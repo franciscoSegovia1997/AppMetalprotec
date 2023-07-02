@@ -1,1 +1,1 @@
-sudo rm -rf /home/ubuntu/MetalprotecApp/*
+sudo rm -rf /home/ubuntu/AppMetalprotec/*
