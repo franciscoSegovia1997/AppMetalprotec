@@ -7,3 +7,6 @@ source /home/ubuntu/env/bin/activate
 pip install -r /home/ubuntu/AppMetalprotec/requirements.txt
 cd /home/ubuntu/AppMetalprotec/
 gunicorn -c config/gunicorn/dev.py
+python3 manage.py migrate
+python3 manage.py collectstatic
+sudo systemctl restart nginx
