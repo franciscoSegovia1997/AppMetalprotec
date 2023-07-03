@@ -26,6 +26,9 @@
                                 <div class="bi me-2" style="width: 35px; height:60px;">
                                     <img src="{% static 'images/logoMetalprotecBase.png' %}" height="70px">
                                 </div>
+                                <div class="mx-5" style="color: white; font-size: 12px; font-family: sans-serif, Helvetica;">
+                                    {{ user.first_name }} {{ user.last_name }} {{ user.extendeduser.roleUser.nameRole }}
+                                </div>
                             </a>
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
@@ -45,7 +48,7 @@
 
                                 <!-- Link to usersMetalprotec app -->
                                 <li>
-                                    <a href="#" class="nav-link text-truncate">
+                                    <a href="{% url 'usersMetalprotec:usersMetalprotec' %}" class="nav-link text-truncate">
                                         <i class="fa-solid fa-users" style="color: white; width: 25px;"></i>
                                         <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Usuarios</span>
                                     </a>
@@ -53,7 +56,7 @@
 
                                 <!-- Link to clientsMetalprotec app -->
                                 <li>
-                                    <a href="#" class="nav-link text-truncate">
+                                    <a href="{% url 'clientsMetalprotec:clientsMetalprotec' %}" class="nav-link text-truncate">
                                         <i class="fa-regular fa-address-book" style="color: white; width: 25px;"></i>
                                         <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Clientes</span>
                                     </a>
@@ -61,7 +64,7 @@
 
                                 <!-- Link to servicesMetalprotec app -->
                                 <li>
-                                    <a href="#" class="nav-link text-truncate">
+                                    <a href="{% url 'servicesMetalprotec:servicesMetalprotec' %}" class="nav-link text-truncate">
                                         <i class="fa-solid fa-truck-fast" style="color: white; width: 25px;"></i>
                                         <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Servicios</span>
                                     </a>
@@ -69,7 +72,7 @@
 
                                 <!-- Link to productsMetalprotec app -->
                                 <li>
-                                    <a href="#" class="nav-link text-truncate">
+                                    <a href="{% url 'productsMetalprotec:productsMetalprotec' %}" class="nav-link text-truncate">
                                         <i class="fa-solid fa-cart-shopping" style="color: white; width: 25px;"></i>
                                         <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Productos</span>
                                     </a>
