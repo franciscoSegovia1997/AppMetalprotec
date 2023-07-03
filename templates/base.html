@@ -1,0 +1,165 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Title of the template -->
+        <title>Metalprotec App</title>
+
+        <!-- Bootstrap importation -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+        <!-- FontAwesome importation -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        {% block extraFiles %}
+        {% endblock %}
+    </head>
+    <body>
+        <main class="d-flex">
+            <div class="flex-shrink-0 p-3 bg-primary" style="width: 230px;">
+                <nav class="navbar navbar-light bg-primary">
+                    <div class="container-fluid">
+                        <div class="navbar-collapse">
+                            <a class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+                                <div class="bi me-2" style="width: 35px; height:60px;">
+                                    <img src="{% static 'images/logoMetalprotecBase.png' %}" height="70px">
+                                </div>
+                            </a>
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                                <!-- Links to statistics app -->
+                                <li class="nav-item dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle text-truncate" data-bs-toggle="dropdown">
+                                        <i class="fa-solid fa-layer-group" style="color: white; width: 25px;"></i>
+                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Estadísticas</span>
+                                    </a>
+                                    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdown">
+                                        <li><a class="dropdown-item" href="#">General</a></li>
+                                        <li><a class="dropdown-item" href="#">Clientes</a></li>
+                                        <li><a class="dropdown-item" href="#">Productos</a></li>
+                                        <li><a class="dropdown-item" href="#">Ventas</a></li>
+                                    </ul>
+                                </li>
+
+                                <!-- Link to usersMetalprotec app -->
+                                <li>
+                                    <a href="#" class="nav-link text-truncate">
+                                        <i class="fa-solid fa-users" style="color: white; width: 25px;"></i>
+                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Usuarios</span>
+                                    </a>
+                                </li>
+
+                                <!-- Link to clientsMetalprotec app -->
+                                <li>
+                                    <a href="#" class="nav-link text-truncate">
+                                        <i class="fa-regular fa-address-book" style="color: white; width: 25px;"></i>
+                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Clientes</span>
+                                    </a>
+                                </li>
+
+                                <!-- Link to servicesMetalprotec app -->
+                                <li>
+                                    <a href="#" class="nav-link text-truncate">
+                                        <i class="fa-solid fa-truck-fast" style="color: white; width: 25px;"></i>
+                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Servicios</span>
+                                    </a>
+                                </li>
+
+                                <!-- Link to productsMetalprotec app -->
+                                <li>
+                                    <a href="#" class="nav-link text-truncate">
+                                        <i class="fa-solid fa-cart-shopping" style="color: white; width: 25px;"></i>
+                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Productos</span>
+                                    </a>
+                                </li>
+
+                                <!-- Link to stockManagment app -->
+                                <li class="dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle  text-truncate" data-bs-toggle="dropdown">
+                                        <i class="fa-solid fa-cubes-stacked" style="color: white; width: 25px;"></i>
+                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Gestión de stock</span>
+                                    </a>
+                                    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdown">
+                                        <li><a class="dropdown-item" href="#">Ingresos</a></li>
+                                        <li><a class="dropdown-item" href="#">Egresos</a></li>
+                                        <li><a class="dropdown-item" href="#">Inventarios</a></li>
+                                        <li><a class="dropdown-item" href="#">Almacenes</a></li>
+                                    </ul>
+                                </li>
+
+                                <!-- Link to settingsMetalprotec app -->
+                                <li>
+                                    <a href="#" class="nav-link text-truncate">
+                                        <i class="fa-solid fa-gear" style="color: white; width: 25px;"></i>
+                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Configuración</span>
+                                    </a>
+                                </li>
+
+                                <!-- Link to financeMetalprotec app -->
+                                <li class="dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle  text-truncate" data-bs-toggle="dropdown">
+                                        <i class="fa-solid fa-money-bill-1-wave" style="color: white; width: 25px;"></i>
+                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Datos contables</span>
+                                    </a>
+                                    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdown">
+                                        <li><a class="dropdown-item" href="#">Registros bancarios</a></li>
+                                        <li><a class="dropdown-item" href="#">Comisiones</a></li>
+                                        <li><a class="dropdown-item" href="#">Registro de abonos</a></li>
+                                    </ul>
+                                </li>
+
+                                <!-- Link to salesMetalprotec app -->
+                                <li class="dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle  text-truncate" data-bs-toggle="dropdown">
+                                        <i class="fa-solid fa-file-invoice" style="color: white; width: 25px;"></i>
+                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Ventas</span>
+                                    </a>
+                                    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdown">
+                                        <li><a class="dropdown-item" href="#">Cotizaciones</a></li>
+                                        <li><a class="dropdown-item" href="#">Facturas</a></li>
+                                        <li><a class="dropdown-item" href="#">Boletas</a></li>
+                                        <li><a class="dropdown-item" href="#">Guías</a></li>
+                                        <li><a class="dropdown-item" href="#">Notas de crédito</a></li>
+                                    </ul>
+                                </li>
+
+                                <!-- Link to expensesMetalprotec app -->
+                                <li class="dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle  text-truncate" data-bs-toggle="dropdown">
+                                        <i class="fa-solid fa-shop" style="color: white; width: 25px;"></i>
+                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Centro de costos</span>
+                                    </a>
+                                    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdown">
+                                        <li><a class="dropdown-item" href="#">Registro de cajas</a></li>
+                                        <li><a class="dropdown-item" href="#">Registro de costos</a></li>
+                                        <li><a class="dropdown-item" href="#">Datacenter</a></li>
+                                        <li><a class="dropdown-item" href="#">Orden de compra</a></li>
+                                    </ul>
+                                </li>
+
+                                <!-- Link to logout function -->
+                                <li>
+                                    <a href="#" class="nav-link text-truncate">
+                                        <i class="fa-solid fa-right-from-bracket" style="color: white; width: 25px;"></i>
+                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Salir</span>
+                                    </a>
+                                </li>
+
+                                <!-- End of apps in Metalprotec App -->
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div class="d-flex flex-column flex-shrink-0 col-10">
+                {% block pageContent %}
+                {% endblock %}
+            </div>
+        </main>
+    </body>
+</html>
+
+{% block modalContent %}
+{% endblock %}
