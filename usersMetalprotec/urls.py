@@ -5,5 +5,7 @@ app_name='usersMetalprotec'
 
 urlpatterns = [
     path('',views.loginSystem,name='loginSystem'),
-    path('usuarios',views.usersMetalprotec,name='usersMetalprotec'),
+    path('usersMetalprotec',views.usersMetalprotec,name='usersMetalprotec'),
+    path('welcomeMetalprotec',views.welcomeMetalprotec,name='welcomeMetalprotec'),
+    path('logoutSystem',views.logoutSystem,name='logoutSystem'),
 ]
