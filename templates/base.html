@@ -22,7 +22,7 @@
                 <nav class="navbar navbar-light bg-primary">
                     <div class="container-fluid">
                         <div class="navbar-collapse">
-                            <a class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+                            <a href="{% url 'usersMetalprotec:welcomeMetalprotec' %}" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
                                 <div class="bi me-2" style="width: 35px; height:60px;">
                                     <img src="{% static 'images/logoMetalprotecBase.png' %}" height="70px">
                                 </div>
@@ -141,7 +141,7 @@
 
                                 <!-- Link to logout function -->
                                 <li>
-                                    <a href="#" class="nav-link text-truncate">
+                                    <a href="{% url 'usersMetalprotec:logoutSystem' %}" class="nav-link text-truncate">
                                         <i class="fa-solid fa-right-from-bracket" style="color: white; width: 25px;"></i>
                                         <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Salir</span>
                                     </a>
