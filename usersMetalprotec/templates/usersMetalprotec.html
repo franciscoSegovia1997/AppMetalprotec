@@ -46,11 +46,7 @@
                         <td>{{ userInfo.extendeduser.phoneUser }}</td>
                         <td>{{ userInfo.extendeduser.roleUser.nameRole }}</td>
                         <td class="text-center"><a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editUser" id="edit{{ userInfo.id }}" onclick="loadEditData(this.id)"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                        {% if userInfo.extendeduser.roleUser.nameRole == 'SUPERADMIN' %}
-                        <td></td>
-                        {% else %}
                         <td class="text-center"><a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUser" id="delete{{ userInfo.id }}" onclick="loadDeleteData(this.id)"><i class="fa-solid fa-trash-can"></i></a></td>
-                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -66,7 +62,7 @@
     <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="newUser">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form action="#" method="post">
+                <form action="{% url 'usersMetalprotec:usersMetalprotec' %}" method="post">
                     {% csrf_token %}
                     <div class="modal-header">
                         <h5 class="modal-title">Nuevo usuario</h5>
