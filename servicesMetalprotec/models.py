@@ -6,6 +6,7 @@ class serviceSystem(models.Model):
     nameService = models.CharField(max_length=64,null=True,blank=True)
     categoryService = models.CharField(max_length=16,null=True,blank=True)
     subCategoryService = models.CharField(max_length=16,null=True,blank=True)
+    currencyService = models.CharField(max_length=16, null=True, blank=True)
     measureUnit = models.CharField(max_length=16,null=True,blank=True)
     pvnIGV = models.CharField(max_length=16,null=True,blank=True)
     pvcIGV = models.CharField(max_length=16,null=True,blank=True)
