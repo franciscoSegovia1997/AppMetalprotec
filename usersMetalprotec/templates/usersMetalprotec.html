@@ -115,17 +115,6 @@
                                 <input type="text" class="form-control" name="newPhone" id="newPhone" required>
                             </div>
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <label>Rol</label>
-                                <select class="selectpicker form-control" name="newRole" id="newRole" required>
-                                    <option value=""></option>
-                                    {% for roleUser in rolesSystem %}
-                                    <option value="{{ roleUser.nameRole }}">{{ roleUser.nameRole }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteNewInfo()">Cancelar</button>
@@ -180,17 +169,6 @@
                             <div class="col-6">
                                 <label>Celular</label>
                                 <input type="text" class="form-control" name="editPhone" id="editPhone" required>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <label>Rol</label>
-                                <select class="selectpicker form-control" name="editRole" id="editRole" required>
-                                    <option value="" selected></option>
-                                    {% for roleUser in rolesSystem %}
-                                    <option value="{{ roleUser.nameRole }}">{{ roleUser.nameRole }}</option>
-                                    {% endfor %}
-                                </select>
                             </div>
                         </div>
                     </div>

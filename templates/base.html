@@ -34,24 +34,22 @@
                                         {{ user.extendeduser.roleUser.nameRole }}
                                     </div>
                                     <div class="row">
-                                        {{ user.extendeduser.endpointUser.codeEndpoint }}
+                                        {% if user.extendeduser.endpointUser is None %}
+                                            SIN PUNTO DE VENTA
+                                        {% else %}
+                                            {{ user.extendeduser.endpointUser.codeEndpoint }}
+                                        {% endif %}
                                     </div>
                                 </div>
                             </a>
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-                                <!-- Links to statistics app -->
-                                <li class="nav-item dropdown">
-                                    <a href="#" class="nav-link dropdown-toggle text-truncate" data-bs-toggle="dropdown">
-                                        <i class="fa-solid fa-layer-group" style="color: white; width: 25px;"></i>
-                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Estadísticas</span>
+                                <!-- Link to settingsMetalprotec app -->
+                                <li>
+                                    <a href="{% url 'settingsMetalprotec:settingsMetalprotec' %}" class="nav-link text-truncate">
+                                        <i class="fa-solid fa-gear" style="color: white; width: 25px;"></i>
+                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Configuración</span>
                                     </a>
-                                    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdown">
-                                        <li><a class="dropdown-item" href="#">General</a></li>
-                                        <li><a class="dropdown-item" href="#">Clientes</a></li>
-                                        <li><a class="dropdown-item" href="#">Productos</a></li>
-                                        <li><a class="dropdown-item" href="#">Ventas</a></li>
-                                    </ul>
                                 </li>
 
                                 <!-- Link to usersMetalprotec app -->
@@ -62,6 +60,8 @@
                                     </a>
                                 </li>
 
+                                {% if user.extendeduser.endpointUser is None %}
+                                {% else %}
                                 <!-- Link to clientsMetalprotec app -->
                                 <li>
                                     <a href="{% url 'clientsMetalprotec:clientsMetalprotec' %}" class="nav-link text-truncate">
@@ -98,15 +98,7 @@
                                         <li><a class="dropdown-item" href="#">Inventarios</a></li>
                                         <li><a class="dropdown-item" href="#">Almacenes</a></li>
                                     </ul>
-                                </li>
-
-                                <!-- Link to settingsMetalprotec app -->
-                                <li>
-                                    <a href="{% url 'settingsMetalprotec:settingsMetalprotec' %}" class="nav-link text-truncate">
-                                        <i class="fa-solid fa-gear" style="color: white; width: 25px;"></i>
-                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Configuración</span>
-                                    </a>
-                                </li>
+                                </li>                                
 
                                 <!-- Link to financeMetalprotec app -->
                                 <li class="dropdown">
@@ -136,6 +128,20 @@
                                     </ul>
                                 </li>
 
+                                <!-- Links to statistics app -->
+                                <li class="nav-item dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle text-truncate" data-bs-toggle="dropdown">
+                                        <i class="fa-solid fa-layer-group" style="color: white; width: 25px;"></i>
+                                        <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Estadísticas</span>
+                                    </a>
+                                    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdown">
+                                        <li><a class="dropdown-item" href="#">General</a></li>
+                                        <li><a class="dropdown-item" href="#">Clientes</a></li>
+                                        <li><a class="dropdown-item" href="#">Productos</a></li>
+                                        <li><a class="dropdown-item" href="#">Ventas</a></li>
+                                    </ul>
+                                </li>
+
                                 <!-- Link to expensesMetalprotec app -->
                                 <li class="dropdown">
                                     <a href="#" class="nav-link dropdown-toggle  text-truncate" data-bs-toggle="dropdown">
@@ -149,6 +155,7 @@
                                         <li><a class="dropdown-item" href="#">Orden de compra</a></li>
                                     </ul>
                                 </li>
+                                {% endif %}
 
                                 <!-- Link to logout function -->
                                 <li>
