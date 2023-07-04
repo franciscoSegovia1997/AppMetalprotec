@@ -1,11 +1,198 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block extraFiles %}
 
+    <!-- Datatables importation -->
+    <link href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- Datatables configuration -->
+    <script src="{% static 'servicesMetalprotec/js/servicesMetalprotec.js' %}"></script>
+
+    <!-- Select form importation -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">
 {% endblock %}
 
 {% block pageContent %}
     <div class="container" style="height: 100vh; overflow: scroll;">
         <h1 class="mt-3 mb-3">Servicios</h1>
+        <br>
+        <div class="row mx-0">
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#newService">Nuevo <i class="fa-solid fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#importServices">Importar <i class="fa-solid fa-file-import"></i></a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div>
+            <table class="table table-bordered table-hover" id="servicesTable" style="font-size: 12px;">
+                <thead class="table-dark">
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Categoria</th>
+                    <th scope="col">Sub Categoria</th>
+                    <th scope="col">Unidad</th>
+                    <th scope="col">Venta sin IGV</th>
+                    <th scope="col">Venta con IGV</th>
+                    <th scope="col">Editar</th>
+                    <th scope="col">Eliminar</th>
+                </thead>
+                <tbody>
+                    {% for serviceInfo in servicesSystem %}
+                    <tr>
+                        <td>{{ serviceInfo.nameService }}</td>
+                        <td>{{ serviceInfo.categoryService }}</td>
+                        <td>{{ serviceInfo.subCategoryService }}</td>
+                        <td>{{ serviceInfo.measureUnit }}</td>
+                        <td>{{ serviceInfo.pvnIGV }}</td>
+                        <td>{{ serviceInfo.pvcIGV }}</td>
+                        <td class="text-center"><a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editService" id="edit{{ serviceInfo.id }}" onclick="loadEditData(this.id)"><i class="fa-solid fa-pen-to-square"></i></a></td>
+                        <td class="text-center"><a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteService" id="delete{{ serviceInfo.id }}" onclick="loadDeleteData(this.id)"><i class="fa-solid fa-trash-can"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block modalContent %}
+
+    <!-- New service modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="newService">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'servicesMetalprotec:servicesMetalprotec' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Nuevo servicio</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteNewInfo()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-6">
+                                <label>Nombre</label>
+                                <input type="text" class="form-control" name="nameService" id="nameService" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Unidad de medida</label>
+                                <input type="text" class="form-control" name="measureUnit" id="measureUnit" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Categoria</label>
+                                <input type="text" class="form-control" name="categoryService" id="categoryService" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Sub categoria</label>
+                                <input type="text" class="form-control" name="subCategoryService" id="subCategoryService" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Precio de venta sin IGV</label>
+                                <input type="number" step="0.01" class="form-control" name="pvnIGV" id="pvnIGV" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteNewInfo()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Edit service modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="editService">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'servicesMetalprotec:updateService' %}" method="post">
+                    {% csrf_token %}
+                    <div style="display: none;">
+                        <input id="editIdService" name="editIdService" value="">
+                    </div>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Actualizar servicio</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteEditInfo()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-6">
+                                <label>Nombre</label>
+                                <input type="text" class="form-control" name="editNameService" id="editNameService" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Unidad de medida</label>
+                                <input type="text" class="form-control" name="editMeasureUnit" id="editMeasureUnit" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Categoria</label>
+                                <input type="text" class="form-control" name="editCategoryService" id="editCategoryService" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Sub categoria</label>
+                                <input type="text" class="form-control" name="editSubCategoryService" id="editSubCategoryService" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Precio de venta sin IGV</label>
+                                <input type="number" step="0.01" class="form-control" name="editPvnIGV" id="editPvnIGV" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteEditInfo()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete user modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="deleteService">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'servicesMetalprotec:deleteService' %}" method="post">
+                    {% csrf_token %}
+                    <div style="display: none;">
+                        <input id="deleteIdService" name="deleteIdService" value="">
+                    </div>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Eliminar servicio</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteDeleteInfo()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-12">
+                                <h3>¿Esta seguro que desea eliminar este servicio?</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteDeleteInfo()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Eliminar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 {% endblock %}
