@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -77,14 +77,74 @@ def checkUsernameExist(username):
         return False
 
 @login_required(login_url='/')
-def deleteUser(request,idUser):
-    userData = User.objects.get(id=idUser)
-    userData.delete()
-    return HttpResponseRedirect(reverse('usersMetalprotec:usersMetalprotec'))
+def deleteUser(request):
+    if request.method == 'POST':
+        deleteIdUser = request.POST.get('deleteIdUser')
+        deleteUser = User.objects.get(id=deleteIdUser)
+        deleteUser.delete()
+        return HttpResponseRedirect(reverse('usersMetalprotec:usersMetalprotec'))
 
 @login_required(login_url='/')
 def updateUser(request):
-    return HttpResponseRedirect(reverse('usersMetalprotec:usersMetalprotec'))
+    if request.method == 'POST':
+        editIdUser = request.POST.get('editIdUser')
+        editUsername = request.POST.get('editUsername')
+        editPassword = request.POST.get('editPassword')
+        editName = request.POST.get('editName')
+        editLastName = request.POST.get('editLastName')
+        editEmail = request.POST.get('editEmail')
+        editPhone = request.POST.get('editPhone')
+        editRole = request.POST.get('editRole')
+
+        editUser = User.objects.get(id=editIdUser)
+        if editUsername == editUser.username:
+            editUser.username = editUsername
+            editUser.set_password(editPassword)
+            editUser.first_name = editName
+            editUser.last_name = editLastName
+            editUser.email = editEmail
+            editUser.save()
+            
+            editExtendedUser = extendedUser.objects.get(asociatedUser=editUser)
+            editExtendedUser.nameUser = editName
+            editExtendedUser.lastnameUser = editLastName
+            editExtendedUser.phoneUser = editPhone
+            editRoleUser = rolesxUser.objects.get(nameRole=editRole)
+            editExtendedUser.roleUser = editRoleUser
+            editExtendedUser.save()
+            return HttpResponseRedirect(reverse('usersMetalprotec:usersMetalprotec'))
+        else:
+            if checkUsernameExist(editUsername):
+                return HttpResponseRedirect(reverse('usersMetalprotec:usersMetalprotec'))
+            else:
+                editUser.username = editUsername
+                editUser.set_password(editPassword)
+                editUser.first_name = editName
+                editUser.last_name = editLastName
+                editUser.email = editEmail
+                editUser.save()
+                
+                editExtendedUser = extendedUser.objects.get(asociatedUser=editUser)
+                editExtendedUser.nameUser = editName
+                editExtendedUser.lastnameUser = editLastName
+                editExtendedUser.phoneUser = editPhone
+                editRoleUser = rolesxUser.objects.get(nameRole=editRole)
+                editExtendedUser.roleUser = editRoleUser
+                editExtendedUser.save()
+                return HttpResponseRedirect(reverse('usersMetalprotec:usersMetalprotec'))
+
+@login_required(login_url='/')
+def getUserData(request):
+    idUser = request.GET.get('idUser')
+    editUser = User.objects.get(id=idUser)
+    return JsonResponse({
+        'editUsername':editUser.username,
+        'editName':editUser.first_name,
+        'editLastName':editUser.last_name,
+        'editEmail':editUser.email,
+        'editPhone':editUser.extendeduser.phoneUser,
+        'editRole':editUser.extendeduser.roleUser.nameRole,
+    })
 
 @login_required(login_url='/')
 def logoutSystem(request):

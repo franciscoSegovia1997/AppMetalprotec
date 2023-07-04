@@ -72,7 +72,63 @@ function deleteEditInfo()
     $('#editRole').selectpicker('refresh')
 }
 
-function loadEditData(editIdUser)
+function loadEditData(idUser)
 {
-    console.log(editIdUser)
+    idUser = idUser.slice(4)
+    
+    editIdUser=document.getElementById('editIdUser')
+    editIdUser.value = idUser
+
+    editUsername=document.getElementById('editUsername')
+    editPassword=document.getElementById('editPassword')
+    editName=document.getElementById('editName')
+    editLastName=document.getElementById('editLastName')
+    editEmail=document.getElementById('editEmail')
+    editPhone=document.getElementById('editPhone')
+    editRole=document.getElementById('editRole')
+
+    editUsername.value=''
+    editPassword.value=''
+    editName.value=''
+    editLastName.value=''
+    editEmail.value=''
+    editPhone.value=''
+    editRole.selectedIndex = '0'
+    $('#editRole').selectpicker('refresh')
+
+    fetch(`/getUserData?idUser=${idUser}`)
+    .then(response => response.json())
+    .then(data => {
+
+        editUsername.value=data.editUsername
+        editPassword.value=''
+        editName.value=data.editName
+        editLastName.value=data.editLastName
+        editEmail.value=data.editEmail
+        editPhone.value=data.editPhone
+
+        for(let i = 0; i < editRole.options.length; i++)
+        {
+            if(editRole.options[i].value === data.editRole)
+            {
+                editRole.selectedIndex = String(i)
+                $('#editRole').selectpicker('refresh')
+                break;
+            }
+        }
+    })
+}
+
+function deleteDeleteInfo()
+{
+    deleteIdUser = document.getElementById('deleteIdUser')
+    deleteIdUser.value = ''
+}
+
+function loadDeleteData(idUser)
+{
+    deleteIdUser = document.getElementById('deleteIdUser')
+    deleteIdUser.value = ''
+    idUser = idUser.slice(6)
+    deleteIdUser.value = idUser
 }

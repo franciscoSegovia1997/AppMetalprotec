@@ -49,7 +49,7 @@
                         {% if userInfo.extendeduser.roleUser.nameRole == 'SUPERADMIN' %}
                         <td></td>
                         {% else %}
-                        <td class="text-center"><a class="btn btn-danger" href="{% url 'usersMetalprotec:deleteUser' userInfo.id %}"><i class="fa-solid fa-trash-can"></i></a></td>
+                        <td class="text-center"><a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUser" id="delete{{ userInfo.id }}" onclick="loadDeleteData(this.id)"><i class="fa-solid fa-trash-can"></i></a></td>
                         {% endif %}
                     </tr>
                     {% endfor %}
@@ -105,7 +105,7 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-6">
-                                <label>Email</label>
+                                <label>Rol</label>
                                 <select class="selectpicker form-control" name="newRole" id="newRole" required>
                                     <option value=""></option>
                                     {% for roleUser in rolesSystem %}
@@ -172,7 +172,7 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-6">
-                                <label>Email</label>
+                                <label>Rol</label>
                                 <select class="selectpicker form-control" name="editRole" id="editRole" required>
                                     <option value="" selected></option>
                                     {% for roleUser in rolesSystem %}
@@ -185,6 +185,35 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteEditInfo()">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete user modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="deleteUser">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'usersMetalprotec:deleteUser' %}" method="post">
+                    {% csrf_token %}
+                    <div style="display: none;">
+                        <input id="deleteIdUser" name="deleteIdUser" value="">
+                    </div>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Eliminar Usuario</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteEditInfo()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-12">
+                                <h3>¿Esta seguro que desea eliminar este usuario?</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteEditInfo()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Eliminar</button>
                     </div>
                 </form>
             </div>
