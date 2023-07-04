@@ -18,6 +18,7 @@ def servicesMetalprotec(request):
         measureUnit = request.POST.get('measureUnit')
         pvnIGV = str(Decimal('%.2f' % Decimal(request.POST.get('pvnIGV'))))
         pvcIGV = str(Decimal('%.2f' % (Decimal(pvnIGV)*Decimal(1.18))))
+        currencyService = request.POST.get('currencyService')
         endpointService = request.user.extendeduser.endpointUser
 
         serviceSystem.objects.create(
@@ -27,6 +28,7 @@ def servicesMetalprotec(request):
             measureUnit=measureUnit,
             pvnIGV=pvnIGV,
             pvcIGV=pvcIGV,
+            currencyService=currencyService,
             endpointService=endpointService,
         )
         return HttpResponseRedirect(reverse('servicesMetalprotec:servicesMetalprotec'))
@@ -52,6 +54,7 @@ def getServiceData(request):
         'editSubCategoryService':editService.subCategoryService,
         'editMeasureUnit':editService.measureUnit,
         'editPvnIGV':editService.pvnIGV,
+        'editCurrencyService':editService.currencyService,
     })
 
 @login_required(login_url='/')
@@ -64,6 +67,7 @@ def updateService(request):
         editSubCategoryService=request.POST.get('editSubCategoryService')
         editPvnIGV=str(Decimal('%.2f' % Decimal(request.POST.get('editPvnIGV'))))
         editPvcIGV=str(Decimal('%.2f' % (Decimal(editPvnIGV)*Decimal(1.18))))
+        editCurrencyService=request.POST.get('editCurrencyService')
 
         editService = serviceSystem.objects.get(id=editIdService)
         editService.nameService=editNameService
@@ -72,4 +76,6 @@ def updateService(request):
         editService.subCategoryService=editSubCategoryService
         editService.pvnIGV=editPvnIGV
         editService.pvcIGV=editPvcIGV
+        editService.currencyService=editCurrencyService
         editService.save()
+        return HttpResponseRedirect(reverse('servicesMetalprotec:servicesMetalprotec'))

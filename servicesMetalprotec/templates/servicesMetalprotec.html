@@ -42,6 +42,7 @@
                     <th scope="col">Categoria</th>
                     <th scope="col">Sub Categoria</th>
                     <th scope="col">Unidad</th>
+                    <th scope="col">Moneda</th>
                     <th scope="col">Venta sin IGV</th>
                     <th scope="col">Venta con IGV</th>
                     <th scope="col">Editar</th>
@@ -54,6 +55,7 @@
                         <td>{{ serviceInfo.categoryService }}</td>
                         <td>{{ serviceInfo.subCategoryService }}</td>
                         <td>{{ serviceInfo.measureUnit }}</td>
+                        <td>{{ serviceInfo.currencyService }}</td>
                         <td>{{ serviceInfo.pvnIGV }}</td>
                         <td>{{ serviceInfo.pvcIGV }}</td>
                         <td class="text-center"><a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editService" id="edit{{ serviceInfo.id }}" onclick="loadEditData(this.id)"><i class="fa-solid fa-pen-to-square"></i></a></td>
@@ -103,6 +105,14 @@
                             <div class="col-6">
                                 <label>Precio de venta sin IGV</label>
                                 <input type="number" step="0.01" class="form-control" name="pvnIGV" id="pvnIGV" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Moneda</label>
+                                <select class="selectpicker form-control" name="currencyService" id="currencyService" required>
+                                    <option value="" selected></option>
+                                    <option value="SOLES">SOLES</option>
+                                    <option value="DOLARES">DOLARES</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -155,6 +165,14 @@
                             <div class="col-6">
                                 <label>Precio de venta sin IGV</label>
                                 <input type="number" step="0.01" class="form-control" name="editPvnIGV" id="editPvnIGV" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Moneda</label>
+                                <select class="selectpicker form-control" name="editCurrencyService" id="editCurrencyService" required>
+                                    <option value="" selected></option>
+                                    <option value="SOLES">SOLES</option>
+                                    <option value="DOLARES">DOLARES</option>
+                                </select>
                             </div>
                         </div>
                     </div>

@@ -37,12 +37,15 @@ function deleteNewInfo()
     categoryService=document.getElementById('categoryService')
     subCategoryService=document.getElementById('subCategoryService')
     pvnIGV=document.getElementById('pvnIGV')
+    currencyService=document.getElementById('currencyService')
 
     nameService.value=''
     measureUnit.value=''
     categoryService.value=''
     subCategoryService.value=''
     pvnIGV.value=''
+    currencyService.selectedIndex='0'
+    $('#currencyService').selectpicker('refresh')
 }
 
 function deleteEditInfo()
@@ -52,12 +55,15 @@ function deleteEditInfo()
     editCategoryService=document.getElementById('editCategoryService')
     editSubCategoryService=document.getElementById('editSubCategoryService')
     editPvnIGV=document.getElementById('editPvnIGV')
+    editCurrencyService=document.getElementById('editCurrencyService')
 
     editNameService.value=''
     editMeasureUnit.value=''
     editCategoryService.value=''
     editSubCategoryService.value=''
     editPvnIGV.value=''
+    editCurrencyService.selectedIndex='0'
+    $('#editCurrencyService').selectpicker('refresh')
 }
 
 function loadEditData(idService)
@@ -72,12 +78,15 @@ function loadEditData(idService)
     editCategoryService=document.getElementById('editCategoryService')
     editSubCategoryService=document.getElementById('editSubCategoryService')
     editPvnIGV=document.getElementById('editPvnIGV')
+    editCurrencyService=document.getElementById('editCurrencyService')
 
     editNameService.value=''
     editMeasureUnit.value=''
     editCategoryService.value=''
     editSubCategoryService.value=''
     editPvnIGV.value=''
+    editCurrencyService.selectedIndex='0'
+    $('#editCurrencyService').selectpicker('refresh')
 
     fetch(`/servicesMetalprotecgetServiceData?idService=${idService}`)
     .then(response => response.json())
@@ -88,6 +97,16 @@ function loadEditData(idService)
         editCategoryService.value=data.editCategoryService
         editSubCategoryService.value=data.editSubCategoryService
         editPvnIGV.value=data.editPvnIGV
+
+        for(let i = 0; i < editCurrencyService.options.length; i++ )
+        {
+            if(editCurrencyService.options[i].value === data.editCurrencyService)
+            {
+                editCurrencyService.selectedIndex = String(i)
+                $('#editCurrencyService').selectpicker('refresh')
+                break;
+            }
+        }
     })
 }
 
