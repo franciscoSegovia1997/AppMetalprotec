@@ -11,4 +11,6 @@ urlpatterns = [
     path('deleteUser',views.deleteUser,name='deleteUser'),
     path('updateUser',views.updateUser,name='updateUser'),
     path('getUserData',views.getUserData,name='getUserData'),
+    path('assignRoleUser',views.assignRoleUser,name='assignRoleUser'),
+    path('assignEndpointUser',views.assignEndpointUser,name='assignEndpointUser'),
 ]

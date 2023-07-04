@@ -22,8 +22,22 @@
     <div class="container" style="height: 100vh; overflow: scroll;">
         <h1 class="mt-3 mb-3">Usuarios</h1>
         <br>
-        <div>
-            <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#newUser">Nuevo <i class="fa-solid fa-user-plus"></i></a>
+        <div class="row mx-0">
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#newUser">Nuevo <i class="fa-solid fa-user-plus"></i></a>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#assignRole">Asignar rol</i></a>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#assignEndpoint">Asignar punto</a>
+                </div>
+            </div>
         </div>
         <br>
         <div>
@@ -34,6 +48,7 @@
                     <th scope="col">Nombre y Apellido</th>
                     <th scope="col">Celular</th>
                     <th scope="col">Rol</th>
+                    <th scope="col">Punto de venta</th>
                     <th scope="col">Editar</th>
                     <th scope="col">Eliminar</th>
                 </thead>
@@ -45,6 +60,7 @@
                         <td>{{ userInfo.first_name }} {{ userInfo.last_name }}</td>
                         <td>{{ userInfo.extendeduser.phoneUser }}</td>
                         <td>{{ userInfo.extendeduser.roleUser.nameRole }}</td>
+                        <td>{{ userInfo.extendeduser.endpointUser.codeEndpoint }}</td>
                         <td class="text-center"><a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editUser" id="edit{{ userInfo.id }}" onclick="loadEditData(this.id)"><i class="fa-solid fa-pen-to-square"></i></a></td>
                         <td class="text-center"><a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUser" id="delete{{ userInfo.id }}" onclick="loadDeleteData(this.id)"><i class="fa-solid fa-trash-can"></i></a></td>
                     </tr>
@@ -198,7 +214,7 @@
                     </div>
                     <div class="modal-header">
                         <h5 class="modal-title">Eliminar Usuario</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteEditInfo()"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteDeleteInfo()"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row mb-3 mt-3">
@@ -208,8 +224,90 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteEditInfo()">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteDeleteInfo()">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Eliminar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Role -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="assignRole">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'usersMetalprotec:assignRoleUser' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Asignar rol</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteAssignInfo()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-6">
+                                <label>Usuario</label>
+                                <select class="selectpicker form-control" data-live-search="true" name="userEditRole" id="userEditRole" required>
+                                    <option value="" selected></option>
+                                    {% for userInfo in usersSystem %}
+                                    <option value="{{ userInfo.id }}">{{ userInfo.username }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label>Rol</label>
+                                <select class="selectpicker form-control" name="roleEditRole" id="roleEditRole" required>
+                                    <option value="" selected></option>
+                                    {% for roleUser in rolesSystem %}
+                                    <option value="{{ roleUser.id }}">{{ roleUser.nameRole }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteAssignInfo()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Asignar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Endpoint -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="assignEndpoint">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'usersMetalprotec:assignEndpointUser' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Asignar punto de venta</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteAssignEndpoint()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-6">
+                                <label>Usuario</label>
+                                <select class="selectpicker form-control" data-live-search="true" name="userEditEndpoint" id="userEditEndpoint" required>
+                                    <option value="" selected></option>
+                                    {% for userInfo in usersSystem %}
+                                    <option value="{{ userInfo.id }}">{{ userInfo.username }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label>Punto de venta</label>
+                                <select class="selectpicker form-control" name="endpointEditEndpoint" id="endpointEditEndpoint" required>
+                                    <option value="" selected></option>
+                                    {% for endpointInfo in endpointsSystem %}
+                                    <option value="{{ endpointInfo.id }}">{{ endpointInfo.codeEndpoint }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteAssignEndpoint()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Asignar</button>
                     </div>
                 </form>
             </div>
