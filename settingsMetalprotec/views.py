@@ -1,0 +1,109 @@
+from django.shortcuts import render
+from .models import endpointSystem
+from django.http import HttpResponseRedirect, JsonResponse
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+
+# Create your views here.
+@login_required(login_url='/')
+def settingsMetalprotec(request):
+    if request.method=='POST':
+        serieCoti=request.POST.get('serieCoti')
+        nroCoti=request.POST.get('nroCoti')
+        serieGuia=request.POST.get('serieGuia')
+        nroGuia=request.POST.get('nroGuia')
+        serieFactura=request.POST.get('serieFactura')
+        nroFactura=request.POST.get('nroFactura')
+        serieBoleta=request.POST.get('serieBoleta')
+        nroBoleta=request.POST.get('nroBoleta')
+        serieNotaFactura=request.POST.get('serieNotaFactura')
+        nroNotaFactura=request.POST.get('nroNotaFactura')
+        serieNotaBoleta=request.POST.get('serieNotaBoleta')
+        nroNotaBoleta=request.POST.get('nroNotaBoleta')
+
+        newEndpoint = endpointSystem.objects.create(
+            serieCoti=serieCoti,
+            nroCoti=nroCoti,
+            serieGuia=serieGuia,
+            nroGuia=nroGuia,
+            serieFactura=serieFactura,
+            nroFactura=nroFactura,
+            serieBoleta=serieBoleta,
+            nroBoleta=nroBoleta,
+            serieNotaFactura=serieNotaFactura,
+            nroNotaFactura=nroNotaFactura,
+            serieNotaBoleta=serieNotaBoleta,
+            nroNotaBoleta=nroNotaBoleta,
+        )
+
+        codeEndpoint = str(newEndpoint.id)
+        while len(codeEndpoint) < 4:
+            codeEndpoint = '0' + codeEndpoint
+        codeEndpoint = 'END-' + codeEndpoint
+
+        newEndpoint.codeEndpoint = codeEndpoint
+        newEndpoint.save()
+        return HttpResponseRedirect(reverse('settingsMetalprotec:settingsMetalprotec'))
+    return render(request,'settingsMetalprotec.html',{
+        'endpointsSystem':endpointSystem.objects.all().order_by('id'),
+    })
+
+@login_required(login_url='/')
+def deleteEndpoint(request):
+    if request.method == 'POST':
+        deleteIdEndpoint = request.POST.get('deleteIdEndpoint')
+        deleteEndpoint = endpointSystem.objects.get(id=deleteIdEndpoint)
+        deleteEndpoint.delete()
+        return HttpResponseRedirect(reverse('settingsMetalprotec:settingsMetalprotec'))
+
+@login_required(login_url='/')
+def getEndpointData(request):
+    idEndpoint = request.GET.get('idEndpoint')
+    editEndpoint = endpointSystem.objects.get(id=idEndpoint)
+    return JsonResponse({
+        'editSerieCoti':editEndpoint.serieCoti,
+        'editNroCoti':editEndpoint.nroCoti,
+        'editSerieGuia':editEndpoint.serieGuia,
+        'editNroGuia':editEndpoint.nroGuia,
+        'editSerieFactura':editEndpoint.serieFactura,
+        'editNroFactura':editEndpoint.nroFactura,
+        'editSerieBoleta':editEndpoint.serieBoleta,
+        'editNroBoleta':editEndpoint.nroBoleta,
+        'editSerieNotaFactura':editEndpoint.serieNotaFactura,
+        'editNroNotaFactura':editEndpoint.nroNotaFactura,
+        'editSerieNotaBoleta':editEndpoint.serieNotaBoleta,
+        'editNroNotaBoleta':editEndpoint.nroNotaBoleta,
+    })
+
+@login_required(login_url='/')
+def updateEndpoint(request):
+    if request.method == 'POST':
+        editIdEndpoint = request.POST.get('editIdEndpoint')
+        editSerieCoti=request.POST.get('editSerieCoti')
+        editNroCoti=request.POST.get('editNroCoti')
+        editSerieGuia=request.POST.get('editSerieGuia')
+        editNroGuia=request.POST.get('editNroGuia')
+        editSerieFactura=request.POST.get('editSerieFactura')
+        editNroFactura=request.POST.get('editNroFactura')
+        editSerieBoleta=request.POST.get('editSerieBoleta')
+        editNroBoleta=request.POST.get('editNroBoleta')
+        editSerieNotaFactura=request.POST.get('editSerieNotaFactura')
+        editNroNotaFactura=request.POST.get('editNroNotaFactura')
+        editSerieNotaBoleta=request.POST.get('editSerieNotaBoleta')
+        editNroNotaBoleta=request.POST.get('editNroNotaBoleta')
+
+        editEndpoint = endpointSystem.objects.get(id=editIdEndpoint)
+        editEndpoint.serieCoti=editSerieCoti
+        editEndpoint.nroCoti=editNroCoti
+        editEndpoint.serieGuia=editSerieGuia
+        editEndpoint.nroGuia=editNroGuia
+        editEndpoint.serieFactura=editSerieFactura
+        editEndpoint.nroFactura=editNroFactura
+        editEndpoint.serieBoleta=editSerieBoleta
+        editEndpoint.nroBoleta=editNroBoleta
+        editEndpoint.serieNotaFactura=editSerieNotaFactura
+        editEndpoint.nroNotaFactura=editNroNotaFactura
+        editEndpoint.serieNotaBoleta=editSerieNotaBoleta
+        editEndpoint.nroNotaBoleta=editNroNotaBoleta
+        editEndpoint.save()
+        return HttpResponseRedirect(reverse('settingsMetalprotec:settingsMetalprotec'))

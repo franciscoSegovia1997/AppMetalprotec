@@ -23,4 +23,5 @@ urlpatterns = [
     path('clientsMetalprotec',include('clientsMetalprotec.urls')),
     path('servicesMetalprotec',include('servicesMetalprotec.urls')),
     path('productsMetalprotec',include('productsMetalprotec.urls')),
+    path('settingsMetalprotec',include('settingsMetalprotec.urls')),
 ]
