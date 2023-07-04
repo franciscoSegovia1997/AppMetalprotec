@@ -38,7 +38,6 @@ function deleteNewInfo()
     newLastName=document.getElementById('newLastName')
     newEmail=document.getElementById('newEmail')
     newPhone=document.getElementById('newPhone')
-    newRole=document.getElementById('newRole')
 
     newUsername.value=''
     newPassword.value=''
@@ -46,8 +45,6 @@ function deleteNewInfo()
     newLastName.value=''
     newEmail.value=''
     newPhone.value=''
-    newRole.selectedIndex = '0'
-    $('#newRole').selectpicker('refresh')
 }
 
 function deleteEditInfo()
@@ -59,7 +56,6 @@ function deleteEditInfo()
     editLastName=document.getElementById('editLastName')
     editEmail=document.getElementById('editEmail')
     editPhone=document.getElementById('editPhone')
-    editRole=document.getElementById('editRole')
 
     editIdUser.value=''
     editUsername.value=''
@@ -68,8 +64,6 @@ function deleteEditInfo()
     editLastName.value=''
     editEmail.value=''
     editPhone.value=''
-    editRole.selectedIndex = '0'
-    $('#editRole').selectpicker('refresh')
 }
 
 function loadEditData(idUser)
@@ -85,7 +79,6 @@ function loadEditData(idUser)
     editLastName=document.getElementById('editLastName')
     editEmail=document.getElementById('editEmail')
     editPhone=document.getElementById('editPhone')
-    editRole=document.getElementById('editRole')
 
     editUsername.value=''
     editPassword.value=''
@@ -93,8 +86,6 @@ function loadEditData(idUser)
     editLastName.value=''
     editEmail.value=''
     editPhone.value=''
-    editRole.selectedIndex = '0'
-    $('#editRole').selectpicker('refresh')
 
     fetch(`/getUserData?idUser=${idUser}`)
     .then(response => response.json())
@@ -106,16 +97,6 @@ function loadEditData(idUser)
         editLastName.value=data.editLastName
         editEmail.value=data.editEmail
         editPhone.value=data.editPhone
-
-        for(let i = 0; i < editRole.options.length; i++)
-        {
-            if(editRole.options[i].value === data.editRole)
-            {
-                editRole.selectedIndex = String(i)
-                $('#editRole').selectpicker('refresh')
-                break;
-            }
-        }
     })
 }
 

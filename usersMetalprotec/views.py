@@ -33,7 +33,6 @@ def usersMetalprotec(request):
         newLastName = request.POST.get('newLastName')
         newEmail = request.POST.get('newEmail')
         newPhone = request.POST.get('newPhone')
-        newRole = request.POST.get('newRole')
 
         if checkUsernameExist(newUsername):
             return HttpResponseRedirect(reverse('usersMetalprotec:usersMetalprotec'))
@@ -54,15 +53,12 @@ def usersMetalprotec(request):
                 newCodeUser = '0' + newCodeUser
             newCodeUser = 'USR-' + newCodeUser
 
-            roleUserObject = rolesxUser.objects.get(nameRole=newRole)
-
             extendedUser.objects.create(
                 asociatedUser=newUserObject,
                 codeUser=newCodeUser,
                 nameUser=newName,
                 lastnameUser=newLastName,
                 phoneUser=newPhone,
-                roleUser=roleUserObject,
             )
             return HttpResponseRedirect(reverse('usersMetalprotec:usersMetalprotec'))
     return render(request,'usersMetalprotec.html',{
@@ -96,7 +92,6 @@ def updateUser(request):
         editLastName = request.POST.get('editLastName')
         editEmail = request.POST.get('editEmail')
         editPhone = request.POST.get('editPhone')
-        editRole = request.POST.get('editRole')
 
         editUser = User.objects.get(id=editIdUser)
         if editUsername == editUser.username:
@@ -111,8 +106,6 @@ def updateUser(request):
             editExtendedUser.nameUser = editName
             editExtendedUser.lastnameUser = editLastName
             editExtendedUser.phoneUser = editPhone
-            editRoleUser = rolesxUser.objects.get(nameRole=editRole)
-            editExtendedUser.roleUser = editRoleUser
             editExtendedUser.save()
             return HttpResponseRedirect(reverse('usersMetalprotec:usersMetalprotec'))
         else:
@@ -130,8 +123,6 @@ def updateUser(request):
                 editExtendedUser.nameUser = editName
                 editExtendedUser.lastnameUser = editLastName
                 editExtendedUser.phoneUser = editPhone
-                editRoleUser = rolesxUser.objects.get(nameRole=editRole)
-                editExtendedUser.roleUser = editRoleUser
                 editExtendedUser.save()
                 return HttpResponseRedirect(reverse('usersMetalprotec:usersMetalprotec'))
 
@@ -145,7 +136,6 @@ def getUserData(request):
         'editLastName':editUser.last_name,
         'editEmail':editUser.email,
         'editPhone':editUser.extendeduser.phoneUser,
-        'editRole':editUser.extendeduser.roleUser.nameRole,
     })
 
 @login_required(login_url='/')
