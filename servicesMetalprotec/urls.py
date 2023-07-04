@@ -5,4 +5,7 @@ app_name='servicesMetalprotec'
 
 urlpatterns = [
     path('',views.servicesMetalprotec,name='servicesMetalprotec'),
+    path('deleteService',views.deleteService,name='deleteService'),
+    path('getServiceData',views.getServiceData,name='getServiceData'),
+    path('updateService',views.updateService,name='updateService')
 ]
