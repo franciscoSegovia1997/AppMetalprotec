@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import rolesxUser, extendedUser
+from settingsMetalprotec.models import endpointSystem
 
 # Create your views here.
 def loginSystem(request):
@@ -67,6 +68,7 @@ def usersMetalprotec(request):
     return render(request,'usersMetalprotec.html',{
         'usersSystem':User.objects.all().order_by('id'),
         'rolesSystem':rolesxUser.objects.all().order_by('id'),
+        'endpointsSystem':endpointSystem.objects.all().order_by('id'),
     })
 
 def checkUsernameExist(username):
@@ -150,3 +152,27 @@ def getUserData(request):
 def logoutSystem(request):
     logout(request)
     return HttpResponseRedirect(reverse('usersMetalprotec:loginSystem'))
+
+@login_required(login_url='/')
+def assignRoleUser(request):
+    if request.method=='POST':
+        userEditRole = request.POST.get('userEditRole')
+        roleEditRole = request.POST.get('roleEditRole')
+        userEdit = User.objects.get(id=userEditRole)
+        roleEdit = rolesxUser.objects.get(id=roleEditRole)
+        extendedUserEdit = extendedUser.objects.get(asociatedUser=userEdit)
+        extendedUserEdit.roleUser = roleEdit
+        extendedUserEdit.save()
+        return HttpResponseRedirect(reverse('usersMetalprotec:usersMetalprotec'))
+    
+@login_required(login_url='/')
+def assignEndpointUser(request):
+    if request.method=='POST':
+        userEditEndpoint = request.POST.get('userEditEndpoint')
+        endpointEditEndpoint = request.POST.get('endpointEditEndpoint')
+        userEdit = User.objects.get(id=userEditEndpoint)
+        endpointEdit = endpointSystem.objects.get(id=endpointEditEndpoint)
+        extendedUserEdit = extendedUser.objects.get(asociatedUser=userEdit)
+        extendedUserEdit.endpointUser = endpointEdit
+        extendedUserEdit.save()
+        return HttpResponseRedirect(reverse('usersMetalprotec:usersMetalprotec'))

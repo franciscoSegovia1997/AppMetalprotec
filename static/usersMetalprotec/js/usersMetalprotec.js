@@ -132,3 +132,29 @@ function loadDeleteData(idUser)
     idUser = idUser.slice(6)
     deleteIdUser.value = idUser
 }
+
+function deleteAssignInfo()
+{
+    userEditRole = document.getElementById('userEditRole')
+    roleEditRole = document.getElementById('roleEditRole')
+
+    userEditRole.selectedIndex = '0'
+    $('#userEditRole').selectpicker('refresh')
+
+    roleEditRole.selectedIndex = '0'
+    $('#roleEditRole').selectpicker('refresh')
+
+}
+
+function deleteAssignEndpoint()
+{
+    userEditEndpoint = document.getElementById('userEditEndpoint')
+    endpointEditEndpoint = document.getElementById('endpointEditEndpoint')
+
+    userEditEndpoint.selectedIndex = '0'
+    $('#userEditEndpoint').selectpicker('refresh')
+
+    endpointEditEndpoint.selectedIndex = '0'
+    $('#endpointEditEndpoint').selectpicker('refresh')
+
+}
