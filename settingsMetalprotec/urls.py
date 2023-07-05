@@ -8,4 +8,5 @@ urlpatterns = [
     path('deleteEndpoint',views.deleteEndpoint,name='deleteEndpoint'),
     path('getEndpointData',views.getEndpointData,name='getEndpointData'),
     path('updateEndpoint',views.updateEndpoint,name='updateEndpoint'),
+    path('deleteStore',views.deleteStore,name='deleteStore'),
 ]

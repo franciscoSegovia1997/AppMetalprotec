@@ -28,6 +28,36 @@ document.addEventListener('DOMContentLoaded', ()=>{
             }
         }
     })
+
+    $('#storesTable').DataTable({
+        dom: 'lrtip',
+        paging: true,
+        pageLength: 10,
+        lenghtChange: false,
+        autoWidth: false,
+        serching: false,
+        bInfo: false,
+        bSort: false,
+        language: {
+            "decimal": "",
+            "emptyTable": "Sin información",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+            "infoEmpty": "Sin entradas",
+            "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ Entradas",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "zeroRecords": "Sin resultados encontrados",
+            "paginate": {
+                "first": "Primero",
+                "last": "Ultimo",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        }
+    })
 })
 
 function deleteNewInfo()
@@ -154,4 +184,24 @@ function loadDeleteData(idEndpoint)
     deleteIdEndpoint.value = ''
     idEndpoint = idEndpoint.slice(6)
     deleteIdEndpoint.value = idEndpoint
+}
+
+function deleteNewStoreInfo()
+{
+    nameStore = document.getElementById('nameStore')
+    nameStore.value=''
+}
+
+function loadDeleteStoreData(idStore)
+{
+    deleteIdStore = document.getElementById('deleteIdStore')
+    deleteIdStore.value = ''
+    idStore = idStore.slice(6)
+    deleteIdStore.value = idStore
+}
+
+function deleteDeleteStore()
+{
+    deleteIdStore = document.getElementById('deleteIdStore')
+    deleteIdStore.value = ''
 }
