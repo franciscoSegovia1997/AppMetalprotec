@@ -23,11 +23,12 @@
         <h1 class="mt-3 mb-3">Configuracion</h1>
         <br>
         <hr>
-        <div>
+        <div class="row">
             <h4>Puntos de venta</h4>
             <div>
                 <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#newEndpoint">Nuevo <i class="fa-solid fa-cart-plus"></i></a>
             </div>
+            <br>
             <br>
             <div>
                 <table class="table table-bordered table-hover" id="endpointsTable" style="font-size: 12px;">
@@ -60,6 +61,41 @@
                 </table>
             </div>
         </div>
+        {% if user.extendeduser.endpointUser is None %}
+        {% else %}
+        <hr>
+        <div class="row">
+            <div class="col-6">
+                <div class="row">
+                    <h4>Almacenes</h4>
+                    <div>
+                        <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#newStore">Nuevo <i class="fa-solid fa-store"></i></a>
+                    </div>
+                    <br>
+                    <br>
+                    <div>
+                        <table class="table table-bordered table-hover" id="storesTable" style="font-size: 12px;">
+                            <thead class="table-dark">
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Fecha de creacion</th>
+                                <th scope="col">Eliminar</th>
+                            </thead>
+                            <tbody>
+                                {% for store in user.extendeduser.endpointUser.storesystem_set.all %}
+                                <tr>
+                                    <td>{{ store.nameStore }}</td>
+                                    <td>{{ store.dateCreation }}</td>
+                                    <td class="text-center"><a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteStore" id="delete{{ store.id }}" onclick="loadDeleteStoreData(this.id)"><i class="fa-solid fa-trash-can"></i></a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <vh>
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
 
@@ -141,7 +177,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteNewInfo()">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Agregar</button>
+                        <button type="submit" class="btn btn-primary" name="newEndpoint">Agregar</button>
                     </div>
                 </form>
             </div>
@@ -243,7 +279,7 @@
                     </div>
                     <div class="modal-header">
                         <h5 class="modal-title">Eliminar Punto de venta</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteEditInfo()"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteDeleteInfo()"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row mb-3 mt-3">
@@ -253,7 +289,63 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteEditInfo()">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteDeleteInfo()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Eliminar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- New store modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="newStore">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'settingsMetalprotec:settingsMetalprotec' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Nuevo almacen</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteNewStoreInfo()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-12">
+                                <label>Nombre de almacen</label>
+                                <input type="text" class="form-control" name="nameStore" id="nameStore" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteNewStoreInfo()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="newStore">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete store modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="deleteStore">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'settingsMetalprotec:deleteStore' %}" method="post">
+                    {% csrf_token %}
+                    <div style="display: none;">
+                        <input id="deleteIdStore" name="deleteIdStore" value="">
+                    </div>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Eliminar Almacen</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteDeleteStore()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-12">
+                                <h3>¿Esta seguro que desea eliminar este punto de venta?</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteDeleteStore()">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Eliminar</button>
                     </div>
                 </form>
