@@ -50,6 +50,7 @@ function deleteNewInfo()
 
 function deleteEditInfo()
 {
+    editIdService=document.getElementById('editIdService')
     editNameService=document.getElementById('editNameService')
     editMeasureUnit=document.getElementById('editMeasureUnit')
     editCategoryService=document.getElementById('editCategoryService')
@@ -57,6 +58,7 @@ function deleteEditInfo()
     editPvnIGV=document.getElementById('editPvnIGV')
     editCurrencyService=document.getElementById('editCurrencyService')
 
+    editIdService.value=''
     editNameService.value=''
     editMeasureUnit.value=''
     editCategoryService.value=''
