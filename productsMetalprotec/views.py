@@ -112,7 +112,7 @@ def getProductStock(request):
     stockProduct = productSystem.objects.get(id=idProduct)
     stockStoreProduct = []
     for stock in stockProduct.storexproductsystem_set.all():
-        stockStoreProduct.append([stock.asociatedStore.nameStore,stock.quatityProduct])
+        stockStoreProduct.append([stock.asociatedStore.nameStore,stock.quantityProduct])
     print(stockStoreProduct)
     return JsonResponse({
         'stockStoreProduct':stockStoreProduct,
@@ -128,13 +128,13 @@ def addStockProduct(request):
         addStockStore=storeSystem.objects.get(id=addStockIdStore)
         if checkStockExist(addStockProduct,addStockStore):
             stockEdit = storexproductSystem.objects.filter(asociatedProduct=addStockProduct).get(asociatedStore=addStockStore)
-            stockEdit.quatityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quatityProduct) + Decimal(addStockQt))))
+            stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) + Decimal(addStockQt))))
             stockEdit.save()
         else:
             storexproductSystem.objects.create(
                 asociatedProduct=addStockProduct,
                 asociatedStore=addStockStore,
-                quatityProduct=addStockQt,
+                quantityProduct=addStockQt,
             )
         return HttpResponseRedirect(reverse('productsMetalprotec:productsMetalprotec'))
 
