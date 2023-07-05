@@ -10,7 +10,7 @@ class serviceSystem(models.Model):
     measureUnit = models.CharField(max_length=16,null=True,blank=True)
     pvnIGV = models.CharField(max_length=16,null=True,blank=True)
     pvcIGV = models.CharField(max_length=16,null=True,blank=True)
-    endpointService = models.ForeignKey(endpointSystem, on_delete=models.SET_NULL, null=True, blank=True)
+    endpointService = models.ForeignKey(endpointSystem, on_delete=models.CASCADE, null=True, blank=True)
     
 
     def __str__(self):
