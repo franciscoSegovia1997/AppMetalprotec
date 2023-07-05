@@ -1,11 +1,309 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block extraFiles %}
 
+    <!-- Datatables importation -->
+    <link href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- Datatables configuration -->
+    <script src="{% static 'clientsMetalprotec/js/clientsMetalprotec.js' %}"></script>
+
+    <!-- Select form importation -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">
 {% endblock %}
 
 {% block pageContent %}
     <div class="container" style="height: 100vh; overflow: scroll;">
         <h1 class="mt-3 mb-3">Clientes</h1>
+        <br>
+        <div class="row mx-0">
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#newClient">Nuevo <i class="fa-solid fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#importClients">Importar <i class="fa-solid fa-file-import"></i></a>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#newAddress">Direccion <i class="fa-solid fa-plus"></i></a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div>
+            <table class="table table-bordered table-hover" id="clientsTable" style="font-size: 12px;">
+                <thead class="table-dark">
+                    <th scope="col">Razon / Nombre</th>
+                    <th scope="col">RUC / DNI</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Contacto</th>
+                    <th scope="col">Telefono</th>
+                    <th scope="col">Direccion fiscal</th>
+                    <th scope="col">Ver direcciones</th>
+                    <th scope="col">Editar</th>
+                    <th scope="col">Eliminar</th>
+                </thead>
+                <tbody>
+                    {% for clientInfo in clientsSystem %}
+                    <tr>
+                        <td>{{ clientInfo.identificationClient }}</td>
+                        <td>{{ clientInfo.documentClient }}</td>
+                        <td>{{ clientInfo.typeClient }}</td>
+                        <td>{{ clientInfo.emailClient }}</td>
+                        <td>{{ clientInfo.contactClient }}</td>
+                        <td>{{ clientInfo.phoneClient }}</td>
+                        <td>{{ clientInfo.legalAddressClient }}</td>
+                        <td class="text-center"><a class="btn btn-info" data-bs-toggle="modal" data-bs-target="#showAddresses" id="show{{ clientInfo.id }}" onclick="loadClientAddress(this.id)"><i class="fa-solid fa-eye"></i></a></td>
+                        <td class="text-center"><a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editClient" id="edit{{ clientInfo.id }}" onclick="loadEditClientData(this.id)"><i class="fa-solid fa-pen-to-square"></i></a></td>
+                        <td class="text-center"><a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteClient" id="delete{{ clientInfo.id }}" onclick="loadDeleteClientData(this.id)"><i class="fa-solid fa-trash-can"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
+{% endblock %}
+
+{% block modalContent %}
+
+    <!-- New client modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="newClient">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'clientsMetalprotec:clientsMetalprotec' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Nuevo cliente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteNewClientInfo()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-6">
+                                <label>Razon / Nombre</label>
+                                <input type="text" class="form-control" name="identificationClient" id="identificationClient" required>
+                            </div>
+                            <div class="col-6">
+                                <label>RUC / DNI</label>
+                                <input type="text" class="form-control" name="documentClient" id="documentClient" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Email</label>
+                                <input type="text" class="form-control" name="emailClient" id="emailClient" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Direccion fiscal</label>
+                                <input type="text" class="form-control" name="legalAddressClient" id="legalAddressClient" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Contacto</label>
+                                <input type="text" class="form-control" name="contactClient" id="contactClient" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Telefono</label>
+                                <input type="text" class="form-control" name="phoneClient" id="phoneClient" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Tipo de cliente</label>
+                                <select class="selectpicker form-control" name="typeClient" id="typeClient" required>
+                                    <option value="" selected></option>
+                                    <option value="PERSONA">PERSONA</option>
+                                    <option value="EMPRESA">EMPRESA</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <br>
+                                <input class="form-check-input" type="checkbox" name="enabledCommission" id="enabledCommission">
+                                <label>Habilitado para comisiones</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteNewClientInfo()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="newClient">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit client modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="editClient">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'clientsMetalprotec:updateClient' %}" method="post">
+                    {% csrf_token %}
+                    <div style="display: none;">
+                        <input id="editIdClient" name="editIdClient" value="">
+                    </div>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar cliente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteEditClientInfo()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-6">
+                                <label>Razon / Nombre</label>
+                                <input type="text" class="form-control" name="editIdentificationClient" id="editIdentificationClient" required>
+                            </div>
+                            <div class="col-6">
+                                <label>RUC / DNI</label>
+                                <input type="text" class="form-control" name="editDocumentClient" id="editDocumentClient" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Email</label>
+                                <input type="text" class="form-control" name="editEmailClient" id="editEmailClient" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Direccion fiscal</label>
+                                <input type="text" class="form-control" name="editLegalAddressClient" id="editLegalAddressClient" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Contacto</label>
+                                <input type="text" class="form-control" name="editContactClient" id="editContactClient" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Telefono</label>
+                                <input type="text" class="form-control" name="editPhoneClient" id="editPhoneClient" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Tipo de cliente</label>
+                                <select class="selectpicker form-control" name="editTypeClient" id="editTypeClient" required>
+                                    <option value="" selected></option>
+                                    <option value="PERSONA">PERSONA</option>
+                                    <option value="EMPRESA">EMPRESA</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <br>
+                                <input class="form-check-input" type="checkbox" name="editEnabledCommission" id="editEnabledCommission">
+                                <label>Habilitado para comisiones</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteEditClientInfo()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="newClient">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete client modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="deleteClient">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'clientsMetalprotec:deleteClient' %}" method="post">
+                    {% csrf_token %}
+                    <div style="display: none;">
+                        <input id="deleteIdClient" name="deleteIdClient" value="">
+                    </div>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Eliminar cliente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteDeleteClientInfo()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-12">
+                                <h3>¿Esta seguro que desea eliminar este cliente?</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteDeleteClientInfo()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Eliminar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Show addresses of the client -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="showAddresses">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Direcciones del cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteShowAddresses()"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                            <th scope="col">Direccion</th>
+                        </thead>
+                        <tbody id="addressesClient">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteShowAddresses()">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Add addresses-->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="newAddress">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post" action="{% url 'clientsMetalprotec:addClientAddress' %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Agregar direccion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteNewAddress()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 mx-0">
+                                <label>Seleccionar cliente</label>
+                                <select class="selectpicker form-control" data-live-search="true" name="addAddressClient" id="addAddressClient" required>
+                                    <option value=""></option>
+                                    {% for clientInfo in clientsSystem %}
+                                    <option value="{{ clientInfo.id }}">{{ clientInfo.identificationClient }} - {{ clientInfo.documentClient }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-12 mx-0">
+                                <label>Direccion de entrega</label>
+                                <input class="form-control" type="text" name="newClientAddress" id="newClientAddress" required>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteNewAddress()">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
 {% endblock %}
