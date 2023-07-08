@@ -136,6 +136,7 @@ def getUserData(request):
         'editLastName':editUser.last_name,
         'editEmail':editUser.email,
         'editPhone':editUser.extendeduser.phoneUser,
+        'editCode':editUser.extendeduser.codeUser,
     })
 
 @login_required(login_url='/')
