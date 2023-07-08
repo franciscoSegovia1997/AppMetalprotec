@@ -120,11 +120,11 @@
                                         <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Ventas</span>
                                     </a>
                                     <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdown">
-                                        <li><a class="dropdown-item" href="#">Cotizaciones</a></li>
-                                        <li><a class="dropdown-item" href="#">Facturas</a></li>
-                                        <li><a class="dropdown-item" href="#">Boletas</a></li>
-                                        <li><a class="dropdown-item" href="#">Guías</a></li>
-                                        <li><a class="dropdown-item" href="#">Notas de crédito</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'salesMetalprotec:quotationsMetalprotec' %}">Cotizaciones</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'salesMetalprotec:guidesMetalprotec' %}">Guias</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'salesMetalprotec:billsMetalprotec' %}">Facturas</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'salesMetalprotec:invoicesMetalprotec' %}">Boletas</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'salesMetalprotec:creditNotesMetalprotec' %}">Notas de crédito</a></li>
                                     </ul>
                                 </li>
 
