@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'servicesMetalprotec',
     'productsMetalprotec',
     'settingsMetalprotec',
+    'salesMetalprotec',
+    'expensesMetalprotec',
 ]
 
 MIDDLEWARE = [

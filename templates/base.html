@@ -120,11 +120,11 @@
                                         <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Ventas</span>
                                     </a>
                                     <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdown">
-                                        <li><a class="dropdown-item" href="#">Cotizaciones</a></li>
-                                        <li><a class="dropdown-item" href="#">Facturas</a></li>
-                                        <li><a class="dropdown-item" href="#">Boletas</a></li>
-                                        <li><a class="dropdown-item" href="#">Guías</a></li>
-                                        <li><a class="dropdown-item" href="#">Notas de crédito</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'salesMetalprotec:quotationsMetalprotec' %}">Cotizaciones</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'salesMetalprotec:guidesMetalprotec' %}">Guias</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'salesMetalprotec:billsMetalprotec' %}">Facturas</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'salesMetalprotec:invoicesMetalprotec' %}">Boletas</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'salesMetalprotec:creditNotesMetalprotec' %}">Notas de crédito</a></li>
                                     </ul>
                                 </li>
 
@@ -149,10 +149,10 @@
                                         <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Centro de costos</span>
                                     </a>
                                     <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdown">
-                                        <li><a class="dropdown-item" href="#">Registro de cajas</a></li>
-                                        <li><a class="dropdown-item" href="#">Registro de costos</a></li>
-                                        <li><a class="dropdown-item" href="#">Datacenter</a></li>
-                                        <li><a class="dropdown-item" href="#">Orden de compra</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'expensesMetalprotec:boxRegister' %}">Registro de cajas</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'expensesMetalprotec:costRegister' %}">Registro de costos</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'expensesMetalprotec:datacenter' %}">Datacenter</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'expensesMetalprotec:purchaseOrder' %}">Orden de compra</a></li>
                                     </ul>
                                 </li>
                                 {% endif %}
