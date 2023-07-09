@@ -25,4 +25,5 @@ urlpatterns = [
     path('productsMetalprotec',include('productsMetalprotec.urls')),
     path('settingsMetalprotec',include('settingsMetalprotec.urls')),
     path('salesMetalprotec',include('salesMetalprotec.urls')),
+    path('expensesMetalprotec',include('expensesMetalprotec.urls')),
 ]
