@@ -4,8 +4,8 @@ from . import views
 app_name='expensesMetalprotec'
 
 urlpatterns = [
-    path('boxRegister',views.boxRegister,name='boxRegister'),
-    path('costRegister',views.costRegister,name='costRegister'),
+    path('boxRegisterFunction',views.boxRegisterFunction,name='boxRegisterFunction'),
+    path('costRegisterFunction',views.costRegisterFunction,name='costRegisterFunction'),
     path('datacenter',views.datacenter,name='datacenter'),
     path('purchaseOrder',views.purchaseOrder,name='purchaseOrder'),
     path('deleteDivision/<str:idDivision>',views.deleteDivision,name='deleteDivision'),
@@ -15,4 +15,11 @@ urlpatterns = [
     path('newCategory',views.newCategory,name='newCategory'),
     path('getCategories',views.getCategories,name='getCategories'),
     path('newDivision',views.newDivision,name='newDivision'),
+    path('getDivisionData',views.getDivisionData,name='getDivisionData'),
+    path('deleteCostRegister/<str:idRegister>',views.deleteCostRegister,name='deleteCostRegister'),
+    path('getDataRegisterInfo',views.getDataRegisterInfo,name='getDataRegisterInfo'),
+    path('deleteBoxRegister/<str:idBoxRegister>',views.deleteBoxRegister,name='deleteBoxRegister'),
+    path('showBoxInfo/<str:idBoxRegister>',views.showBoxInfo,name='showBoxInfo'),
+    path('deleteCashIncome/<str:idCashIncome>&<str:idBoxRegister>',views.deleteCashIncome,name='deleteCashIncome'),
+    path('createIncomeBox/<str:idBoxInfo>',views.createIncomeBox,name='createIncomeBox')
 ]
