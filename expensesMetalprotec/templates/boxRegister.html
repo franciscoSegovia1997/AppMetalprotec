@@ -22,6 +22,87 @@
     <div class="container" style="height: 100vh; overflow: scroll;">
         <h1 class="mt-3 mb-3">Registro de cajas</h1>
         <br>
-        
+        <div class="row mx-0">
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-success" data-bs-toggle="modal" data-bs-target="#newRegisterBox">Crear caja <i class="fa-solid fa-plus"></i></a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div>
+            <table class="table table-bordered table-hover" id="boxRegisterTable">
+                <thead class="table-dark">
+                    <th>Fecha de creacion</th>
+                    <th>Concepto de caja</th>
+                    <th>Valor total</th>
+                    <th>Moneda</th>
+                    <th>Detalle</th>
+                    <th>Eliminar</th>
+                </thead>
+                <tbody>
+                    {% for boxRegistered in boxRegisterSystem %}
+                    <tr>
+                        <td>{{ boxRegistered.creationDate|date:'Y-m-d' }}</td>
+                        <td>{{ boxRegistered.descriptionBox }}</td>
+                        <td>{{ boxRegistered.valueBox }}</td>
+                        <td>{{ boxRegistered.currencyBox }}</td>
+                        <td class="text-center"><a class="btn btn-info" href="{% url 'expensesMetalprotec:showBoxInfo' boxRegistered.id %}"><i class="fa fa-eye"></i></a></td>
+                        <td class="text-center"><a class="btn btn-danger" href="{% url 'expensesMetalprotec:deleteBoxRegister' boxRegistered.id %}"><i class="fa fa-trash"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
+{% endblock %}
+
+{% block modalContent %}
+
+    <!-- Create box -->
+    <div class="modal fade" id="newRegisterBox" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <form method="post" action="{% url 'expensesMetalprotec:boxRegisterFunction' %}">
+            {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Crear caja</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteInfoData()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Datos generales</h5>
+                        <div class="row justify-content-around mb-3">
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label>Moneda</label>
+                                    <select class="selectpicker form-control" required id="currencyBox" name="currencyBox">
+                                        <option value=""></option>
+                                        <option value="SOLES">SOLES</option>
+                                        <option value="DOLARES">DOLARES</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-8">
+                                <div class="form-group">
+                                    <label>Concepto :</label>
+                                    <input class="form-control" type="text" id="descriptionBox" name="descriptionBox" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 form-group">
+                                <label>Monto de caja</label>
+                                <input class="form-control" type="number" step="0.01" id="valueBox" name="valueBox">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteInfoData()">Close</button>
+                        <button type="submit" class="btn btn-primary">Registrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 {% endblock %}
