@@ -1,0 +1,288 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extraFiles %}
+
+    <!-- Datatables importation -->
+    <link href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- Datatables configuration -->
+    <script src="{% static 'salesMetalprotec/js/editGuide.js' %}"></script>
+
+    <!-- Select form importation -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">
+{% endblock %}
+
+{% block pageContent %}
+    <div class="container" style="height: 100vh; overflow: scroll;">
+        <h1 class="mt-3 mb-3">Editar guia</h1>
+        <div style="display: none;">
+            <input id="idGuideInfo" value="{{ editGuide.id }}" type="text">
+        </div>
+        <hr>
+        <div class="row">
+            <h4>Datos del cliente</h4>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Razon / Nombre</label>
+                    <input class="form-control" type="text" value="{{ editGuide.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}" readonly>
+                </div>
+                <div class="col-4">
+                    <label>RUC / DNI</label>
+                    <input class="form-control" type="text" value="{{ editGuide.asociatedQuotation.quotationclientdata.dataClientQuotation.2 }}" readonly>
+                </div>
+                <div class="col-4">
+                    <label>Tipo de cliente</label>
+                    <input class="form-control" type="text" value="{{ editGuide.asociatedQuotation.quotationclientdata.dataClientQuotation.3 }}"  readonly>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Email</label>
+                    <input class="form-control" type="text" value="{{ editGuide.asociatedQuotation.quotationclientdata.dataClientQuotation.4 }}" readonly>
+                </div>
+                <div class="col-4">
+                    <label>Contacto</label>
+                    <input class="form-control" type="text" value="{{ editGuide.asociatedQuotation.quotationclientdata.dataClientQuotation.5 }}" readonly>
+                </div>
+                <div class="col-4">
+                    <label>Telefono</label>
+                    <input class="form-control" type="text" value="{{ editGuide.asociatedQuotation.quotationclientdata.dataClientQuotation.6 }}" readonly>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label>Direccion fiscal</label>
+                    <input class="form-control" type="text" id="legalAddressClient" value="{{ editGuide.asociatedQuotation.quotationclientdata.dataClientQuotation.7 }}">
+                </div>
+                <div class="col-6">
+                    <label>Direccion de entrega</label>
+                    <input class="form-control" type="text" id="deliveryAddress" value="{{ editGuide.asociatedQuotation.quotationclientdata.dataClientQuotation.8 }}">
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <h4>Datos de la direccion de origen</h4>
+            <div class="row mb-3 mt-3">
+                <div class="col-4">
+                    <label>Seleccionar departamento</label>
+                    <select class="selectpicker form-control" data-live-search="true" id="selectDeparment">
+                        <option value="" selected></option>
+                        <option value="01">AMAZONAS</option>
+                        <option value="02">ANCASH</option>
+                        <option value="03">APURIMAC</option>
+                        <option value="04">AREQUIPA</option>
+                        <option value="05">AYACUCHO</option>
+                        <option value="06">CAJAMARCA</option>
+                        <option value="07">CALLAO</option>
+                        <option value="08">CUSCO</option>
+                        <option value="09">HUANCAVELICA</option>
+                        <option value="10">HUANUCO</option>
+                        <option value="11">ICA</option>
+                        <option value="12">JUNIN</option>
+                        <option value="13">LA LIBERTAD</option>
+                        <option value="14">LAMBAYEQUE</option>
+                        <option value="15">LIMA</option>
+                        <option value="16">LORETO</option>
+                        <option value="17">MADRE DE DIOS</option>
+                        <option value="18">MOQUEGUA</option>
+                        <option value="19">PASCO</option>
+                        <option value="20">PIURA</option>
+                        <option value="21">PUNO</option>
+                        <option value="22">SAN MARTIN</option>
+                        <option value="23">TACNA</option>
+                        <option value="24">TUMBES</option>
+                        <option value="25">UCAYALI</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Departamento</label>
+                    <input class="form-control" type="text" value="{{ editGuide.deparmentDeparture }}" id="deparmentDeparture" readonly>
+                </div>
+                <div class="col-4">
+                    <label>Provincia</label>
+                    <input class="form-control" type="text" value="{{ editGuide.provinceDeparture }}" id="provinceDeparture">
+                </div>
+                <div class="col-4">
+                    <label>Distrito</label>
+                    <input class="form-control" type="text" value="{{ editGuide.districtDeparture }}" id="districtDeparture">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Direccion</label>
+                    <input class="form-control" type="text" value="{{ editGuide.addressDeparture }}" id="addressDeparture">
+                </div>
+                <div class="col-4">
+                    <label>Ubigeo</label>
+                    <input class="form-control" type="text" value="{{ editGuide.ubigeoDeparture }}" id="ubigeoDeparture">
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <h4>Datos de la guia</h4>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Fecha de emision</label>
+                    <input class="form-control" type="date" value="{{ editGuide.dateGuide|date:'Y-m-d' }}" id="dateGuide">
+                </div>
+                <div class="col-4">
+                    <label>Fecha de entrega de bienes</label>
+                    <input class="form-control" type="date" value="{{ editGuide.dateGivenGoods|date:'Y-m-d' }}" id="dateGivenGoods">
+                </div>
+                <div class="col-4">
+                    <label>Peso extra de la carga</label>
+                    <input class="form-control" type="number" step="0.01" value="{{ editGuide.extraWeight }}" id="extraWeight">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Motivo de traslado</label>
+                    <select class="selectpicker form-control" id="purposeTransportation">
+                        <option value="" selected></option>
+                        {% if editGuide.purposeTransportation == 'VENTA' %}
+                        <option value="" ></option>
+                        <option value="VENTA" selected>VENTA</option>
+                        <option value="TRASLADO">TRASLADO ENTRE ESTABLECIMIENTOS</option>
+                        {% elif editGuide.purposeTransportation == 'TRASLADO' %}
+                        <option value="" ></option>
+                        <option value="VENTA">VENTA</option>
+                        <option value="TRASLADO" selected>TRASLADO ENTRE ESTABLECIMIENTOS</option>
+                        {% else %}
+                        <option value="" selected></option>
+                        <option value="VENTA">VENTA</option>
+                        <option value="TRASLADO">TRASLADO ENTRE ESTABLECIMIENTOS</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="col-4">
+                    <label>Modalidad de transporte</label>
+                    <select class="selectpicker form-control" id="modeTransportation">
+                        <option value="" selected></option>
+                        {% if editGuide.modeTransportation == 'PRIVADO' %}
+                        <option value="" ></option>
+                        <option value="PRIVADO" selected>PRIVADO</option>
+                        <option value="PUBLICO">PUBLICO</option>
+                        {% elif editGuide.modeTransportation == 'PUBLICO' %}
+                        <option value="" ></option>
+                        <option value="PRIVADO">PRIVADO</option>
+                        <option value="PUBLICO" selected>PUBLICO</option>
+                        {% else %}
+                        <option value="" selected></option>
+                        <option value="PRIVADO">PRIVADO</option>
+                        <option value="PUBLICO">PUBLICO</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="col-4">
+                    <label>Nro de ubigeo del cliente</label>
+                    <input class="form-control" type="text" value="{{ editGuide.ubigeoClient }}" id="ubigeoClient">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <label>Observaciones</label>
+                    <textarea class="form-control" rows="2" id="commentGuide" >{{ editGuide.commentGuide }}</textarea>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <h4>Datos del transportista</h4>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Razon social</label>
+                    <input class="form-control" type="text" value="{{ editGuide.razonSocialTranporter }}" id="razonSocialTranporter">
+                </div>
+                <div class="col-4">
+                    <label>RUC</label>
+                    <input class="form-control" type="text" value="{{ editGuide.rucTransporter }}" id="rucTransporter">
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <h4>Datos del conductor</h4>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Placa del conductor</label>
+                    <input class="form-control" type="text" value="{{ editGuide.vehiclePlate }}" id="vehiclePlate">
+                </div>
+                <div class="col-4">
+                    <label>DNI del conductor</label>
+                    <input class="form-control" type="text" value="{{ editGuide.dniDriver }}" id="dniDriver">
+                </div>
+                <div class="col-4">
+                    <label>Licencia del conductor</label>
+                    <input class="form-control" type="text" value="{{ editGuide.licenceDriver }}" id="licenceDriver">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label>Nombre del conductor</label>
+                    <input class="form-control" type="text" value="{{ editGuide.nameDriver }}" id="nameDriver">
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <h4>Items de la guia</h4>
+            <div class="row mx-0" id="productsSection">
+                <br>
+                <h6>Productos</h6>
+                <table class="table table-bordered table-hover" id="productsTable">
+                    <thead class="table-dark">
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Codigo</th>
+                        <th scope="col">Unidad de medida</th>
+                        <th scope="col">Almacen</th>
+                        <th scope="col">Moneda</th>
+                        <th scope="col">pvnIGV</th>
+                        <th scope="col">Descuento</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Peso del producto</th>
+                    </thead>
+                    <tbody id="productsItems">
+                        {% for productInfo in editGuide.asociatedQuotation.quotationproductdata_set.all %}
+                        <tr>
+                            <td>{{ productInfo.dataProductQuotation.1 }}</td>
+                            <td>{{ productInfo.dataProductQuotation.2 }}</td>
+                            <td>{{ productInfo.dataProductQuotation.3 }}</td>
+                            <td>{{ productInfo.dataProductQuotation.4 }}</td>
+                            <td>{{ productInfo.dataProductQuotation.5 }}</td>
+                            <td>{{ productInfo.dataProductQuotation.6 }}</td>
+                            <td>{{ productInfo.dataProductQuotation.7 }}</td>
+                            <td>{{ productInfo.dataProductQuotation.8 }}</td>
+                            <td style="width: 80px;"><input class="form-control weightData" data-info='id{{ productInfo.id }}' type="number" step="0.01" value="{{ productInfo.dataProductQuotation.10 }}"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <br>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <button class="btn btn-primary" onclick="modifyGuide()">Guardar</button>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-secondary" href="{% url 'salesMetalprotec:guidesMetalprotec' %}">Cancelar</a>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+{% endblock %}

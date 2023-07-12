@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extraFiles %}
+
+    <!-- Datatables importation -->
+    <link href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- Datatables configuration -->
+    <script src="{% static 'statisticsMetalprotec/js/sellDashboard.js' %}"></script>
+
+    <!-- Select form importation -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">
+{% endblock %}
+
+{% block pageContent %}
+    <div class="container" style="height: 100vh; overflow: scroll;">
+        <div class="row mx-0" style="border-bottom: solid 1px black;">
+            <div class="col-6">
+                <div class="row text-center">
+                    <h5>Vendedores con mas ventas</h5>
+                </div>
+                <br>
+                <div class="row justify-content-center">
+                    <div class="col-3">
+                        <select class="form-select" id="filtroVendedor" style="font-size: 12px;">
+                            <option value="10">Top 10</option>
+                            <option value="5">Top 5</option>
+                            <option value="3">Top 3</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <select class="form-select" id="mesesVendedor" style="font-size: 12px;">
+                            <option value="0">Presente mes</option>
+                            <option value="1">Ultimo mes</option>
+                            <option value="3">Ultimos 3 meses</option>
+                            <option value="6">Ultimos 6 meses</option>
+                            <option value="12">Ultimo año</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-success" id="filtrarVendedor" style="font-size: 12px;">Filtrar</button>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <canvas width="200" height="100" id="grafVendedor"></canvas>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="row text-center">
+                    <h5>Ventas mensuales</h5>
+                </div>
+                <br>
+                <div class="row justify-content-center">
+                    <div class="col-3">
+                        <select class="form-select" id="filtroVentas" style="font-size: 12px;">
+                            <option value="10">Ultimos 10 meses</option>
+                            <option value="5">Ultimos 5 meses</option>
+                            <option value="3">Ultimos 3 meses</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-success" id="filtrarVentas" style="font-size: 12px;">Filtrar</button>
+                    </div>
+                </div>
+                <br>
+                <div>
+                    <canvas width="200" height="100" id="grafVentas"></canvas>
+                </div>
+            </div>
+            <br>
+        </div>
+        <br>
+        <div class="row mx-0 justify-content-center" style="border-bottom: solid 1px black;">
+            <div class="col-10">
+                <div class="row text-center">
+                    <h5>Vendedores a lo largo del tiempo</h5>
+                </div>
+                <br>
+                <div class="row justify-content-center">
+                    <div class="col-3">
+                        <select class="form-select" id="filtroVendedoresMoneda" style="font-size: 12px;">
+                            <option value="SOLES">Soles</option>
+                            <option value="DOLARES">Dolares</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <select class="form-select" id="filtroVendedoresTiempo" style="font-size: 12px;">
+                            <option value="2022">2022</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-success" id="filtrarVendedoresTiempo" style="font-size: 12px;">Filtrar</button>
+                    </div>
+                </div>
+                <br>
+                <div class="row justify-content-center">
+                    <canvas width="200" height="100" id="grafVendedoresTiempo"></canvas>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+{% endblock %}
