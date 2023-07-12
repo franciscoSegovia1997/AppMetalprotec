@@ -93,10 +93,9 @@
                                         <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Gestión de stock</span>
                                     </a>
                                     <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdown">
-                                        <li><a class="dropdown-item" href="#">Ingresos</a></li>
-                                        <li><a class="dropdown-item" href="#">Egresos</a></li>
-                                        <li><a class="dropdown-item" href="#">Inventarios</a></li>
-                                        <li><a class="dropdown-item" href="#">Almacenes</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'stockManagment:incomingItems' %}">Ingresos</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'stockManagment:outcomingItems' %}">Egresos</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'stockManagment:stockTaking' %}">Inventarios</a></li>
                                     </ul>
                                 </li>                                
 
@@ -107,9 +106,9 @@
                                         <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Datos contables</span>
                                     </a>
                                     <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdown">
-                                        <li><a class="dropdown-item" href="#">Registros bancarios</a></li>
-                                        <li><a class="dropdown-item" href="#">Comisiones</a></li>
-                                        <li><a class="dropdown-item" href="#">Registro de abonos</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'financeMetalprotec:bankRegisters' %}">Registros bancarios</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'financeMetalprotec:comissions' %}">Comisiones</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'financeMetalprotec:paymentsRegister' %}">Registro de abonos</a></li>
                                     </ul>
                                 </li>
 
@@ -135,10 +134,10 @@
                                         <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Estadísticas</span>
                                     </a>
                                     <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdown">
-                                        <li><a class="dropdown-item" href="#">General</a></li>
-                                        <li><a class="dropdown-item" href="#">Clientes</a></li>
-                                        <li><a class="dropdown-item" href="#">Productos</a></li>
-                                        <li><a class="dropdown-item" href="#">Ventas</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'statisticsMetalprotec:mainDashboard' %}">General</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'statisticsMetalprotec:clientsDashboard' %}">Clientes</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'statisticsMetalprotec:productsDashboard' %}">Productos</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'statisticsMetalprotec:sellDashboard' %}">Ventas</a></li>
                                     </ul>
                                 </li>
 

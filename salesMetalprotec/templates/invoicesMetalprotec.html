@@ -21,5 +21,65 @@
 {% block pageContent %}
     <div class="container" style="height: 100vh; overflow: scroll;">
         <h1 class="mt-3 mb-3">Boletas</h1>
+        <br>
+        <div class="row">
+            <div class="col-2">
+                <div class="row mx-0">
+                    <label>Fecha inicial</label>
+                    <input type="date" class="form-control" name="startDate">
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <label>Fecha final</label>
+                    <input type="date" class="form-control" name="endDate">
+                </div>
+            </div>
+            <div class="col-2">
+                <br>
+                <div class="row mx-0">
+                    <button class="btn btn-success" name="filterInvoices">Filtrar</button>
+                </div>
+            </div>
+            <div class="col-2">
+                <br>
+                <div class="row mx-0">
+                    <button class="btn btn-success" name="exportInvoices">Exportar</button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div>
+            <table class="table table-bordered table-hover" id="invoicesTable" style="font-size: 12px;">
+                <thead class="table-dark">
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Codigo</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Editar</th>
+                    <th scope="col">Descargar Boleta</th>
+                    <th scope="col">Enviar a TeFacturo</th>
+                    <th scope="col">Verificar Estado</th>
+                    <th scope="col">Estado TeFacturo</th>
+                    <th scope="col">Emitir Nota de Credito</th>
+                </thead>
+                <tbody>
+                    {% for invoiceInfo in billsSystem %}
+                    <tr>
+                        <td></td>
+                        <td>{{ invoiceInfo.codeBill }}</td>
+                        <td>{{ invoiceInfo.dateBill }}</td>
+                        <td>{{ invoiceInfo.stateBill }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>{{ invoiceInfo.stateTeFacturo }}</td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock %}
