@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 import datetime
-from productsMetalprotec.models import storeSystem
+from productsMetalprotec.models import storeSystem, productSystem, storexproductSystem
 
 # Create your views here.
 @login_required(login_url='/')
@@ -51,11 +51,20 @@ def settingsMetalprotec(request):
             nameStore = request.POST.get('nameStore')
             dateCreation = datetime.date.today()
             endpointStore = request.user.extendeduser.endpointUser
-            storeSystem.objects.create(
+            storeObject = storeSystem.objects.create(
                 nameStore=nameStore,
                 dateCreation=dateCreation,
                 endpointStore=endpointStore,
             )
+            allProductsInfo = productSystem.objects.filter(endpointProduct=request.user.extendeduser.endpointUser)
+            for productInfo in allProductsInfo:
+                allStoresxProduct = productInfo.storexproductsystem_set.all()
+                if storeObject not in allStoresxProduct:
+                    storexproductSystem.objects.create(
+                        quantityProduct = '0',
+                        asociatedProduct=productInfo,
+                        asociatedStore=storeObject,
+                    )
             return HttpResponseRedirect(reverse('settingsMetalprotec:settingsMetalprotec'))
     return render(request,'settingsMetalprotec.html',{
         'endpointsSystem':endpointSystem.objects.all().order_by('id'),

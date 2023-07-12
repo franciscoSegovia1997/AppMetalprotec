@@ -25,7 +25,7 @@ def productsMetalprotec(request):
             pccIGV = str(Decimal('%.2f' % (Decimal(pcnIGV)*Decimal(1.18))))
             endpointProduct=request.user.extendeduser.endpointUser
 
-            productSystem.objects.create(
+            productObjectCreated = productSystem.objects.create(
                 nameProduct=nameProduct,
                 codeProduct=codeProduct,
                 codeSunatProduct=codeSunatProduct,
@@ -40,6 +40,14 @@ def productsMetalprotec(request):
                 pccIGV=pccIGV,
                 endpointProduct=endpointProduct,
             )
+
+            allStoreSystem = storeSystem.objects.filter(endpointStore=request.user.extendeduser.endpointUser)
+            for storeInfo in allStoreSystem:
+                storexproductSystem.objects.create(
+                    quantityProduct='0',
+                    asociatedProduct=productObjectCreated,
+                    asociatedStore=storeInfo,
+                )
             return HttpResponseRedirect(reverse('productsMetalprotec:productsMetalprotec'))
 
 

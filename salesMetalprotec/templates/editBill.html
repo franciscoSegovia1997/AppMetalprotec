@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extraFiles %}
+
+    <!-- Datatables importation -->
+    <link href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- Datatables configuration -->
+    <script src="{% static 'salesMetalprotec/js/editBill.js' %}"></script>
+
+    <!-- Select form importation -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">
+{% endblock %}
+
+{% block pageContent %}
+    <div class="container" style="height: 100vh; overflow: scroll;">
+        <h1 class="mt-3 mb-3">Editar factura</h1>
+        <div style="display: none;">
+            <input id="billInfo" value="{{ editBill.id }}" type="text">
+        </div>
+        <hr>
+        <div class="row">
+            <h4>Datos del cliente</h4>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Razon / Nombre</label>
+                    <input class="form-control" type="text" value="{{ editBill.guidesystem_set.all.0.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}" readonly>
+                </div>
+                <div class="col-4">
+                    <label>RUC / DNI</label>
+                    <input class="form-control" type="text" value="{{ editBill.guidesystem_set.all.0.asociatedQuotation.quotationclientdata.dataClientQuotation.2 }}" readonly>
+                </div>
+                <div class="col-4">
+                    <label>Tipo de cliente</label>
+                    <input class="form-control" type="text" value="{{ editBill.guidesystem_set.all.0.asociatedQuotation.quotationclientdata.dataClientQuotation.3 }}"  readonly>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Email</label>
+                    <input class="form-control" type="text" value="{{ editBill.guidesystem_set.all.0.asociatedQuotation.quotationclientdata.dataClientQuotation.4 }}" readonly>
+                </div>
+                <div class="col-4">
+                    <label>Contacto</label>
+                    <input class="form-control" type="text" value="{{ editBill.guidesystem_set.all.0.asociatedQuotation.quotationclientdata.dataClientQuotation.5 }}" readonly>
+                </div>
+                <div class="col-4">
+                    <label>Telefono</label>
+                    <input class="form-control" type="text" value="{{ editBill.guidesystem_set.all.0.asociatedQuotation.quotationclientdata.dataClientQuotation.6 }}" readonly>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label>Direccion fiscal</label>
+                    <input class="form-control" type="text" id="legalAddressClient" value="{{ editBill.guidesystem_set.all.0.asociatedQuotation.quotationclientdata.dataClientQuotation.7 }}">
+                </div>
+                <div class="col-6">
+                    <label>Direccion de entrega</label>
+                    <input class="form-control" type="text" id="deliveryAddress" value="{{ editBill.guidesystem_set.all.0.asociatedQuotation.quotationclientdata.dataClientQuotation.8 }}">
+                </div>
+            </div>
+        </div>
+        <hr>
+        <br>
+        <div class="row">
+            <h4>Datos de la factura</h4>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Fecha de emision</label>
+                    <input class="form-control" type="date" value="{{ editBill.dateBill|date:'Y-m-d' }}" id="dateBill">
+                </div>
+                <div class="col-4">
+                    <label>Documento relacionado</label>
+                    <input class="form-control" type="text" value="{{ editBill.relatedDocumentBill }}" id="relatedDocumentBill">
+                </div>
+                <div class="col-4">
+                    <label>Moneda</label>
+                    <select class="selectpicker form-control" id="currencyBill">
+                        <option value="" selected></option>
+                        {% if editBill.currencyBill == 'SOLES' %}
+                        <option value="" ></option>
+                        <option value="SOLES" selected>SOLES</option>
+                        <option value="DOLARES">DOLARES</option>
+                        {% elif editBill.currencyBill == 'DOLARES' %}
+                        <option value="" ></option>
+                        <option value="SOLES">SOLES</option>
+                        <option value="DOLARES" selected>DOLARES</option>
+                        {% else %}
+                        <option value="" selected></option>
+                        <option value="SOLES">SOLES</option>
+                        <option value="DOLARES">DOLARES</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-3">
+                    <label>TC - COMPRA</label>
+                    <input class="form-control" type="text" value="{{ editBill.erBuy }}" id="erBuy">
+                </div>
+                <div class="col-3">
+                    <label>TC - VENTA</label>
+                    <input class="form-control" type="text" value="{{ editBill.erSel }}" id="erSel">
+                </div>
+                <div class="col-3">
+                    <label>Forma de pago</label>
+                    <input class="form-control" type="text" value="{{ editBill.guidesystem_set.all.0.asociatedQuotation.paymentQuotation }}" id="paymentQuotation" readonly>
+                </div>
+                {% if editBill.guidesystem_set.all.0.asociatedQuotation.paymentQuotation == 'CREDITO' %}
+                <div class="col-3">
+                    <label>Cantidad de cuotas</label>
+                    <input class="form-control" type="text" value="{{ editBill.guidesystem_set.all.0.asociatedQuotation.numberQuotation }}" readonly>
+                </div>
+                {% endif %}
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <label>Observaciones</label>
+                    <textarea class="form-control" rows="2" id="commentBill" >{{ editBill.commentBill }}</textarea>
+                </div>
+            </div>
+        </div>
+        <br>
+        {% if editBill.guidesystem_set.all.0.asociatedQuotation.paymentQuotation == 'CREDITO' %}
+        <div class="row">
+            <h4>Fechas de las cuotas</h4>
+            <div class="row mb-3">
+                <div class="col-4">
+                    {% for quoteInfo in editBill.dateQuotesBill %}
+                    <input value="{{ quoteInfo }}" class="form-control dateQuoteInfo" type="date">
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <br>
+        {% else %}
+        {% endif %}
+        <div class="row">
+            <h4>Items de la factura</h4>
+            <div class="row mx-0" id="productsSection">
+                <br>
+                <h6>Productos</h6>
+                <table class="table table-bordered table-hover" id="productsTable">
+                    <thead class="table-dark">
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Codigo</th>
+                        <th scope="col">Unidad de medida</th>
+                        <th scope="col">Almacen</th>
+                        <th scope="col">Moneda</th>
+                        <th scope="col">pvnIGV</th>
+                        <th scope="col">Descuento</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Producto gratis</th>
+                    </thead>
+                    <tbody id="productsItems">
+                        {% for guideInfo in editBill.guidesystem_set.all %}
+                            {% for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all %}
+                            <tr class="text-center">
+                                <td>{{ productInfo.dataProductQuotation.1 }}</td>
+                                <td>{{ productInfo.dataProductQuotation.2 }}</td>
+                                <td>{{ productInfo.dataProductQuotation.3 }}</td>
+                                <td>{{ productInfo.dataProductQuotation.4 }}</td>
+                                <td>{{ productInfo.dataProductQuotation.5 }}</td>
+                                <td style="width: 80px;"><input class="form-control pvnIGV" data-info='id{{ productInfo.id }}' type="number" step="0.01" value="{{ productInfo.dataProductQuotation.6 }}"></td>
+                                <td style="width: 80px;"><input class="form-control discountProduct" data-info='id{{ productInfo.id }}' type="number" step="0.01" value="{{ productInfo.dataProductQuotation.7 }}"></td>
+                                <td style="width: 80px;"><input class="form-control quantityProduct" data-info='id{{ productInfo.id }}' type="number" step="0.01" value="{{ productInfo.dataProductQuotation.8 }}"></td>
+                                {% if productInfo.dataProductQuotation.9 == '1' %}
+                                    <td style="width:60px;"><input class="form-check-input freeProduct" data-info='id{{ productInfo.id }}' type="checkbox" checked></td>
+                                {% else %}
+                                    <td style="width:60px;"><input class="form-check-input freeProduct" type="checkbox"></td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <br>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <button class="btn btn-primary" onclick="modifyBill()">Guardar</button>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-secondary" href="{% url 'salesMetalprotec:billsMetalprotec' %}">Cancelar</a>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+{% endblock %}
