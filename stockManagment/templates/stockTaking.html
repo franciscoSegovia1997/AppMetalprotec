@@ -22,5 +22,56 @@
     <div class="container" style="height: 100vh; overflow: scroll;">
         <h1 class="mt-3 mb-3">Inventarios</h1>
         <br>
+        <div class="row">
+            <form method="post" action="{% url 'stockManagment:stockTaking' %}" class="row">
+                {% csrf_token %}
+                <div class="col-4">
+                    <div class="row mx-0">
+                        <label>Almacen</label>
+                        <select class="selectpicker form-control" name="selectedStore" required>
+                            <option value="" selected></option>
+                            {% for storeInfo in storeSystemInfo %}
+                            <option value="{{ storeInfo.id }}">{{ storeInfo.nameStore }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <br>
+                    <div class="row mx-0">
+                        <button type="submit" class="btn btn-success">Nuevo inventario</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <br>
+        <div>
+            <table class="table table-bordered table-hover" id="stockTakingTable" style="font-size: 12px;">
+                <thead class="table-dark">
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Codigo del inventario</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Almacen</th>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Aprobar / Observar</th>
+                    <th scope="col">Descargar</th>
+                    <th scope="col">Eliminar</th>
+                </thead>
+                <tbody>
+                    {% for stockTakingInfo in stockTakingRegistersData %}
+                    <tr>
+                        <td>{{ stockTakingInfo.dateStockTaking }}</td>
+                        <td>{{ stockTakingInfo.codeStockTaking }}</td>
+                        <td>{{ stockTakingInfo.stateStockTaking }}</td>
+                        <td>{{ stockTakingInfo.storeStokTaking }}</td>
+                        <td>{{ stockTakingInfo.asociatedUserData.extendeduser.codeUser }}</td>
+                        <td></td>
+                        <td class="text-center"><a class="btn btn-info" href="{% url 'stockManagment:downloadStockTaking' stockTakingInfo.id %}"><i class="fa-solid fa-download"></i></a></td>
+                        <td class="text-center"><a class="btn btn-danger" href="{% url 'stockManagment:deleteStockTaking' stockTakingInfo.id %}"><i class="fa-solid fa-trash-can"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock %}
