@@ -7,4 +7,6 @@ urlpatterns = [
     path('incomingItems',views.incomingItems,name='incomingItems'),
     path('outcomingItems',views.outcomingItems,name='outcomingItems'),
     path('stockTaking',views.stockTaking,name='stockTaking'),
+    path('deleteStockTaking/<str:idStockTaking>',views.deleteStockTaking,name='deleteStockTaking'),
+    path('downloadStockTaking/<str:idStockTaking>',views.downloadStockTaking,name='downloadStockTaking'),
 ]
