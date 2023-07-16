@@ -1,6 +1,7 @@
 from django.db import models
 from settingsMetalprotec.models import endpointSystem
 from decimal import Decimal, DecimalException,getcontext
+from django.contrib.postgres.fields import ArrayField
 
 getcontext().prec = 10
 
@@ -23,6 +24,8 @@ class productSystem(models.Model):
     pccIGV = models.CharField(max_length=16,null=True,blank=True)
     pvnIGV = models.CharField(max_length=16,null=True,blank=True)
     pvcIGV = models.CharField(max_length=16,null=True,blank=True)
+    kitProduct = models.CharField(max_length=6,null=True,blank=True)
+    kitInfo = ArrayField(models.CharField(max_length=12),null=True, blank=True)
     endpointProduct=models.ForeignKey(endpointSystem, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):

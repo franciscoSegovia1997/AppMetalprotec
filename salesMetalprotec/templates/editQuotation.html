@@ -1,0 +1,523 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extraFiles %}
+
+    <!-- Datatables importation -->
+    <link href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- Datatables configuration -->
+    <script src="{% static 'salesMetalprotec/js/editQuotation.js' %}"></script>
+
+    <!-- Select form importation -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">
+{% endblock %}
+
+{% block pageContent %}
+    <div class="container" style="height: 100vh; overflow: scroll;">
+        <h1 class="mt-3 mb-3">Editar cotizacion</h1>
+        <hr>
+        <div style="display: none;">
+            <input value="{{ editQuotation.id }}" id="quotationIdInfo">
+        </div>
+        <div class="row">
+            <h4>Datos del cliente</h4>
+            <div class="row mb-3 mt-3">
+                <div class="col-4">
+                    <label>Seleccionar cliente</label>
+                    <select class="selectpicker form-control" data-live-search="true" id="selectClient" disabled>
+                        <option value="" selected></option>
+                        {% for clientInfo in clientsSystem %}
+                        <option value="{{ clientInfo.id }}">{{ clientInfo.identificationClient }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-4">
+                    <label>Seleccionar direccion</label>
+                    <select class="selectpicker form-control" id="clientAddress" disabled>
+                        <option value="" selected></option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Razon / Nombre</label>
+                    <input class="form-control" type="text" id="identificationClient" value="{{ editQuotation.quotationclientdata.dataClientQuotation.1 }}">
+                </div>
+                <div class="col-4">
+                    <label>RUC / DNI</label>
+                    <input class="form-control" type="text" id="documentClient" value="{{ editQuotation.quotationclientdata.dataClientQuotation.2 }}">
+                </div>
+                <div class="col-4">
+                    <label>Tipo de cliente</label>
+                    <input class="form-control" type="text" id="typeClient" value="{{ editQuotation.quotationclientdata.dataClientQuotation.3 }}" readonly>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Email</label>
+                    <input class="form-control" type="text" id="emailClient" value="{{ editQuotation.quotationclientdata.dataClientQuotation.4 }}">
+                </div>
+                <div class="col-4">
+                    <label>Contacto</label>
+                    <input class="form-control" type="text" id="contactClient" value="{{ editQuotation.quotationclientdata.dataClientQuotation.5 }}">
+                </div>
+                <div class="col-4">
+                    <label>Telefono</label>
+                    <input class="form-control" type="text" id="phoneClient" value="{{ editQuotation.quotationclientdata.dataClientQuotation.6 }}">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label>Direccion fiscal</label>
+                    <input class="form-control" type="text" id="legalAddressClient" value="{{ editQuotation.quotationclientdata.dataClientQuotation.7 }}">
+                </div>
+                <div class="col-6">
+                    <label>Direccion de entrega</label>
+                    <input class="form-control" type="text" id="deliveryAddress" value="{{ editQuotation.quotationclientdata.dataClientQuotation.8 }}">
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <h4>Datos del vendedor</h4>
+            <div class="row mb-3 mt-3">
+                <div class="col-4">
+                    <label>Seleccionar vendedor</label>
+                    <select class="selectpicker form-control" data-live-search="true" id="selectSeller" disabled>
+                        <option value="" selected></option>
+                        {% for userInfo in usersSystem %}
+                        <option value="{{ userInfo.id }}">{{ userInfo.nameUser }} {{ userInfo.lastnameUser }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Nombre y apellido</label>
+                    <input class="form-control" type="text" id="nameSeller" value="{{ editQuotation.quotationsellerdata.dataUserQuotation.1 }}">
+                </div>
+                <div class="col-4">
+                    <label>Codigo</label>
+                    <input class="form-control" type="text" id="codeSeller" value="{{ editQuotation.quotationsellerdata.dataUserQuotation.2 }}">
+                </div>
+                <div class="col-4">
+                    <label>Telefono</label>
+                    <input class="form-control" type="text" id="phoneSeller" value="{{ editQuotation.quotationsellerdata.dataUserQuotation.3 }}">
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <h4>Datos de la cotizacion</h4>
+            <div class="row mb-3 mt-3">
+                <div class="col-4">
+                    <label>Fecha de emision</label>
+                    <input class="form-control" type="date" id="dateQuotation" value="{{ editQuotation.dateQuotation|date:'Y-m-d' }}">
+                </div>
+                <div class="col-4">
+                    <label>Validez</label>
+                    <input class="form-control" type="text" id="expirationQuotation" value="{{ editQuotation.expirationQuotation }}">
+                </div>
+                <div class="col-4">
+                    <label>Nro de documento</label>
+                    <input class="form-control" type="text" id="relatedDocumentQuotation" value="{{ editQuotation.relatedDocumentQuotation }}">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Moneda</label>
+                    <select class="selectpicker form-control" id="currencyQuotation">
+                        {% if editQuotation.currencyQuotation == 'SOLES' %}
+                        <option value="" ></option>
+                        <option value="SOLES" selected>SOLES</option>
+                        <option value="DOLARES">DOLARES</option>
+                        {% elif editQuotation.currencyQuotation == 'DOLARES' %}
+                        <option value="" ></option>
+                        <option value="SOLES">SOLES</option>
+                        <option value="DOLARES" selected>DOLARES</option>
+                        {% else %}
+                        <option value="" selected></option>
+                        <option value="SOLES">SOLES</option>
+                        <option value="DOLARES">DOLARES</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="col-4">
+                    <label>TC Venta</label>
+                    <input class="form-control" type="text" id="erSel" value="{{ editQuotation.erSel }}">
+                </div>
+                <div class="col-4">
+                    <label>TC Compra</label>
+                    <input class="form-control" type="text" id="erBuy" value="{{ editQuotation.erBuy }}">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Forma de pago</label>
+                    <select class="selectpicker form-control" id="paymentQuotation">
+                        {% if editQuotation.paymentQuotation == 'CONTADO' %}
+                        <option value=""></option>
+                        <option value="CONTADO" selected>CONTADO</option>
+                        <option value="CREDITO">CREDITO</option>
+                        {% elif editQuotation.paymentQuotation == 'CREDITO' %}
+                        <option value=""></option>
+                        <option value="CONTADO">CONTADO</option>
+                        <option value="CREDITO" selected>CREDITO</option>
+                        {% else %}
+                        <option value="" selected></option>
+                        <option value="CONTADO">CONTADO</option>
+                        <option value="CREDITO">CREDITO</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="col-4">
+                    <label>Nro de coutas</label>
+                    <input class="form-control" type="text" id="quotesQuotation" value="{{ editQuotation.quotesQuotation }}">
+                </div>
+                <div class="col-4">
+                    <label>Tiempo de crédito</label>
+                    <input class="form-control" type="text" id="expirationCredit" value="{{ editQuotation.expirationCredit }}">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-8">
+                    <label>Observaciones</label>
+                    <textarea class="form-control" rows="2" id="commentQuotation">{{ editQuotation.commentQuotation }}</textarea>
+                </div>
+                <div class="col-4">
+                    <label>Modificacion del documento</label><br>
+                    {% if editQuotation.showDiscount == 'ON' %}
+                        <input class="form-check-input" type="checkbox" id="showDiscount" checked>
+                    {% else %}
+                        <input class="form-check-input" type="checkbox" id="showDiscount">
+                    {% endif %}
+                    <label> Mostrar descuento</label><br>
+                    {% if editQuotation.showSellPrice == 'ON' %}
+                        <input class="form-check-input" type="checkbox" id="showSellPrice" checked>
+                    {% else %}
+                        <input class="form-check-input" type="checkbox" id="showSellPrice">
+                    {% endif %}
+                    <label> Mostrar PU</label><br>
+                    {% if editQuotation.showUnitPrice == 'ON' %}
+                        <input class="form-check-input" type="checkbox" id="showUnitPrice" checked>
+                    {% else %}
+                        <input class="form-check-input" type="checkbox" id="showUnitPrice">
+                    {% endif %}
+                    <label> Mostrar VU</label>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <h4>Items de la cotización</h4>
+            <div class="row mb-3 mt-3">
+                <div class="col-4">
+                    <div class="row mx-0">
+                        <label>Tipo de items</label>
+                        <select class="selectpicker form-control" id="typeItems">
+                            {% if editQuotation.typeQuotation == 'PRODUCTOS' %}
+                            <option value=""></option>
+                            <option value="PRODUCTOS" selected>PRODUCTOS</option>
+                            <option value="SERVICIOS">SERVICIOS</option>
+                            {% elif editQuotation.typeQuotation == 'SERVICIOS' %}
+                            <option value=""></option>
+                            <option value="PRODUCTOS">PRODUCTOS</option>
+                            <option value="SERVICIOS" selected>SERVICIOS</option>
+                            {% else %}
+                            <option value="" selected></option>
+                            <option value="PRODUCTOS">PRODUCTOS</option>
+                            <option value="SERVICIOS">SERVICIOS</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-6"></div>
+                {% if editQuotation.typeQuotation == 'PRODUCTOS' %}
+                <div class="col-2" id="btnAddProduct">
+                    <br>
+                    <div class="row mx-0">
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProduct" onclick="deleteAddProductInfo()">Productos <i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="col-2" id="btnAddService" style="display: none;">
+                    <br>
+                    <div class="row mx-0">
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addService" onclick="deleteAddServiceInfo()">Servicios <i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-2" id="btnAddProduct" style="display: none;">
+                    <br>
+                    <div class="row mx-0">
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProduct" onclick="deleteAddProductInfo()">Productos <i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="col-2" id="btnAddService">
+                    <br>
+                    <div class="row mx-0">
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addService" onclick="deleteAddServiceInfo()">Servicios <i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% if editQuotation.typeQuotation == 'PRODUCTOS' %}
+            <div class="row mx-0" id="productsSection">
+                <br>
+                <h6>Productos</h6>
+                <table class="table table-bordered table-hover" id="productsTable">
+                    <thead class="table-dark">
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Codigo</th>
+                        <th scope="col">Unidad de medida</th>
+                        <th scope="col">Almacen</th>
+                        <th scope="col">Moneda</th>
+                        <th scope="col">pvnIGV</th>
+                        <th scope="col">Descuento</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Producto gratis</th>
+                        <th scope="col">Eliminar</th>
+                    </thead>
+                    <tbody id="productsItems">
+                        {% for productInfo in editQuotation.quotationproductdata_set.all %}
+                        <tr class="text-center">
+                            <td data-info="{{ productInfo.dataProductQuotation.0 }}">{{ productInfo.dataProductQuotation.1 }}</td>
+                            <td>{{ productInfo.dataProductQuotation.2 }}</td>
+                            <td>{{ productInfo.dataProductQuotation.3 }}</td>
+                            <td>{{ productInfo.dataProductQuotation.4 }}</td>
+                            <td>{{ productInfo.dataProductQuotation.5 }}</td>
+                            <td style="width:120px;"><input type="text" class="form-control" value="{{ productInfo.dataProductQuotation.6 }}"></td>
+                            <td style="width:60px;"><input type="text" class="form-control" value="{{ productInfo.dataProductQuotation.7 }}"></td>
+                            <td style="width:60px;"><input type="text" class="form-control" value="{{ productInfo.dataProductQuotation.8 }}"></td>
+                            {% if productInfo.dataProductQuotation.9 == '1' %}
+                                <td style="width:60px;"><input class="form-check-input freeProduct" data-info='id{{ productInfo.id }}' type="checkbox" checked></td>
+                            {% else %}
+                                <td style="width:60px;"><input class="form-check-input freeProduct" data-info='id{{ productInfo.id }}' type="checkbox"></td>
+                            {% endif %}
+                            <td><input type="button" class="btn btn-secondary" value="Eliminar"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="row mx-0" id="servicesSection" style="display: none;">
+                <br>
+                <h6>Servicios</h6>
+                <table class="table table-bordered table-hover" id="servicesTable">
+                    <thead class="table-dark">
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Unidad de medida</th>
+                        <th scope="col">Moneda</th>
+                        <th scope="col">pvnIGV</th>
+                        <th scope="col">Descuento</th>
+                        <th scope="col">Eliminar</th>
+                    </thead>
+                    <tbody id="servicesItems"></tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="row mx-0" id="productsSection" style="display: none;">
+                <br>
+                <h6>Productos</h6>
+                <table class="table table-bordered table-hover" id="productsTable">
+                    <thead class="table-dark">
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Codigo</th>
+                        <th scope="col">Unidad de medida</th>
+                        <th scope="col">Almacen</th>
+                        <th scope="col">Moneda</th>
+                        <th scope="col">pvnIGV</th>
+                        <th scope="col">Descuento</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Producto gratis</th>
+                        <th scope="col">Eliminar</th>
+                    </thead>
+                    <tbody id="productsItems"></tbody>
+                </table>
+            </div>
+            <div class="row mx-0" id="servicesSection">
+                <br>
+                <h6>Servicios</h6>
+                <table class="table table-bordered table-hover" id="servicesTable">
+                    <thead class="table-dark">
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Unidad de medida</th>
+                        <th scope="col">Moneda</th>
+                        <th scope="col">pvnIGV</th>
+                        <th scope="col">Descuento</th>
+                        <th scope="col">Eliminar</th>
+                    </thead>
+                    <tbody id="servicesItems">
+                        {% for serviceInfo in editQuotation.quotationservicedata_set.all %}
+                        <tr class="text-center align-items-center">
+                            <td data-info="{{ serviceInfo.dataServiceQuotation.0 }}">{{ serviceInfo.dataServiceQuotation.1 }}</td>
+                            <td>{{ serviceInfo.dataServiceQuotation.2 }}</td>
+                            <td>{{ serviceInfo.dataServiceQuotation.3 }}</td>
+                            <td style="width:120px;"><input type="text" class="form-control" value="{{ serviceInfo.dataServiceQuotation.4 }}"></td>
+                            <td style="width:60px;"><input type="text" class="form-control" value="{{ serviceInfo.dataServiceQuotation.5 }}"></td>
+                            <td><input type="button" class="btn btn-secondary" value="Eliminar"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+        <br>
+        <div class="row">
+            <br>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <button class="btn btn-primary" onclick="createQuotation()">Guardar</button>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-secondary" href="{% url 'salesMetalprotec:quotationsMetalprotec' %}">Cancelar</a>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+{% endblock %}
+
+{% block modalContent %}
+    <!-- Add product to quotation -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="addProduct">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteAddProductInfo()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label>Seleccionar producto</label>
+                            <select class="selectpicker form-control" data-live-search="true" id="selectProduct">
+                                <option value="" selected></option>
+                                {% for productInfo in productsSystem %}
+                                <option value="{{ productInfo.id }}">{{ productInfo.nameProduct }} - {{ productInfo.codeProduct }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label>Nombre</label>
+                            <input type="text" class="form-control" id="nameProduct">
+                        </div>
+                        <div class="col-6">
+                            <label>Unidad de medida</label>
+                            <input type="text" class="form-control" id="measureUnitProduct">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label>Codigo</label>
+                            <input type="text" class="form-control" id="codeProduct">
+                        </div>
+                        <div class="col-6">
+                            <label>Precio de venta sin IGV</label>
+                            <input type="number" step="0.01" class="form-control" id="pvnIGVProduct">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label>Descuento (%)</label>
+                            <input type="number" step="1" class="form-control" id="discountProduct">
+                        </div>
+                        <div class="col-6">
+                            <label>Moneda</label>
+                            <select class="selectpicker form-control" id="currencyProduct">
+                                <option value="" selected></option>
+                                <option value="SOLES">SOLES</option>
+                                <option value="DOLARES">DOLARES</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label>Cantidad</label>
+                            <input type="number" step="1" class="form-control" id="quantityProduct">
+                        </div>
+                        <div class="col-6">
+                            <label>Almacen</label>
+                            <select class="selectpicker form-control" id="storeProduct">
+                                <option value="" selected></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteAddProductInfo()">Cancelar</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="addProductInfo()">Agregar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add service to quotation -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="addService">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar servicio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteAddServiceInfo()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label>Seleccionar servicio</label>
+                            <select class="selectpicker form-control" data-live-search="true" id="selectService">
+                                <option value="" selected></option>
+                                {% for serviceInfo in servicesSystem %}
+                                <option value="{{ serviceInfo.id }}">{{ serviceInfo.nameService }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label>Nombre</label>
+                            <input type="text" class="form-control" id="nameService" required>
+                        </div>
+                        <div class="col-6">
+                            <label>Unidad de medida</label>
+                            <input type="text" class="form-control" id="measureUnitService" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label>Precio de venta sin IGV</label>
+                            <input type="number" step="0.01" class="form-control" name="pvnIGV" id="pvnIGVService" required>
+                        </div>
+                        <div class="col-6">
+                            <label>Moneda</label>
+                            <select class="selectpicker form-control" id="currencyService" required>
+                                <option value="" selected></option>
+                                <option value="SOLES">SOLES</option>
+                                <option value="DOLARES">DOLARES</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label>Descuento (%)</label>
+                            <input type="number" step="0" class="form-control" id="discountService">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteAddServiceInfo()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" onclick="addServiceInfo()">Agregar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

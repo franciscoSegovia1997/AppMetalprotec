@@ -22,9 +22,12 @@
     <div class="container" style="height: 100vh; overflow: scroll;">
         <h1 class="mt-3 mb-3">Editar boleta</h1>
         <div style="display: none;">
-            <input id="billInfo" value="{{ editInvoice.id }}" type="text">
+            <input id="invoiceInfo" value="{{ editInvoice.id }}" type="text">
+            <input id="typeItemsInvoice" value="{{ editInvoice.typeItemsInvoice }}" type="text">
+            <input id="originInvoice" value="{{ editInvoice.originInvoice }}" type="text">
         </div>
         <hr>
+        {% if editInvoice.originInvoice == 'GUIDE' %}
         <div class="row">
             <h4>Datos del cliente</h4>
             <div class="row mb-3">
@@ -66,6 +69,51 @@
                 </div>
             </div>
         </div>
+        {% else %}
+        <div class="row">
+            <h4>Datos del cliente</h4>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Razon / Nombre</label>
+                    <input class="form-control" type="text" value="{{ editInvoice.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}" readonly>
+                </div>
+                <div class="col-4">
+                    <label>RUC / DNI</label>
+                    <input class="form-control" type="text" value="{{ editInvoice.asociatedQuotation.quotationclientdata.dataClientQuotation.2 }}" readonly>
+                </div>
+                <div class="col-4">
+                    <label>Tipo de cliente</label>
+                    <input class="form-control" type="text" value="{{ editInvoice.asociatedQuotation.quotationclientdata.dataClientQuotation.3 }}"  readonly>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Email</label>
+                    <input class="form-control" type="text" value="{{ editInvoice.asociatedQuotation.quotationclientdata.dataClientQuotation.4 }}" readonly>
+                </div>
+                <div class="col-4">
+                    <label>Contacto</label>
+                    <input class="form-control" type="text" value="{{ editInvoice.asociatedQuotation.quotationclientdata.dataClientQuotation.5 }}" readonly>
+                </div>
+                <div class="col-4">
+                    <label>Telefono</label>
+                    <input class="form-control" type="text" value="{{ editInvoice.asociatedQuotation.quotationclientdata.dataClientQuotation.6 }}" readonly>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label>Direccion fiscal</label>
+                    <input class="form-control" type="text" id="legalAddressClient" value="{{ editInvoice.asociatedQuotation.quotationclientdata.dataClientQuotation.7 }}">
+                </div>
+                <div class="col-6">
+                    <label>Direccion de entrega</label>
+                    <input class="form-control" type="text" id="deliveryAddress" value="{{ editInvoice.asociatedQuotation.quotationclientdata.dataClientQuotation.8 }}">
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        
         <hr>
         <br>
         <div class="row">
@@ -73,7 +121,7 @@
             <div class="row mb-3">
                 <div class="col-4">
                     <label>Fecha de emision</label>
-                    <input class="form-control" type="date" value="{{ editInvoice.dateInvoice|date:'Y-m-d' }}" id="dateBill">
+                    <input class="form-control" type="date" value="{{ editInvoice.dateInvoice|date:'Y-m-d' }}" id="dateInvoice">
                 </div>
                 <div class="col-4">
                     <label>Documento relacionado</label>
@@ -82,12 +130,11 @@
                 <div class="col-4">
                     <label>Moneda</label>
                     <select class="selectpicker form-control" id="currencyInvoice">
-                        <option value="" selected></option>
-                        {% if editBill.currencyBill == 'SOLES' %}
+                        {% if editInvoice.currencyInvoice == 'SOLES' %}
                         <option value="" ></option>
                         <option value="SOLES" selected>SOLES</option>
                         <option value="DOLARES">DOLARES</option>
-                        {% elif editBill.currencyBill == 'DOLARES' %}
+                        {% elif editInvoice.currencyInvoice == 'DOLARES' %}
                         <option value="" ></option>
                         <option value="SOLES">SOLES</option>
                         <option value="DOLARES" selected>DOLARES</option>
@@ -108,6 +155,7 @@
                     <label>TC - VENTA</label>
                     <input class="form-control" type="text" value="{{ editInvoice.erSel }}" id="erSel">
                 </div>
+                {% if editInvoice.originInvoice == 'GUIDE' %}
                 <div class="col-3">
                     <label>Forma de pago</label>
                     <input class="form-control" type="text" value="{{ editInvoice.guidesystem_set.all.0.asociatedQuotation.paymentQuotation }}" id="paymentQuotation" readonly>
@@ -115,9 +163,22 @@
                 {% if editInvoice.guidesystem_set.all.0.asociatedQuotation.paymentQuotation == 'CREDITO' %}
                 <div class="col-3">
                     <label>Cantidad de cuotas</label>
-                    <input class="form-control" type="text" value="{{ editInvoice.guidesystem_set.all.0.asociatedQuotation.numberQuotation }}" readonly>
+                    <input class="form-control" type="text" value="{{ editInvoice.guidesystem_set.all.0.asociatedQuotation.quotesQuotation }}" id="numberQuotes" readonly>
                 </div>
                 {% endif %}
+                {% else %}
+                <div class="col-3">
+                    <label>Forma de pago</label>
+                    <input class="form-control" type="text" value="{{ editInvoice.asociatedQuotation.paymentQuotation }}" id="paymentQuotation" readonly>
+                </div>
+                {% if editInvoice.asociatedQuotation.paymentQuotation == 'CREDITO' %}
+                <div class="col-3">
+                    <label>Cantidad de cuotas</label>
+                    <input class="form-control" type="text" value="{{ editInvoice.asociatedQuotation.quotesQuotation }}" id="numberQuotes" readonly>
+                </div>
+                {% endif %}
+                {% endif %}
+                
             </div>
             <div class="row mb-3">
                 <div class="col-12">
@@ -127,6 +188,9 @@
             </div>
         </div>
         <br>
+
+
+        {% if editInvoice.originInvoice == 'GUIDE' %}
         {% if editInvoice.guidesystem_set.all.0.asociatedQuotation.paymentQuotation == 'CREDITO' %}
         <div class="row">
             <h4>Fechas de las cuotas</h4>
@@ -139,8 +203,26 @@
             </div>
         </div>
         <br>
-        {% else %}
         {% endif %}
+        {% else %}
+        {% if editInvoice.asociatedQuotation.paymentQuotation == 'CREDITO' %}
+        <div class="row">
+            <h4>Fechas de las cuotas</h4>
+            <div class="row mb-3">
+                <div class="col-4">
+                    {% for quoteInfo in editInvoice.dateQuotesInvoice %}
+                    <input value="{{ quoteInfo }}" class="form-control dateQuoteInfo" type="date">
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <br>
+        {% endif %}
+        {% endif %}
+
+
+
+        {% if editInvoice.typeItemsInvoice == 'PRODUCTOS' %}
         <div class="row">
             <h4>Items de la boleta</h4>
             <div class="row mx-0" id="productsSection">
@@ -159,29 +241,78 @@
                         <th scope="col">Producto gratis</th>
                     </thead>
                     <tbody id="productsItems">
-                        {% for guideInfo in editInvoice.guidesystem_set.all %}
-                            {% for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all %}
+                        {% if editInvoice.originInvoice == 'GUIDE' %}
+                            {% for guideInfo in editInvoice.guidesystem_set.all %}
+                                {% for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all %}
+                                <tr class="text-center">
+                                    <td>{{ productInfo.dataProductQuotation.1 }}</td>
+                                    <td>{{ productInfo.dataProductQuotation.2 }}</td>
+                                    <td>{{ productInfo.dataProductQuotation.3 }}</td>
+                                    <td>{{ productInfo.dataProductQuotation.4 }}</td>
+                                    <td>{{ productInfo.dataProductQuotation.5 }}</td>
+                                    <td style="width: 120px;"><input class="form-control pvnIGV" data-info='id{{ productInfo.id }}' type="number" step="0.01" value="{{ productInfo.dataProductQuotation.6 }}"></td>
+                                    <td style="width: 60px;"><input class="form-control discountProduct" data-info='id{{ productInfo.id }}' type="number" step="0.01" value="{{ productInfo.dataProductQuotation.7 }}"></td>
+                                    <td style="width: 60px;"><input class="form-control quantityProduct" data-info='id{{ productInfo.id }}' type="number" step="0.01" value="{{ productInfo.dataProductQuotation.8 }}"></td>
+                                    {% if productInfo.dataProductQuotation.9 == '1' %}
+                                        <td style="width:60px;"><input class="form-check-input freeProduct" data-info='id{{ productInfo.id }}' type="checkbox" checked></td>
+                                    {% else %}
+                                        <td style="width:60px;"><input class="form-check-input freeProduct" data-info='id{{ productInfo.id }}' type="checkbox"></td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                            {% for productInfo in editInvoice.asociatedQuotation.quotationproductdata_set.all %}
                             <tr class="text-center">
                                 <td>{{ productInfo.dataProductQuotation.1 }}</td>
                                 <td>{{ productInfo.dataProductQuotation.2 }}</td>
                                 <td>{{ productInfo.dataProductQuotation.3 }}</td>
                                 <td>{{ productInfo.dataProductQuotation.4 }}</td>
                                 <td>{{ productInfo.dataProductQuotation.5 }}</td>
-                                <td style="width: 80px;"><input class="form-control pvnIGV" data-info='id{{ productInfo.id }}' type="number" step="0.01" value="{{ productInfo.dataProductQuotation.6 }}"></td>
-                                <td style="width: 80px;"><input class="form-control discountProduct" data-info='id{{ productInfo.id }}' type="number" step="0.01" value="{{ productInfo.dataProductQuotation.7 }}"></td>
-                                <td style="width: 80px;"><input class="form-control quantityProduct" data-info='id{{ productInfo.id }}' type="number" step="0.01" value="{{ productInfo.dataProductQuotation.8 }}"></td>
+                                <td style="width: 120px;"><input class="form-control pvnIGV" data-info='id{{ productInfo.id }}' type="number" step="0.01" value="{{ productInfo.dataProductQuotation.6 }}"></td>
+                                <td style="width: 60px;"><input class="form-control discountProduct" data-info='id{{ productInfo.id }}' type="number" step="0.01" value="{{ productInfo.dataProductQuotation.7 }}"></td>
+                                <td style="width: 60px;"><input class="form-control quantityProduct" data-info='id{{ productInfo.id }}' type="number" step="0.01" value="{{ productInfo.dataProductQuotation.8 }}"></td>
                                 {% if productInfo.dataProductQuotation.9 == '1' %}
                                     <td style="width:60px;"><input class="form-check-input freeProduct" data-info='id{{ productInfo.id }}' type="checkbox" checked></td>
                                 {% else %}
-                                    <td style="width:60px;"><input class="form-check-input freeProduct" type="checkbox"></td>
+                                    <td style="width:60px;"><input class="form-check-input freeProduct" data-info='id{{ productInfo.id }}' type="checkbox"></td>
                                 {% endif %}
                             </tr>
                             {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="row">
+            <h4>Items de la boleta</h4>
+            <div class="row mx-0" id="productsSection">
+                <br>
+                <h6>Servicios</h6>
+                <table class="table table-bordered table-hover" id="servicesTable">
+                    <thead class="table-dark">
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Unidad de medida</th>
+                        <th scope="col">Moneda</th>
+                        <th scope="col">pvnIGV</th>
+                        <th scope="col">Descuento</th>
+                    </thead>
+                    <tbody id="productsItems">
+                        {% for serviceInfo in editInvoice.asociatedQuotation.quotationservicedata_set.all %}
+                        <tr class="text-center">
+                            <td>{{ serviceInfo.dataServiceQuotation.1 }}</td>
+                            <td>{{ serviceInfo.dataServiceQuotation.2 }}</td>
+                            <td>{{ serviceInfo.dataServiceQuotation.3 }}</td>
+                            <td style="width: 120px;"><input class="form-control pvnIGV" data-info='id{{ serviceInfo.id }}' type="number" step="0.01" value="{{ serviceInfo.dataServiceQuotation.4 }}"></td>
+                            <td style="width: 60px;"><input class="form-control discountService" data-info='id{{ serviceInfo.id }}' type="number" step="0.01" value="{{ serviceInfo.dataServiceQuotation.5 }}"></td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
+        {% endif %}
         <br>
         <div class="row">
             <br>

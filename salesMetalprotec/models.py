@@ -61,8 +61,11 @@ class billSystem(models.Model):
     currencyBill = models.CharField(max_length=12,null=True,blank=True)
     stateBill = models.CharField(max_length=12,null=True,blank=True)
     codeBill = models.CharField(max_length=12,null=True,blank=True)
-    stateTeFacturo = models.CharField(max_length=12,null=True,blank=True)
+    stateTeFacturo = models.CharField(max_length=24,null=True,blank=True)
     nroBill = models.CharField(max_length=12,null=True,blank=True)
+    typeItemsBill = models.CharField(max_length=12,null=True,blank=True)
+    originBill = models.CharField(max_length=12,null=True,blank=True)
+    asociatedQuotation = models.OneToOneField(quotationSystem,on_delete=models.CASCADE, blank=True, null=True)
     endpointBill = models.ForeignKey(endpointSystem, on_delete=models.CASCADE, null=True, blank=True)
 
 class invoiceSystem(models.Model):
@@ -75,8 +78,11 @@ class invoiceSystem(models.Model):
     currencyInvoice = models.CharField(max_length=12,null=True,blank=True)
     stateInvoice = models.CharField(max_length=12,null=True,blank=True)
     codeInvoice = models.CharField(max_length=12,null=True,blank=True)
-    stateTeFacturo = models.CharField(max_length=12,null=True,blank=True)
+    stateTeFacturo = models.CharField(max_length=24,null=True,blank=True)
     nroInvoice = models.CharField(max_length=12,null=True,blank=True)
+    typeItemsInvoice = models.CharField(max_length=12,null=True,blank=True)
+    originInvoice = models.CharField(max_length=12,null=True,blank=True)
+    asociatedQuotation = models.OneToOneField(quotationSystem,on_delete=models.CASCADE, blank=True, null=True)
     endpointInvoice = models.ForeignKey(endpointSystem, on_delete=models.CASCADE, null=True, blank=True)
 
 
@@ -104,7 +110,7 @@ class guideSystem(models.Model):
     nameDriver = models.CharField(max_length=64,null=True,blank=True)
     stateGuide = models.CharField(max_length=12,null=True,blank=True)
     codeGuide = models.CharField(max_length=12,null=True,blank=True)
-    stateTeFacturo = models.CharField(max_length=12,null=True,blank=True)
+    stateTeFacturo = models.CharField(max_length=24,null=True,blank=True)
     nroGuide = models.CharField(max_length=12,null=True,blank=True)
     endpointGuide = models.ForeignKey(endpointSystem, on_delete=models.CASCADE, null=True, blank=True)
 
@@ -114,7 +120,7 @@ class creditNoteSystem(models.Model):
     typeCreditNote = models.CharField(max_length=12,null=True,blank=True)
     stateCreditNote = models.CharField(max_length=12,null=True,blank=True)
     codeCreditNote = models.CharField(max_length=12,null=True,blank=True)
-    stateTeFacturo = models.CharField(max_length=12,null=True,blank=True)
+    stateTeFacturo = models.CharField(max_length=24,null=True,blank=True)
     dateCreditNote = models.DateField(null=True,blank=True)
     nroCreditNote = models.CharField(max_length=12,null=True,blank=True)
     endpointCreditNote = models.ForeignKey(endpointSystem, on_delete=models.CASCADE, null=True, blank=True)

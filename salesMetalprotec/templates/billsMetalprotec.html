@@ -65,18 +65,48 @@
                 </thead>
                 <tbody>
                     {% for billInfo in billsSystem %}
-                    <tr>
-                        <td>{{ billInfo.guidesystem_set.all.0.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}</td>
-                        <td>{{ billInfo.codeBill }}</td>
-                        <td>{{ billInfo.dateBill }}</td>
-                        <td>{{ billInfo.stateBill }}</td>
-                        <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataBill' billInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>{{ billInfo.stateTeFacturo }}</td>
-                        <td></td>
-                    </tr>
+                        {% if billInfo.typeItemsBill == 'PRODUCTOS' %}
+                            {% if billInfo.originBill == 'GUIDE' %}
+                            <tr>
+                                <td>{{ billInfo.guidesystem_set.all.0.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}</td>
+                                <td>{{ billInfo.codeBill }}</td>
+                                <td>{{ billInfo.dateBill }}</td>
+                                <td>{{ billInfo.stateBill }}</td>
+                                <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataBill' billInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>{{ billInfo.stateTeFacturo }}</td>
+                                <td></td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td>{{ billInfo.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}</td>
+                                <td>{{ billInfo.codeBill }}</td>
+                                <td>{{ billInfo.dateBill }}</td>
+                                <td>{{ billInfo.stateBill }}</td>
+                                <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataBill' billInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>{{ billInfo.stateTeFacturo }}</td>
+                                <td></td>
+                            </tr>
+                            {% endif %}
+                        {% else %}
+                        <tr>
+                            <td>{{ billInfo.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}</td>
+                            <td>{{ billInfo.codeBill }}</td>
+                            <td>{{ billInfo.dateBill }}</td>
+                            <td>{{ billInfo.stateBill }}</td>
+                            <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataBill' billInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>{{ billInfo.stateTeFacturo }}</td>
+                            <td></td>
+                        </tr>
+                        {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
