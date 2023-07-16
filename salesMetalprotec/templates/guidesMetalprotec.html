@@ -70,14 +70,56 @@
                         <td>{{ guideInfo.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}</td>
                         <td>{{ guideInfo.codeGuide }}</td>
                         <td>{{ guideInfo.dateGuide }}</td>
-                        <td>{{ guideInfo.stateGuide }}</td>
+                        <td>
+                            {% if guideInfo.stateGuide == 'GENERADA' %}
+                            <div class="bg-success rounded-pill text-white text-center">{{ guideInfo.stateGuide }}</div>
+                            {% endif %}
+                            {% if guideInfo.stateGuide == 'ENVIADA' %}
+                            <div class="bg-primary rounded-pill text-white text-center">{{ guideInfo.stateGuide }}</div>
+                            {% endif %}
+                            {% if guideInfo.stateGuide == 'EMITIDA' %}
+                            <div class="bg-warning rounded-pill text-white text-center">{{ guideInfo.stateGuide }}</div>
+                            {% endif %}
+                        </td>
                         <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataGuide' guideInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
+                        {% if guideInfo.stateGuide != 'GENERADA' %}
+                            <td class="text-center"><a class="btn bg-info" href="{% url 'salesMetalprotec:downloadGuideTeFacturo' guideInfo.id %}"><i class="fa-solid fa-download"></i></a></td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if guideInfo.stateGuide == 'ENVIADA' %}
+                            {% if guideInfo.stateTeFacturo == 'Aceptado' or guideInfo.stateTeFacturo == 'Aceptado con Obs.' %}
+                                <td class="text-center selectedGuide" id="{{ guideInfo.id }}"><input class="form-check-input" type="checkbox"></td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if guideInfo.stateGuide == 'ENVIADA' %}
+                            {% if guideInfo.stateTeFacturo == 'Aceptado' or guideInfo.stateTeFacturo == 'Aceptado con Obs.' %}
+                                {% if guideInfo.asociatedQuotation.quotationclientdata.dataClientQuotation.3 == 'EMPRESA' %}
+                                    <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:createBillFromGuide' guideInfo.id %}">F</a></td>
+                                {% else %}
+                                    <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:createInvoiceFromGuide' guideInfo.id %}">B</a></td>
+                                {% endif %}
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                        {% else %}
                         <td></td>
-                        <td></td>
-                        <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:createBillFromGuide' guideInfo.id %}"><i class="fa-solid fa-arrow-right"></i></a></td>
-                        <td></td>
+                        {% endif %}
+                        {% if guideInfo.stateGuide != 'GENERADA' %}
+                            <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:verifyGuideTeFacturo' guideInfo.id %}"><i class="fa-solid fa-check"></i></a></td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
                         <td>{{ guideInfo.stateTeFacturo }}</td>
-                        <td></td>
+                        {% if guideInfo.stateTeFacturo == '' %}
+                            <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:sendGuideTeFacturo' guideInfo.id %}"><i class="fa-solid fa-arrow-right"></i></a></td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>

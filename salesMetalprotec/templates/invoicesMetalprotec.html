@@ -64,19 +64,49 @@
                     <th scope="col">Emitir Nota de Credito</th>
                 </thead>
                 <tbody>
-                    {% for invoiceInfo in billsSystem %}
-                    <tr>
-                        <td></td>
-                        <td>{{ invoiceInfo.codeBill }}</td>
-                        <td>{{ invoiceInfo.dateBill }}</td>
-                        <td>{{ invoiceInfo.stateBill }}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>{{ invoiceInfo.stateTeFacturo }}</td>
-                        <td></td>
-                    </tr>
+                    {% for invoiceInfo in invoicesSystem %}
+                        {% if invoiceInfo.typeItemsInvoice == 'PRODUCTOS' %}
+                            {% if invoiceInfo.originInvoice == 'QUOTATION' %}
+                            <tr>
+                                <td>{{ invoiceInfo.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}</td>
+                                <td>{{ invoiceInfo.codeInvoice }}</td>
+                                <td>{{ invoiceInfo.dateInvoice }}</td>
+                                <td>{{ invoiceInfo.stateInvoice }}</td>
+                                <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataInvoice' invoiceInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>{{ invoiceInfo.stateTeFacturo }}</td>
+                                <td></td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td>{{ invoiceInfo.guidesystem_set.all.0.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}</td>
+                                <td>{{ invoiceInfo.codeInvoice }}</td>
+                                <td>{{ invoiceInfo.dateInvoice }}</td>
+                                <td>{{ invoiceInfo.stateInvoice }}</td>
+                                <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataInvoice' invoiceInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>{{ invoiceInfo.stateTeFacturo }}</td>
+                                <td></td>
+                            </tr>
+                            {% endif %}
+                        {% else %}
+                        <tr>
+                            <td>{{ invoiceInfo.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}</td>
+                            <td>{{ invoiceInfo.codeInvoice }}</td>
+                            <td>{{ invoiceInfo.dateInvoice }}</td>
+                            <td>{{ invoiceInfo.stateInvoice }}</td>
+                            <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataInvoice' invoiceInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>{{ invoiceInfo.stateTeFacturo }}</td>
+                            <td></td>
+                        </tr>
+                        {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
