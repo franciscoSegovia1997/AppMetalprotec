@@ -374,6 +374,14 @@ function chargeClientInfo()
         fetch(`/clientsMetalprotecgetClientAddress?idClient=${idClient}`)
         .then(response => response.json())
         .then(data => {
+            while(clientAddress.length > 0)
+            {
+                clientAddress.remove(0)
+            }
+            firstOption = document.createElement('option')
+            firstOption.value = ''
+            firstOption.innerHTML = ''
+            clientAddress.appendChild(firstOption)
             for(let i = 0;i < data.addressesClient.length; i++)
             {
                 newOption = document.createElement('option')

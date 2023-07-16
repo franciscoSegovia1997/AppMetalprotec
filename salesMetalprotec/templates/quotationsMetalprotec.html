@@ -80,18 +80,55 @@
                         <td>{{ quotationInfo.dateQuotation }}</td>
                         <td>{{ quotationInfo.currencyQuotation }}</td>
                         <td>{{ quotationInfo.typeQuotation }}</td>
-                        <td>{{ quotationInfo.stateQuotation }}</td>
+                        <td>
+                            {% if quotationInfo.stateQuotation == 'GENERADA' %}
+                            <div class="bg-success rounded-pill text-white text-center">{{ quotationInfo.stateQuotation }}</div>
+                            {% endif %}
+                            {% if quotationInfo.stateQuotation == 'EMITIDA' %}
+                            <div class="bg-warning rounded-pill text-white text-center">{{ quotationInfo.stateQuotation }}</div>
+                            {% endif %}
+                            {% if quotationInfo.stateQuotation == 'ANULADA' %}
+                            <div class="bg-danger rounded-pill text-white text-center">{{ quotationInfo.stateQuotation }}</div>
+                            {% endif %}
+                        </td>
                         <td>{{ quotationInfo.quotationclientdata.dataClientQuotation.1 }}</td>
                         <td class="text-center">
-                            <a class="btn btn-info">D</a>
-                            <a class="btn btn-info">S</a>
+                            <a class="btn btn-info" href="{% url 'salesMetalprotec:downloadQuotationDolares' quotationInfo.id %}">D</a>
+                            <a class="btn btn-info" href="{% url 'salesMetalprotec:downloadQuotationSoles' quotationInfo.id %}">S</a>
                         </td>
-                        <td class="text-center">
-                            <a class="btn btn-success">F</a>
-                            <a class="btn btn-success" href="{% url 'salesMetalprotec:createGuideFromQuotation' quotationInfo.id %}">G</a>
-                        </td>
-                        <td class="text-center"><a class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                        <td class="text-center"><a class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a></td>
+                        {% if quotationInfo.stateQuotation == 'GENERADA' %}
+                            {% if quotationInfo.typeQuotation == 'PRODUCTOS' %}
+                                {% if quotationInfo.quotationclientdata.dataClientQuotation.3 == 'PERSONA' %}
+                                <td class="text-center">
+                                    <a class="btn btn-success" href="{% url 'salesMetalprotec:createInvoiceFromQuotation' quotationInfo.id %}">B</a>
+                                    <a class="btn btn-success" href="{% url 'salesMetalprotec:createGuideFromQuotation' quotationInfo.id %}">G</a>
+                                </td>
+                                {% else %}
+                                <td class="text-center">
+                                    <a class="btn btn-success" href="{% url 'salesMetalprotec:createBillFromQuotation' quotationInfo.id %}">F</a>
+                                    <a class="btn btn-success" href="{% url 'salesMetalprotec:createGuideFromQuotation' quotationInfo.id %}">G</a>
+                                </td>
+                                {% endif %}
+                            {% else %}
+                                {% if quotationInfo.quotationclientdata.dataClientQuotation.3 == 'PERSONA' %}
+                                <td class="text-center">
+                                    <a class="btn btn-success" href="{% url 'salesMetalprotec:createInvoiceFromQuotation' quotationInfo.id %}">B</a>
+                                </td>
+                                {% else %}
+                                <td class="text-center">
+                                    <a class="btn btn-success" href="{% url 'salesMetalprotec:createBillFromQuotation' quotationInfo.id %}">F</a>
+                                </td>
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                        <td></td>
+                        {% endif %}
+                        <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataQuotation' quotationInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
+                        {% if quotationInfo.stateQuotation == 'GENERADA' %}
+                        <td class="text-center"><a class="btn btn-danger" href="{% url 'salesMetalprotec:cancelQuotation' quotationInfo.id %}"><i class="fa-solid fa-trash-can"></i></a></td>
+                        {% else %}
+                        <td></td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>
