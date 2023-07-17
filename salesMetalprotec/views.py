@@ -2484,8 +2484,10 @@ def downloadGuideTeFacturo(request,idGuide):
         r = requests.put(urlDownload,headers=headersTeFacturo,json=infoGuide)
         convert_b64 = r.content
         info_decoded = b64decode(convert_b64,validate=True)
+        print(info_decoded)
 
         if info_decoded[0:4] != b'%PDF':
+            print("Hay un error en el pdf")
             raise ValueError('Missing the PDF file signature')
         
         nombre_guia = 'guideObjectTeFacturo.pdf'
@@ -2494,6 +2496,7 @@ def downloadGuideTeFacturo(request,idGuide):
         f.write(info_decoded)
         f.close()
         response = HttpResponse(open(nombre_guia,'rb'),content_type='application/pdf')
+        print(response)
         nombre = 'attachment; ' + 'filename=' + nombre_descarga
         response['Content-Disposition'] = nombre
         return response
