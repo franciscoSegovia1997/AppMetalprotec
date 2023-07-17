@@ -2489,15 +2489,9 @@ def downloadGuideTeFacturo(request,idGuide):
             print("Hay un error en el pdf")
             raise ValueError('Missing the PDF file signature')
         print('PDF LISTO PARA ENVIAR')
-        nombre_guia = 'guideObjectTeFacturo.pdf'
-        nombre_descarga = str(guideObject.endpointGuide.serieGuia) + '-' + str(guideObject.nroGuide) + '.pdf'
-        f = open(nombre_guia, 'wb')
-        f.write(info_decoded)
-        f.close()
-        response = HttpResponse(open(nombre_guia,'rb'),content_type='application/pdf')
-        print(response)
-        nombre = 'attachment; ' + 'filename=' + nombre_descarga
-        response['Content-Disposition'] = nombre
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; ' + f'filename={guideObject.codeGuide}.pdf'
+        response.write(info_decoded)
         return response
     else:
         return HttpResponseRedirect(reverse('salesMetalprotec:guidesMetalprotec'))
