@@ -115,7 +115,7 @@
                             <td></td>
                         {% endif %}
                         <td>{{ guideInfo.stateTeFacturo }}</td>
-                        {% if guideInfo.stateTeFacturo == '' %}
+                        {% if guideInfo.stateGuide == 'GENERADA' %}
                             <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:sendGuideTeFacturo' guideInfo.id %}"><i class="fa-solid fa-arrow-right"></i></a></td>
                         {% else %}
                             <td></td>

@@ -29,4 +29,7 @@ urlpatterns = [
     path('sendGuideTeFacturo/<str:idGuide>',views.sendGuideTeFacturo,name='sendGuideTeFacturo'),
     path('verifyGuideTeFacturo/<str:idGuide>',views.verifyGuideTeFacturo,name='verifyGuideTeFacturo'),
     path('downloadGuideTeFacturo/<str:idGuide>',views.downloadGuideTeFacturo,name='downloadGuideTeFacturo'),
+    path('sendBillTeFacturo/<str:idBill>',views.sendBillTeFacturo,name='sendBillTeFacturo'),
+    path('downloadBillTeFacturo/<str:idBill>',views.downloadBillTeFacturo,name='downloadBillTeFacturo'),
+    path('verifyBillTeFacturo/<str:idBill>',views.verifyBillTeFacturo,name='verifyBillTeFacturo')
 ]

@@ -12,11 +12,11 @@ class storeSystem(models.Model):
 
 # Create your models here.
 class productSystem(models.Model):
-    nameProduct = models.CharField(max_length=64,null=True,blank=True)
-    codeProduct = models.CharField(max_length=24,null=True,blank=True)
-    codeSunatProduct = models.CharField(max_length=24,null=True,blank=True)
-    categoryProduct = models.CharField(max_length=16,null=True,blank=True)
-    subCategoryProduct = models.CharField(max_length=16,null=True,blank=True)
+    nameProduct = models.CharField(max_length=128,null=True,blank=True)
+    codeProduct = models.CharField(max_length=32,null=True,blank=True)
+    codeSunatProduct = models.CharField(max_length=32,null=True,blank=True)
+    categoryProduct = models.CharField(max_length=48,null=True,blank=True)
+    subCategoryProduct = models.CharField(max_length=48,null=True,blank=True)
     measureUnit = models.CharField(max_length=16,null=True,blank=True)
     currencyProduct = models.CharField(max_length=16,null=True,blank=True)
     weightProduct = models.CharField(max_length=16,null=True,blank=True)
@@ -25,7 +25,7 @@ class productSystem(models.Model):
     pvnIGV = models.CharField(max_length=16,null=True,blank=True)
     pvcIGV = models.CharField(max_length=16,null=True,blank=True)
     kitProduct = models.CharField(max_length=6,null=True,blank=True)
-    kitInfo = ArrayField(models.CharField(max_length=12),null=True, blank=True)
+    kitInfo = ArrayField(ArrayField(models.CharField(max_length=12),null=True, blank=True),null=True,blank=True)
     endpointProduct=models.ForeignKey(endpointSystem, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
