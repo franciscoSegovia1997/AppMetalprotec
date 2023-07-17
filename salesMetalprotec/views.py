@@ -29,17 +29,17 @@ getcontext().prec = 10
 # Create your views here.
 def quotationsMetalprotec(request):
     return render(request,'quotationsMetalprotec.html',{
-        'quotationsSystem':quotationSystem.objects.filter(endpointQuotation=request.user.extendeduser.endpointUser).order_by('id')
+        'quotationsSystem':quotationSystem.objects.filter(endpointQuotation=request.user.extendeduser.endpointUser).order_by('-codeQuotation')
     })
 
 def guidesMetalprotec(request):
     return render(request,'guidesMetalprotec.html',{
-        'guidesSystem':guideSystem.objects.filter(endpointGuide=request.user.extendeduser.endpointUser).order_by('id')
+        'guidesSystem':guideSystem.objects.filter(endpointGuide=request.user.extendeduser.endpointUser).order_by('-codeGuide')
     })
 
 def billsMetalprotec(request):
     return render(request,'billsMetalprotec.html',{
-        'billsSystem':billSystem.objects.filter(endpointBill=request.user.extendeduser.endpointUser).order_by('id')
+        'billsSystem':billSystem.objects.filter(endpointBill=request.user.extendeduser.endpointUser).order_by('-codeBill')
     })
 
 def invoicesMetalprotec(request):
@@ -2513,8 +2513,9 @@ def downloadBillTeFacturo(request,idBill):
         info_decoded = b64decode(convert_b64,validate=True)
 
         if info_decoded[0:4] != b'%PDF':
+            print("Hay un error en el pdf")
             raise ValueError('Missing the PDF file signature')
-        
+        print('PDF LISTO APRA ENVIAR')
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; ' + f'filename={billObject.codeBill}.pdf'
         response.write(info_decoded)
