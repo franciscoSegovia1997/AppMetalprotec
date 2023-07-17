@@ -71,26 +71,78 @@
                                 <td>{{ billInfo.guidesystem_set.all.0.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}</td>
                                 <td>{{ billInfo.codeBill }}</td>
                                 <td>{{ billInfo.dateBill }}</td>
-                                <td>{{ billInfo.stateBill }}</td>
+                                <td>
+                                    {% if billInfo.stateBill == 'GENERADA' %}
+                                    <div class="bg-success rounded-pill text-white text-center">{{ billInfo.stateBill }}</div>
+                                    {% endif %}
+                                    {% if billInfo.stateBill == 'ENVIADA' %}
+                                    <div class="bg-primary rounded-pill text-white text-center">{{ billInfo.stateBill }}</div>
+                                    {% endif %}
+                                    {% if billInfo.stateBill == 'ANULADA' %}
+                                    <div class="bg-warning rounded-pill text-white text-center">{{ billInfo.stateBill }}</div>
+                                    {% endif %}
+                                </td>
                                 <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataBill' billInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                {% if billInfo.stateBill == 'ENVIADA' %}
+                                    <td class="text-center"><a class="btn btn-info" href="{% url 'salesMetalprotec:downloadBillTeFacturo' billInfo.id %}"><i class="fa-solid fa-download"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+                                {% if billInfo.stateBill == 'GENERADA' %}
+                                    <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:sendBillTeFacturo' billInfo.id %}"><i class="fa-solid fa-arrow-right"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+                                {% if billInfo.stateBill == 'ENVIADA' %}
+                                    <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:verifyBillTeFacturo' billInfo.id %}"><i class="fa-solid fa-check"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
                                 <td>{{ billInfo.stateTeFacturo }}</td>
-                                <td></td>
+                                {% if billInfo.stateBill == 'ENVIADA' %}
+                                    <td class="text-center"><a class="btn btn-danger" href="#"><i class="fa-solid fa-trash"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
                             </tr>
                             {% else %}
                             <tr>
                                 <td>{{ billInfo.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}</td>
                                 <td>{{ billInfo.codeBill }}</td>
                                 <td>{{ billInfo.dateBill }}</td>
-                                <td>{{ billInfo.stateBill }}</td>
+                                <td>
+                                    {% if billInfo.stateBill == 'GENERADA' %}
+                                    <div class="bg-success rounded-pill text-white text-center">{{ billInfo.stateBill }}</div>
+                                    {% endif %}
+                                    {% if billInfo.stateBill == 'ENVIADA' %}
+                                    <div class="bg-primary rounded-pill text-white text-center">{{ billInfo.stateBill }}</div>
+                                    {% endif %}
+                                    {% if billInfo.stateBill == 'ANULADA' %}
+                                    <div class="bg-warning rounded-pill text-white text-center">{{ billInfo.stateBill }}</div>
+                                    {% endif %}
+                                </td>
                                 <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataBill' billInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                {% if billInfo.stateBill == 'ENVIADA' %}
+                                    <td class="text-center"><a class="btn btn-info" href="{% url 'salesMetalprotec:downloadBillTeFacturo' billInfo.id %}"><i class="fa-solid fa-download"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+                                {% if billInfo.stateBill == 'GENERADA' %}
+                                    <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:sendBillTeFacturo' billInfo.id %}"><i class="fa-solid fa-arrow-right"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+                                {% if billInfo.stateBill == 'ENVIADA' %}
+                                    <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:verifyBillTeFacturo' billInfo.id %}"><i class="fa-solid fa-check"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
                                 <td>{{ billInfo.stateTeFacturo }}</td>
-                                <td></td>
+                                {% if billInfo.stateBill == 'ENVIADA' %}
+                                    <td class="text-center"><a class="btn btn-danger" href="#"><i class="fa-solid fa-trash"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
                             </tr>
                             {% endif %}
                         {% else %}
@@ -98,13 +150,39 @@
                             <td>{{ billInfo.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}</td>
                             <td>{{ billInfo.codeBill }}</td>
                             <td>{{ billInfo.dateBill }}</td>
-                            <td>{{ billInfo.stateBill }}</td>
+                            <td>
+                                {% if billInfo.stateBill == 'GENERADA' %}
+                                <div class="bg-success rounded-pill text-white text-center">{{ billInfo.stateBill }}</div>
+                                {% endif %}
+                                {% if billInfo.stateBill == 'ENVIADA' %}
+                                <div class="bg-primary rounded-pill text-white text-center">{{ billInfo.stateBill }}</div>
+                                {% endif %}
+                                {% if billInfo.stateBill == 'ANULADA' %}
+                                <div class="bg-warning rounded-pill text-white text-center">{{ billInfo.stateBill }}</div>
+                                {% endif %}
+                            </td>
                             <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataBill' billInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            {% if billInfo.stateBill == 'ENVIADA' %}
+                                <td class="text-center"><a class="btn btn-info" href="{% url 'salesMetalprotec:downloadBillTeFacturo' billInfo.id %}"><i class="fa-solid fa-download"></i></a></td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                            {% if billInfo.stateBill == 'GENERADA' %}
+                                <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:sendBillTeFacturo' billInfo.id %}"><i class="fa-solid fa-arrow-right"></i></a></td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                            {% if billInfo.stateBill == 'ENVIADA' %}
+                                <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:verifyBillTeFacturo' billInfo.id %}"><i class="fa-solid fa-check"></i></a></td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
                             <td>{{ billInfo.stateTeFacturo }}</td>
-                            <td></td>
+                            {% if billInfo.stateBill == 'ENVIADA' %}
+                                <td class="text-center"><a class="btn btn-danger" href="#"><i class="fa-solid fa-trash"></i></a></td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
                         </tr>
                         {% endif %}
                     {% endfor %}

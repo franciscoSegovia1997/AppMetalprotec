@@ -6,7 +6,7 @@ from settingsMetalprotec.models import endpointSystem
 # Create your models here.
 class clientSystem(models.Model):
     documentClient = models.CharField(max_length=12, null=True,blank=True)
-    identificationClient = models.CharField(max_length=64, null=True,blank=True)
+    identificationClient = models.CharField(max_length=256, null=True,blank=True)
     typeClient = models.CharField(max_length=10, null=True, blank=True)
     emailClient = models.CharField(max_length=48, null=True, blank=True)
     contactClient = models.CharField(max_length=64, null=True, blank=True)
