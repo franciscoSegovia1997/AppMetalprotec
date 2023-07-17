@@ -2515,14 +2515,9 @@ def downloadBillTeFacturo(request,idBill):
         if info_decoded[0:4] != b'%PDF':
             raise ValueError('Missing the PDF file signature')
         
-        nombre_factura = 'billObjectTeFacturo.pdf'
-        nombre_descarga = str(billObject.endpointBill.serieFactura) + '-' + str(billObject.nroBill) + '.pdf'
-        f = open(nombre_factura, 'wb')
-        f.write(info_decoded)
-        f.close()
-        response = HttpResponse(open(nombre_factura,'rb'),content_type='application/pdf')
-        nombre = 'attachment; ' + 'filename=' + nombre_descarga
-        response['Content-Disposition'] = nombre
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; ' + f'filename={billObject.codeBill}.pdf'
+        response.write(info_decoded)
         return response
     else:
         return HttpResponseRedirect(reverse('salesMetalprotec:billsMetalprotec'))
