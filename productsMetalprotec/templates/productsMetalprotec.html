@@ -38,6 +38,48 @@
                     <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#addStock">Agregar stock <i class="fa-solid fa-plus"></i></a>
                 </div>
             </div>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-success text-white">Actualizar precios</a>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-success text-white">Cambiar almacen</a>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-danger text-white">Eliminar todo<i class="fa-solid fa-trash"></i></a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row mx-0">
+            <div class="col-2">
+                <div class="row mx-0">
+                    <label>Seleccionar usuario :</label>
+                    <input class="form-control" placeholder="Categoria ...">
+                </div>
+            </div>
+            <div class="col-2">
+                <br>
+                <div class="row mx-0">
+                    <a class="btn btn-success text-white">Filtrar</a>
+                </div>
+            </div>
+            <div class="col-2">
+                <br>
+                <div class="row mx-0">
+                    <a class="btn btn-danger text-white">Reestablecer</a>
+                </div>
+            </div>
+            <div class="col-2">
+                <br>
+                <div class="row mx-0">
+                    <a class="btn btn-info text-white">Descargar manual <i class="fa-solid fa-download"></i></a>
+                </div>
+            </div>
         </div>
         <br>
         <div>
@@ -80,6 +122,30 @@
 {% endblock %}
 
 {% block modalContent %}
+
+    <!-- Import products -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="importProducts">
+        <div class="modal-dialog" role="document">
+            <form method="post" action="{% url 'productsMetalprotec:importProductsData' %}">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Importar Productos</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input class="form-control" type="file" id="formFile" name="MyFile">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Importar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- New product modal window -->
     <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="newProduct">
