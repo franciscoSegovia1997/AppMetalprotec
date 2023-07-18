@@ -2424,7 +2424,9 @@ def sendGuideTeFacturo(request,idGuide):
     if env('ENV_PROJECT') == 'ProdMetalprotec':
         headersTeFacturo = {"X-Auth-Token":token_metalprotec,"Content-Type":"application/json"}
         urlGuide = 'https://invoice2u.pe/apiemisor/invoice2u/integracion/guia-remision'
-        r = requests.put(urlGuide,headers=headersTeFacturo,json=infoGuide)
+        r = requests.post(urlGuide,headers=headersTeFacturo,json=infoGuide)
+        print(r)
+        print(r.content)
         if((r.status_code==200) or (r.status_code==201)):
             guideObject.stateGuide = 'ENVIADA'
         guideObject.save()
@@ -2824,6 +2826,8 @@ def sendBillTeFacturo(request,idBill):
         headersTeFacturo = {"X-Auth-Token":token_metalprotec,"Content-Type":"application/json"}
         urlBill = 'https://invoice2u.pe/apiemisor/invoice2u/integracion/factura'
         r = requests.put(urlBill,headers=headersTeFacturo,json=infoBill)
+        print(r)
+        print(r.content)
         if((r.status_code==200) or (r.status_code==201)):
             billObject.stateBill = 'ENVIADA'
         billObject.save()
@@ -2840,6 +2844,8 @@ def sendCreditNoteTeFacturo(request,idCreditNote):
         headersTeFacturo = {"X-Auth-Token":token_metalprotec,"Content-Type":"application/json"}
         urlCreditNote = 'https://invoice2u.pe/apiemisor/invoice2u/integracion/nota-credito'
         r = requests.put(urlCreditNote,headers=headersTeFacturo,json=infoCreditNote)
+        print(r)
+        print(r.content)
         if((r.status_code==200) or (r.status_code==201)):
             creditNoteObject.stateCreditNote = 'ENVIADA'
         creditNoteObject.save()
@@ -2856,6 +2862,8 @@ def sendInvoiceTeFacturo(request,idInvoice):
         headersTeFacturo = {"X-Auth-Token":token_metalprotec,"Content-Type":"application/json"}
         urlInvoice = 'https://invoice2u.pe/apiemisor/invoice2u/integracion/boleta'
         r = requests.put(urlInvoice,headers=headersTeFacturo,json=infoInvoice)
+        print(r)
+        print(r.content)
         if((r.status_code==200) or (r.status_code==201)):
             invoiceObject.stateInvoice = 'ENVIADA'
         invoiceObject.save()
