@@ -152,3 +152,7 @@ def checkStockExist(productInfo,storeInfo):
         return False
     else:
         return True
+    
+def importProductsData(request):
+    if request.method == 'POST':
+        return HttpResponseRedirect(reverse('productsMetalprotec:productsMetalprotec'))

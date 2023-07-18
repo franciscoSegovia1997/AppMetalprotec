@@ -22,6 +22,30 @@
     <div class="container" style="height: 100vh; overflow: scroll;">
         <h1 class="mt-3 mb-3">Ordenes de compra</h1>
         <br>
-        
+        <div class="row">
+            <div class="col-2">
+                <br>
+                <div class="row mx-0">
+                    <button class="btn btn-success">Nuevo <i class="fa-solid fa-plus"></i></button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div>
+            <table class="table table-bordered table-hover" id="purchaseOrderTable" style="font-size: 12px;">
+                <thead class="table-dark">
+                    <th scope="col">Codigo</th>
+                    <th scope="col">Vendedor</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">RUC</th>
+                    <th scope="col">Proveedor</th>
+                    <th scope="col">Descargar OC</th>
+                    <th scope="col">Editar</th>
+                    <th scope="col">Eliminar</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock %}

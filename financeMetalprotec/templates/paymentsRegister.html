@@ -22,5 +22,124 @@
     <div class="container" style="height: 100vh; overflow: scroll;">
         <h1 class="mt-3 mb-3">Registro de abonos</h1>
         <br>
+        <div class="row">
+            <div class="col-2">
+                <br>
+                <div class="row mx-0">
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#newPayment">Registrar Abono <i class="fa-solid fa-plus"></i></button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div>
+            <table class="table table-bordered table-hover" id="paymentsTable" style="font-size: 12px;">
+                <thead class="table-dark">
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Banco</th>
+                    <th scope="col">Moneda</th>
+                    <th scope="col">Nro de operacion</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Estado OP</th>
+                    <th scope="col">Factura</th>
+                    <th scope="col">Guia</th>
+                    <th scope="col">Cotizacion</th>
+                    <th scope="col">Editar</th>
+                    <th scope="col">Eliminar</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <br>
     </div>
+{% endblock %}
+
+
+{% block modalContent %}
+
+    <!-- New client modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="newPayment">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'financeMetalprotec:paymentsRegister' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Nuevo Abono</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteNewClientInfo()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-12">
+                                <label>Banco</label>
+                                <select class="selectpicker form-control">
+                                    <option value="" selected></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3 mt-3">
+                            <div class="col-6">
+                                <label>Nro de operacion</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="col-6">
+                                <label>Nro de operacion 2</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Cliente</label>
+                                <select class="selectpicker form-control">
+                                    <option value="" selected></option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <br>
+                                <input class="form-check-input" type="checkbox">
+                                <label> Cancelado</label>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Comprobantes</label>
+                                <select class="selectpicker form-control">
+                                    <option value="" selected></option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label>Guia</label>
+                                <input type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Cotizacion</label>
+                                <input type="text" class="form-control" readonly>
+                            </div>
+                            <div class="col-6">
+                                <label>Vendedor</label>
+                                <input type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Fecha de registro</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="col-6">
+                                <br>
+                                <input class="form-check-input" type="checkbox">
+                                <label> Habilitado para comisiones</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="newClient">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

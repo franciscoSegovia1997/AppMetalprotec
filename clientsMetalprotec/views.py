@@ -111,3 +111,7 @@ def addClientAddress(request):
             asociatedClient=asociatedClient,
         )
         return HttpResponseRedirect(reverse('clientsMetalprotec:clientsMetalprotec'))
+    
+def importClientsData(request):
+    if request.method == 'POST':
+        return HttpResponseRedirect(reverse('clientsMetalprotec:clientsMetalprotec'))

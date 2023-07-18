@@ -10,4 +10,5 @@ urlpatterns = [
     path('updateClient',views.updateClient,name='updateClient'),
     path('getClientAddress',views.getClientAddress,name='getClientAddress'),
     path('addClientAddress',views.addClientAddress,name='addClientAddress'),
+    path('importClientsData',views.importClientsData,name='importClientsData')
 ]
