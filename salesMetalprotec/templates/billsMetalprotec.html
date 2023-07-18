@@ -100,7 +100,7 @@
                                 {% endif %}
                                 <td>{{ billInfo.stateTeFacturo }}</td>
                                 {% if billInfo.stateBill == 'ENVIADA' %}
-                                    <td class="text-center"><a class="btn btn-danger" href="#"><i class="fa-solid fa-trash"></i></a></td>
+                                    <td class="text-center"><a class="btn btn-danger" href="{% url 'salesMetalprotec:createCreditNoteFromBill' billInfo.id %}"><i class="fa-solid fa-trash"></i></a></td>
                                 {% else %}
                                     <td></td>
                                 {% endif %}
@@ -139,7 +139,7 @@
                                 {% endif %}
                                 <td>{{ billInfo.stateTeFacturo }}</td>
                                 {% if billInfo.stateBill == 'ENVIADA' %}
-                                    <td class="text-center"><a class="btn btn-danger" href="#"><i class="fa-solid fa-trash"></i></a></td>
+                                    <td class="text-center"><a class="btn btn-danger" href="{% url 'salesMetalprotec:createCreditNoteFromBill' billInfo.id %}"><i class="fa-solid fa-trash"></i></a></td>
                                 {% else %}
                                     <td></td>
                                 {% endif %}
@@ -179,7 +179,7 @@
                             {% endif %}
                             <td>{{ billInfo.stateTeFacturo }}</td>
                             {% if billInfo.stateBill == 'ENVIADA' %}
-                                <td class="text-center"><a class="btn btn-danger" href="#"><i class="fa-solid fa-trash"></i></a></td>
+                                <td class="text-center"><a class="btn btn-danger" href="{% url 'salesMetalprotec:createCreditNoteFromBill' billInfo.id %}"><i class="fa-solid fa-trash"></i></a></td>
                             {% else %}
                                 <td></td>
                             {% endif %}

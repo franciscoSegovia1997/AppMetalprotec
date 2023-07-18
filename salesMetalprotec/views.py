@@ -82,6 +82,7 @@ def editDataInvoice(request,idInvoice):
     })
 
 def newQuotation(request):
+    exchangeRate = getExchangeRate()
     if request.method == 'POST':
         quotationInfo = json.load(request)
         productsData = quotationInfo.get('productsData')
@@ -193,7 +194,8 @@ def newQuotation(request):
         'clientsSystem':clientSystem.objects.filter(endpointClient=request.user.extendeduser.endpointUser).order_by('id'),
         'usersSystem':extendedUser.objects.filter(endpointUser=request.user.extendeduser.endpointUser).order_by('id'),
         'productsSystem':productSystem.objects.filter(endpointProduct=request.user.extendeduser.endpointUser).order_by('id'),
-        'servicesSystem':serviceSystem.objects.filter(endpointService=request.user.extendeduser.endpointUser).order_by('id')
+        'servicesSystem':serviceSystem.objects.filter(endpointService=request.user.extendeduser.endpointUser).order_by('id'),
+        'exchangeRate':exchangeRate
     })
 
 
@@ -4100,3 +4102,173 @@ def getInfoCreditNote(creditNoteObject):
         'cuotas':None
     }
     return param_data
+
+
+def createCreditNoteFromBill(request,idBill):
+    asociatedBill = billSystem.objects.create(id=idBill)
+    endpointCreditNote = request.user.extendeduser.endpointUser
+    serieCreditNote = endpointCreditNote.serieNotaFactura
+    nroCreditNote = endpointCreditNote.nroNotaFactura
+    endpointCreditNote.nroNotaFactura = str(int(nroCreditNote) + 1)
+    endpointCreditNote.save()
+    codeCreditNote = nroCreditNote
+    while len(codeCreditNote) < 4:
+        codeCreditNote = '0' + codeCreditNote
+    codeCreditNote = f"{serieCreditNote}-{codeCreditNote}"
+    creditNoteSystem.objects.create(
+        asociatedBill=asociatedBill,
+        typeCreditNote='BILL',
+        stateCreditNote='GENERADA',
+        codeCreditNote=codeCreditNote,
+        stateTeFacturo='',
+        dateCreditNote=datetime.datetime.today(),
+        nroCreditNote=nroCreditNote,
+        originCreditNote='BILL',
+        endpointCreditNote=endpointCreditNote
+    )
+    return HttpResponseRedirect(reverse('salesMetalprotec:creditNotesMetalprotec'))
+
+
+def createCreditNoteFromInvoice(request,idInvoice):
+    asociatedInvoice = invoiceSystem.objects.create(id=idInvoice)
+    endpointCreditNote = request.user.extendeduser.endpointUser
+    serieCreditNote = endpointCreditNote.serieNotaBoleta
+    nroCreditNote = endpointCreditNote.nroNotaBoleta
+    endpointCreditNote.nroNotaBoleta = str(int(nroCreditNote) + 1)
+    endpointCreditNote.save()
+    codeCreditNote = nroCreditNote
+    while len(codeCreditNote) < 4:
+        codeCreditNote = '0' + codeCreditNote
+    codeCreditNote = f"{serieCreditNote}-{codeCreditNote}"
+    creditNoteSystem.objects.create(
+        asociatedInvoice=asociatedInvoice,
+        typeCreditNote='INVOICE',
+        stateCreditNote='GENERADA',
+        codeCreditNote=codeCreditNote,
+        stateTeFacturo='',
+        dateCreditNote=datetime.datetime.today(),
+        nroCreditNote=nroCreditNote,
+        originCreditNote='INVOICE',
+        endpointCreditNote=endpointCreditNote
+    )
+    return HttpResponseRedirect(reverse('salesMetalprotec:creditNotesMetalprotec'))
+
+
+def createBillFromGuides(request):
+    if request.method == 'POST':
+        guidesData = json.load(request)
+        guidesInfo = guidesData.get('guidesInfo')
+        probeGuide = guideSystem.objects.get(id=guidesInfo[0])
+
+        endpointBill = request.user.extendeduser.endpointUser
+        nroBill = endpointBill.nroFactura
+        serieBill = endpointBill.serieFactura
+        endpointBill.nroFactura = str(int(nroBill) + 1)
+        endpointBill.save()
+
+        codeBill = nroBill
+        while len(codeBill) < 4:
+            codeBill = '0' + codeBill
+        codeBill = f"{serieBill}-{codeBill}"
+
+        dateQuotesBill = []
+        if probeGuide.asociatedQuotation.paymentQuotation == 'CONTADO':
+            dateQuotesBill = []
+        else:
+            for numberData in range(int(probeGuide.asociatedQuotation.quotesQuotation)):
+                dateQuotesBill.append('2023-01-01')
+        infoCreatedBill = billSystem.objects.create(
+            commentBill='',
+            dateBill=datetime.datetime.today(),
+            relatedDocumentBill='',
+            dateQuotesBill=dateQuotesBill,
+            erBuy=probeGuide.asociatedQuotation.erBuy,
+            erSel=probeGuide.asociatedQuotation.erSel,
+            currencyBill=probeGuide.asociatedQuotation.currencyQuotation,
+            stateBill='GENERADA',
+            codeBill=codeBill,
+            stateTeFacturo='',
+            nroBill=nroBill,
+            typeItemsBill='PRODUCTOS',
+            originBill='GUIDE',
+            endpointBill=endpointBill
+        )
+
+        for idGuide in guidesInfo:
+            guideObject = guideSystem.objects.get(id=idGuide)
+            guideObject.asociatedBill = infoCreatedBill
+            guideObject.save()
+        return HttpResponseRedirect(reverse('salesMetalprotec:billsMetalprotec'))
+    
+def createInvoiceFromGuides(request):
+    if request.method == 'POST':
+        guidesData = json.load(request)
+        guidesInfo = guidesData.get('guidesInfo')
+        probeGuide = guideSystem.objects.get(id=guidesInfo[0])
+
+        endpointInvoice = request.user.extendeduser.endpointUser
+        nroInvoice = endpointInvoice.nroBoleta
+        serieInvoice = endpointInvoice.serieBoleta
+        endpointInvoice.nroBoleta = str(int(nroInvoice) + 1)
+        endpointInvoice.save()
+
+        codeInvoice = nroInvoice
+        while len(codeInvoice) < 4:
+            codeInvoice = '0' + codeInvoice
+        codeInvoice = f"{serieInvoice}-{codeInvoice}"
+
+        dateQuotesInvoice = []
+        if probeGuide.asociatedQuotation.paymentQuotation == 'CONTADO':
+            dateQuotesInvoice = []
+        else:
+            for numberData in range(int(probeGuide.asociatedQuotation.quotesQuotation)):
+                dateQuotesInvoice.append('2023-01-01')
+        infoCreatedInvoice = invoiceSystem.objects.create(
+            commentInvoice='',
+            dateInvoice=datetime.datetime.today(),
+            relatedDocumentInvoice='',
+            dateQuotesInvoice=dateQuotesInvoice,
+            erBuy=probeGuide.asociatedQuotation.erBuy,
+            erSel=probeGuide.asociatedQuotation.erSel,
+            currencyInvoice=probeGuide.asociatedQuotation.currencyQuotation,
+            stateInvoice='GENERADA',
+            codeInvoice=codeInvoice,
+            stateTeFacturo='',
+            nroInvoice=nroInvoice,
+            typeItemsInvoice='PRODUCTOS',
+            originInvoice='GUIDE',
+            endpointInvoice=endpointInvoice
+        )
+
+        for idGuide in guidesInfo:
+            guideObject = guideSystem.objects.get(id=idGuide)
+            guideObject.asociatedInvoice = infoCreatedInvoice
+            guideObject.save()
+        return HttpResponseRedirect(reverse('salesMetalprotec:invoicesMetalprotec'))
+    
+def getExchangeRate():
+    exchangeRate = []
+    try:
+        r = requests.get('https://www.sbs.gob.pe/app/pp/sistip_portal/paginas/publicacion/tipocambiopromedio.aspx')
+        datos = BeautifulSoup(r.text,'html.parser')
+        tc_fila = datos.find(id='ctl00_cphContent_rgTipoCambio_ctl00__0')
+        tc_fila = tc_fila.find_all(class_='APLI_fila2')
+        if len(tc_fila) == 2:
+            tc_compra = round(float(tc_fila[0].string),3)
+            tc_venta = round(float(tc_fila[1].string),3)
+            exchangeRate = []
+            exchangeRate.append(str(tc_compra))
+            exchangeRate.append(str(tc_venta))
+        else:
+            tc_compra = 0.000
+            tc_venta = 0.000
+            exchangeRate = []
+            exchangeRate.append(str(tc_compra))
+            exchangeRate.append(str(tc_venta))
+    except:
+        tc_compra = 3.705
+        tc_venta = 3.710
+        exchangeRate = []
+        exchangeRate.append(str(tc_compra))
+        exchangeRate.append(str(tc_venta))
+    return exchangeRate
