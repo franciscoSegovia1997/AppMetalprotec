@@ -71,26 +71,78 @@
                                 <td>{{ invoiceInfo.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}</td>
                                 <td>{{ invoiceInfo.codeInvoice }}</td>
                                 <td>{{ invoiceInfo.dateInvoice }}</td>
-                                <td>{{ invoiceInfo.stateInvoice }}</td>
+                                <td>
+                                    {% if invoiceInfo.stateInvoice == 'GENERADA' %}
+                                    <div class="bg-success rounded-pill text-white text-center">{{ invoiceInfo.stateInvoice }}</div>
+                                    {% endif %}
+                                    {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
+                                    <div class="bg-primary rounded-pill text-white text-center">{{ invoiceInfo.stateInvoice }}</div>
+                                    {% endif %}
+                                    {% if invoiceInfo.stateInvoice == 'ANULADA' %}
+                                    <div class="bg-warning rounded-pill text-white text-center">{{ invoiceInfo.stateInvoice }}</div>
+                                    {% endif %}
+                                </td>
                                 <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataInvoice' invoiceInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
+                                    <td class="text-center"><a class="btn btn-info" href="{% url 'salesMetalprotec:downloadInvoiceTeFacturo' invoiceInfo.id %}"><i class="fa-solid fa-download"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+                                {% if invoiceInfo.stateInvoice == 'GENERADA' %}
+                                    <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:sendInvoiceTeFacturo' invoiceInfo.id %}"><i class="fa-solid fa-arrow-right"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+                                {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
+                                    <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:verifyInvoiceTeFacturo' invoiceInfo.id %}"><i class="fa-solid fa-check"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
                                 <td>{{ invoiceInfo.stateTeFacturo }}</td>
-                                <td></td>
+                                {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
+                                    <td class="text-center"><a class="btn btn-danger" href="#"><i class="fa-solid fa-trash"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
                             </tr>
                             {% else %}
                             <tr>
                                 <td>{{ invoiceInfo.guidesystem_set.all.0.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}</td>
                                 <td>{{ invoiceInfo.codeInvoice }}</td>
                                 <td>{{ invoiceInfo.dateInvoice }}</td>
-                                <td>{{ invoiceInfo.stateInvoice }}</td>
+                                <td>
+                                    {% if invoiceInfo.stateInvoice == 'GENERADA' %}
+                                    <div class="bg-success rounded-pill text-white text-center">{{ invoiceInfo.stateInvoice }}</div>
+                                    {% endif %}
+                                    {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
+                                    <div class="bg-primary rounded-pill text-white text-center">{{ invoiceInfo.stateInvoice }}</div>
+                                    {% endif %}
+                                    {% if invoiceInfo.stateInvoice == 'ANULADA' %}
+                                    <div class="bg-warning rounded-pill text-white text-center">{{ invoiceInfo.stateInvoice }}</div>
+                                    {% endif %}
+                                </td>
                                 <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataInvoice' invoiceInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
+                                    <td class="text-center"><a class="btn btn-info" href="{% url 'salesMetalprotec:downloadInvoiceTeFacturo' invoiceInfo.id %}"><i class="fa-solid fa-download"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+                                {% if invoiceInfo.stateInvoice == 'GENERADA' %}
+                                    <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:sendInvoiceTeFacturo' invoiceInfo.id %}"><i class="fa-solid fa-arrow-right"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+                                {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
+                                    <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:verifyInvoiceTeFacturo' invoiceInfo.id %}"><i class="fa-solid fa-check"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
                                 <td>{{ invoiceInfo.stateTeFacturo }}</td>
-                                <td></td>
+                                {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
+                                    <td class="text-center"><a class="btn btn-danger" href="#"><i class="fa-solid fa-trash"></i></a></td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
                             </tr>
                             {% endif %}
                         {% else %}
@@ -98,13 +150,39 @@
                             <td>{{ invoiceInfo.asociatedQuotation.quotationclientdata.dataClientQuotation.1 }}</td>
                             <td>{{ invoiceInfo.codeInvoice }}</td>
                             <td>{{ invoiceInfo.dateInvoice }}</td>
-                            <td>{{ invoiceInfo.stateInvoice }}</td>
+                            <td>
+                                {% if invoiceInfo.stateInvoice == 'GENERADA' %}
+                                <div class="bg-success rounded-pill text-white text-center">{{ invoiceInfo.stateInvoice }}</div>
+                                {% endif %}
+                                {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
+                                <div class="bg-primary rounded-pill text-white text-center">{{ invoiceInfo.stateInvoice }}</div>
+                                {% endif %}
+                                {% if invoiceInfo.stateInvoice == 'ANULADA' %}
+                                <div class="bg-warning rounded-pill text-white text-center">{{ invoiceInfo.stateInvoice }}</div>
+                                {% endif %}
+                            </td>
                             <td class="text-center"><a class="btn btn-warning" href="{% url 'salesMetalprotec:editDataInvoice' invoiceInfo.id %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
+                                <td class="text-center"><a class="btn btn-info" href="{% url 'salesMetalprotec:downloadInvoiceTeFacturo' invoiceInfo.id %}"><i class="fa-solid fa-download"></i></a></td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                            {% if invoiceInfo.stateInvoice == 'GENERADA' %}
+                                <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:sendInvoiceTeFacturo' invoiceInfo.id %}"><i class="fa-solid fa-arrow-right"></i></a></td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                            {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
+                                <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:verifyInvoiceTeFacturo' invoiceInfo.id %}"><i class="fa-solid fa-check"></i></a></td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
                             <td>{{ invoiceInfo.stateTeFacturo }}</td>
-                            <td></td>
+                            {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
+                                <td class="text-center"><a class="btn btn-danger" href="#"><i class="fa-solid fa-trash"></i></a></td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
                         </tr>
                         {% endif %}
                     {% endfor %}

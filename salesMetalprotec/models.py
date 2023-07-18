@@ -123,6 +123,7 @@ class creditNoteSystem(models.Model):
     stateTeFacturo = models.CharField(max_length=24,null=True,blank=True)
     dateCreditNote = models.DateField(null=True,blank=True)
     nroCreditNote = models.CharField(max_length=12,null=True,blank=True)
+    originCreditNote = models.CharField(max_length=12,null=True,blank=True)
     endpointCreditNote = models.ForeignKey(endpointSystem, on_delete=models.CASCADE, null=True, blank=True)
 
 

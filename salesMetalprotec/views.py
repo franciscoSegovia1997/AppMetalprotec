@@ -44,11 +44,13 @@ def billsMetalprotec(request):
 
 def invoicesMetalprotec(request):
     return render(request,'invoicesMetalprotec.html',{
-        'invoicesSystem':invoiceSystem.objects.filter(endpointInvoice=request.user.extendeduser.endpointUser).order_by('id')
+        'invoicesSystem':invoiceSystem.objects.filter(endpointInvoice=request.user.extendeduser.endpointUser).order_by('-codeInvoice')
     })
 
 def creditNotesMetalprotec(request):
-    return render(request,'creditNotesMetalprotec.html')
+    return render(request,'creditNotesMetalprotec.html',{
+        'creditNotesSystem':creditNoteSystem.objects.filter(endpointCreditNote=request.user.extendeduser.endpointUser).order_by('-codeCreditNote')
+    })
 
 def editDataQuotation(request,idQuotation):
     quotationObject = quotationSystem.objects.get(id=idQuotation)
@@ -2449,6 +2451,30 @@ def verifyGuideTeFacturo(request,idGuide):
         guideObject.save()
     return HttpResponseRedirect(reverse('salesMetalprotec:guidesMetalprotec'))
 
+def verifyCreditNoteTeFacturo(request,idCreditNote):
+    creditNoteObject = creditNoteSystem.objects.get(id=idCreditNote)
+    if creditNoteObject.originCreditNote == 'INVOICE':
+        serieCreditNote = creditNoteObject.endpointCreditNote.serieNotaBoleta
+    else:
+        serieCreditNote = creditNoteObject.endpointCreditNote.serieNotaFactura
+    infoCreditNote = {
+        'emisor':'20541628631',
+        'numero':str(creditNoteObject.nroCreditNote),
+        'serie':serieCreditNote,
+        'tipoComprobante':'07'
+    }
+    print(infoCreditNote)
+    if env('ENV_PROJECT') == 'ProdMetalprotec':
+        headersTeFacturo = {"X-Auth-Token":token_metalprotec,"Content-Type":"application/json"}
+        urlState = 'https://invoice2u.pe/apiemisor/invoice2u/integracion/consultarEstado'
+        r = requests.put(urlState,headers=headersTeFacturo,json=infoCreditNote)
+        creditNoteObject.stateTeFacturo = r.json().get('estadoSunat').get('valor')
+        creditNoteObject.save()
+    else:
+        creditNoteObject.stateTeFacturo = 'Aceptado con Obs.'
+        creditNoteObject.save()
+    return HttpResponseRedirect(reverse('salesMetalprotec:creditNotesMetalprotec'))
+
 def verifyBillTeFacturo(request,idBill):
     billObject = billSystem.objects.get(id=idBill)
     infoBill = {
@@ -2468,6 +2494,27 @@ def verifyBillTeFacturo(request,idBill):
         billObject.stateTeFacturo = 'Aceptado con Obs.'
         billObject.save()
     return HttpResponseRedirect(reverse('salesMetalprotec:billsMetalprotec'))
+
+def verifyInvoiceTeFacturo(request,idInvoice):
+    invoiceObject = invoiceSystem.objects.get(id=idInvoice)
+    infoInvoice = {
+        'emisor':'20541628631',
+        'numero':str(invoiceObject.nroInvoice),
+        'serie':str(invoiceObject.endpointInvoice.serieBoleta),
+        'tipoComprobante':'03'
+    }
+    print(infoInvoice)
+    if env('ENV_PROJECT') == 'ProdMetalprotec':
+        headersTeFacturo = {"X-Auth-Token":token_metalprotec,"Content-Type":"application/json"}
+        urlState = 'https://invoice2u.pe/apiemisor/invoice2u/integracion/consultarEstado'
+        r = requests.put(urlState,headers=headersTeFacturo,json=infoInvoice)
+        print(r.json().get('estadoSunat').get('valor'))
+        invoiceObject.stateTeFacturo = r.json().get('estadoSunat').get('valor')
+        invoiceObject.save()
+    else:
+        invoiceObject.stateTeFacturo = 'Aceptado con Obs.'
+        invoiceObject.save()
+    return HttpResponseRedirect(reverse('salesMetalprotec:invoicesMetalprotec'))
 
 def downloadGuideTeFacturo(request,idGuide):
     guideObject = guideSystem.objects.get(id=idGuide)
@@ -2495,6 +2542,37 @@ def downloadGuideTeFacturo(request,idGuide):
         return response
     else:
         return HttpResponseRedirect(reverse('salesMetalprotec:guidesMetalprotec'))
+
+def downloadCreditNoteTeFacturo(request,idCreditNote):
+    creditNoteObject = creditNoteSystem.objects.get(id=idCreditNote)
+    if creditNoteObject.originCreditNote == 'INVOICE':
+        serieCreditNote = creditNoteObject.endpointCreditNote.serieNotaBoleta
+    else:
+        serieCreditNote = creditNoteObject.endpointCreditNote.serieNotaFactura
+    infoCreditNote = {
+        "emisor":"20541628631",
+        "numero":int(creditNoteObject.nroCreditNote),
+        "serie":serieCreditNote,
+        "tipoComprobante":"07"
+    }
+    print(infoCreditNote)
+    if env('ENV_PROJECT') == 'ProdMetalprotec':
+        headersTeFacturo = {"X-Auth-Token":token_metalprotec,"Content-Type":"application/json"}
+        urlDownload = 'https://invoice2u.pe/apiemisor/invoice2u/integracion/consultarPdf'
+        r = requests.put(urlDownload,headers=headersTeFacturo,json=infoCreditNote)
+        convert_b64 = r.content
+        info_decoded = b64decode(convert_b64,validate=True)
+
+        if info_decoded[0:4] != b'%PDF':
+            print("Hay un error en el pdf")
+            raise ValueError('Missing the PDF file signature')
+        print('PDF LISTO PARA ENVIAR')
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; ' + f'filename={creditNoteObject.codeCreditNote}.pdf'
+        response.write(info_decoded)
+        return response
+    else:
+        return HttpResponseRedirect(reverse('salesMetalprotec:creditNotesMetalprotec'))
     
 def downloadBillTeFacturo(request,idBill):
     billObject = billSystem.objects.get(id=idBill)
@@ -2522,6 +2600,33 @@ def downloadBillTeFacturo(request,idBill):
         return response
     else:
         return HttpResponseRedirect(reverse('salesMetalprotec:billsMetalprotec'))
+
+def downloadInvoiceTeFacturo(request,idInvoice):
+    invoiceObject = invoiceSystem.objects.get(id=idInvoice)
+    infoInvoice = {
+        "emisor":"20541628631",
+        "numero":int(invoiceObject.nroInvoice),
+        "serie":invoiceObject.endpointInvoice.serieBoleta,
+        "tipoComprobante":"03"
+    }
+    print(infoInvoice)
+    if env('ENV_PROJECT') == 'ProdMetalprotec':
+        headersTeFacturo = {"X-Auth-Token":token_metalprotec,"Content-Type":"application/json"}
+        urlDownload = 'https://invoice2u.pe/apiemisor/invoice2u/integracion/consultarPdf'
+        r = requests.put(urlDownload,headers=headersTeFacturo,json=infoInvoice)
+        convert_b64 = r.content
+        info_decoded = b64decode(convert_b64,validate=True)
+
+        if info_decoded[0:4] != b'%PDF':
+            print("Hay un error en el pdf")
+            raise ValueError('Missing the PDF file signature')
+        print('PDF LISTO APRA ENVIAR')
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; ' + f'filename={invoiceObject.codeInvoice}.pdf'
+        response.write(info_decoded)
+        return response
+    else:
+        return HttpResponseRedirect(reverse('salesMetalprotec:invoicesMetalprotec'))
 
 def getInfoGuide(guideObject):
     totalProductsInfo = guideObject.asociatedQuotation.quotationproductdata_set.all()
@@ -2724,6 +2829,38 @@ def sendBillTeFacturo(request,idBill):
         billObject.stateBill = 'ENVIADA'
         billObject.save()
     return HttpResponseRedirect(reverse('salesMetalprotec:billsMetalprotec'))
+
+def sendCreditNoteTeFacturo(request,idCreditNote):
+    creditNoteObject = creditNoteSystem.objects.get(id=idCreditNote)
+    infoCreditNote = getInfoCreditNote(creditNoteObject)
+    print(infoCreditNote)
+    if env('ENV_PROJECT') == 'ProdMetalprotec':
+        headersTeFacturo = {"X-Auth-Token":token_metalprotec,"Content-Type":"application/json"}
+        urlCreditNote = 'https://invoice2u.pe/apiemisor/invoice2u/integracion/nota-credito'
+        r = requests.put(urlCreditNote,headers=headersTeFacturo,json=infoCreditNote)
+        if((r.status_code==200) or (r.status_code==201)):
+            creditNoteObject.stateCreditNote = 'ENVIADA'
+        creditNoteObject.save()
+    else:
+        creditNoteObject.stateCreditNote = 'ENVIADA'
+        creditNoteObject.save()
+    return HttpResponseRedirect(reverse('salesMetalprotec:creditNotesMetalprotec'))
+
+def sendInvoiceTeFacturo(request,idInvoice):
+    invoiceObject = invoiceSystem.objects.get(id=idInvoice)
+    infoInvoice = getInfoInvoice(invoiceObject)
+    print(infoInvoice)
+    if env('ENV_PROJECT') == 'ProdMetalprotec':
+        headersTeFacturo = {"X-Auth-Token":token_metalprotec,"Content-Type":"application/json"}
+        urlInvoice = 'https://invoice2u.pe/apiemisor/invoice2u/integracion/boleta'
+        r = requests.put(urlInvoice,headers=headersTeFacturo,json=infoInvoice)
+        if((r.status_code==200) or (r.status_code==201)):
+            invoiceObject.stateInvoice = 'ENVIADA'
+        invoiceObject.save()
+    else:
+        invoiceObject.stateInvoice = 'ENVIADA'
+        invoiceObject.save()
+    return HttpResponseRedirect(reverse('salesMetalprotec:invoicesMetalprotec'))
 
 def getInfoBill(billObject):
     if billObject.typeItemsBill == 'SERVICIOS':
@@ -3037,5 +3174,929 @@ def getInfoBill(billObject):
             "documentoReferenciaList":guideJson,
         },
         'cuotas':quotesData
+    }
+    return param_data
+
+def getInfoInvoice(invoiceObject):
+    if invoiceObject.typeItemsInvoice == 'SERVICIOS':
+        refSuperior = {
+            "tipoIntegracion":"OFFLINE",
+            "tipoPlantilla":"02",
+            "tipoRegistro":"PRECIOS_SIN_IGV"
+        }
+    else:
+        refSuperior = {
+            "tipoIntegracion":"OFFLINE",
+            "tipoPlantilla":"01",
+            "tipoRegistro":"PRECIOS_SIN_IGV"
+        }
+
+    if invoiceObject.currencyInvoice == 'DOLARES':
+        currencyInvoice = 'USD'
+    else:
+        currencyInvoice = 'PEN'
+
+    if invoiceObject.originInvoice == 'GUIDE':
+        emailClient = invoiceObject.guidesystem_set.all()[0].asociatedQuotation.quotationclientdata.dataClientQuotation[4]
+        addressClient = invoiceObject.guidesystem_set.all()[0].asociatedQuotation.quotationclientdata.dataClientQuotation[7]
+        identificationClient = invoiceObject.guidesystem_set.all()[0].asociatedQuotation.quotationclientdata.dataClientQuotation[1]
+        documentClient = invoiceObject.guidesystem_set.all()[0].asociatedQuotation.quotationclientdata.dataClientQuotation[2]
+        condicionPago = invoiceObject.guidesystem_set.all()[0].asociatedQuotation.paymentQuotation
+        sellerInfo = invoiceObject.guidesystem_set.all()[0].asociatedQuotation.quotationsellerdata.dataUserQuotation[1]
+        guideJson = []
+        for guideInfo in invoiceObject.guidesystem_set.all():
+            newGuide = {
+                "tipoDocumento":"GUIAEMISIONREMITENTE",
+                "numero":guideInfo.nroGuide,
+                "serie":invoiceObject.endpointInvoice.serieGuia,
+            }
+            guideJson.append(newGuide)
+    else:
+        emailClient = invoiceObject.asociatedQuotation.quotationclientdata.dataClientQuotation[4]
+        addressClient = invoiceObject.asociatedQuotation.quotationclientdata.dataClientQuotation[7]
+        identificationClient = invoiceObject.asociatedQuotation.quotationclientdata.dataClientQuotation[1]
+        documentClient = invoiceObject.asociatedQuotation.quotationclientdata.dataClientQuotation[2]
+        condicionPago = invoiceObject.asociatedQuotation.paymentQuotation
+        sellerInfo = invoiceObject.asociatedQuotation.quotationsellerdata.dataUserQuotation[1]
+        guideJson = None
+
+    itemsInvoice = []
+    if invoiceObject.typeItemsInvoice == 'PRODUCTOS':
+        totalProductsItems = []
+        if invoiceObject.originInvoice == 'GUIDE':
+            for guideInfo in invoiceObject.guidesystem_set.all():
+                for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all():
+                    if productInfo.asociatedProduct is not None:
+                        if productInfo.asociatedProduct.kitProduct == 'ON':
+                            productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                            totalProductsItems.append([
+                                productoDatos.id,
+                                productoDatos.nameProduct,
+                                productoDatos.codeProduct,
+                                productoDatos.measureUnit,
+                                productInfo.dataProductQuotation[4],
+                                productInfo.dataProductQuotation[5],
+                                productInfo.dataProductQuotation[6],
+                                productInfo.dataProductQuotation[7],
+                                productInfo.dataProductQuotation[8],
+                                productInfo.dataProductQuotation[9],
+                            ])
+                        else:
+                            totalProductsItems.append(productInfo.dataProductQuotation)
+                    else:
+                        totalProductsItems.append(productInfo.dataProductQuotation)
+        else:
+            for productInfo in invoiceObject.asociatedQuotation.quotationproductdata_set.all():
+                if productInfo.asociatedProduct is not None:
+                    if productInfo.asociatedProduct.kitProduct == 'ON':
+                        productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                        totalProductsItems.append([
+                            productoDatos.id,
+                            productoDatos.nameProduct,
+                            productoDatos.codeProduct,
+                            productoDatos.measureUnit,
+                            productInfo.dataProductQuotation[4],
+                            productInfo.dataProductQuotation[5],
+                            productInfo.dataProductQuotation[6],
+                            productInfo.dataProductQuotation[7],
+                            productInfo.dataProductQuotation[8],
+                            productInfo.dataProductQuotation[9],
+                        ])
+                    else:
+                        totalProductsItems.append(productInfo.dataProductQuotation)
+                else:
+                    totalProductsItems.append(productInfo.dataProductQuotation)
+        
+        finalPrice = 0
+        if currencyInvoice == 'PEN':
+            i = 1
+            for productoItem in totalProductsItems:
+                if productoItem[5] == 'SOLES':
+                    precioProducto = Decimal(productoItem[6])*Decimal(Decimal(1.00) - (Decimal(productoItem[7])/100))
+                    precioProducto = float('%.2f' % precioProducto)
+                else:
+                    precioProducto = Decimal(productoItem[6])*Decimal(invoiceObject.erSel)*Decimal(Decimal(1.00) - Decimal(productoItem[7])/100)
+                    precioProducto = float('%.2f' % precioProducto)
+                if productoItem[9] == '1':
+                    infoProductoItem = {
+                        "codigoProducto":productoItem[2],
+                        "codigoProductoSunat":"",
+                        "descripcion":productoItem[1],
+                        "tipoAfectacion":"EXONERADO_TRANSFERENCIA_GRATUITA",
+                        "unidadMedida":"UNIDAD_BIENES",
+                        "cantidad":str(int(float(precioProducto[8]))),
+                        "valorReferencialUnitarioItem":precioProducto,
+                        "descuento":{
+                            "monto":'0',
+                        },
+                        "numeroOrden":i,
+                        "esPorcentaje":True
+                    }
+                    finalPrice = finalPrice
+                else:
+                    infoProductoItem = {
+                        "codigoProducto":productoItem[2],
+                        "codigoProductoSunat":"",
+                        "descripcion":productoItem[1],
+                        "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                        "unidadMedida":"UNIDAD_BIENES",
+                        "cantidad":str(int(float(productoItem[8]))),
+                        "valorVentaUnitarioItem":precioProducto,
+                        "descuento":{
+                            "monto":'0',
+                        },
+                        "numeroOrden":i,
+                        "esPorcentaje":True
+                    }
+                    finalPrice = finalPrice + precioProducto*round(float(productoItem[8]),2)
+                itemsInvoice.append(infoProductoItem)
+                i = i +1
+        else:
+            i = 1
+            for productoItem in totalProductsItems:
+                if productoItem[5] == 'SOLES':
+                    precioProducto = (Decimal(productoItem[6])/Decimal(invoiceObject.erSel))*Decimal(Decimal(1.00) - (Decimal(productoItem[7])/100))
+                    precioProducto = float('%.2f' % precioProducto)
+                else:
+                    precioProducto = Decimal(productoItem[6])*Decimal(Decimal(1.00) - Decimal(productoItem[7])/100)
+                    precioProducto = float('%.2f' % precioProducto)
+                if productoItem[9] == '1':
+                    infoProductoItem = {
+                        "codigoProducto":productoItem[2],
+                        "codigoProductoSunat":"",
+                        "descripcion":productoItem[1],
+                        "tipoAfectacion":"EXONERADO_TRANSFERENCIA_GRATUITA",
+                        "unidadMedida":"UNIDAD_BIENES",
+                        "cantidad":str(int(float(precioProducto[8]))),
+                        "valorReferencialUnitarioItem":precioProducto,
+                        "descuento":{
+                            "monto":'0',
+                        },
+                        "numeroOrden":i,
+                        "esPorcentaje":True
+                    }
+                    finalPrice = finalPrice
+                else:
+                    infoProductoItem = {
+                        "codigoProducto":productoItem[2],
+                        "codigoProductoSunat":"",
+                        "descripcion":productoItem[1],
+                        "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                        "unidadMedida":"UNIDAD_BIENES",
+                        "cantidad":str(int(float(productoItem[8]))),
+                        "valorVentaUnitarioItem":precioProducto,
+                        "descuento":{
+                            "monto":'0',
+                        },
+                        "numeroOrden":i,
+                        "esPorcentaje":True
+                    }
+                    finalPrice = finalPrice + precioProducto*round(float(productoItem[8]),2)
+                itemsInvoice.append(infoProductoItem)
+                i = i +1
+    else:
+        totalServicesItems = []
+        for serviceInfo in invoiceObject.asociatedQuotation.quotationservicedata_set.all():
+            totalServicesItems.append(serviceInfo.dataServiceQuotation)
+        finalPrice = 0
+        if currencyInvoice == 'PEN':
+            i = 1
+            for serviceItem in totalServicesItems:
+                if serviceItem[3] == 'SOLES':
+                    precioServicio = Decimal(serviceItem[4])*Decimal(Decimal(1.00) - (Decimal(serviceItem[5])/100))
+                    precioServicio = float('%.2f' % precioServicio)
+                if serviceItem[3] == 'DOLARES':
+                    precioServicio = Decimal(serviceItem[4])*Decimal(invoiceObject.erSel)*Decimal(Decimal(1.00) - (Decimal(serviceItem[5])/100))
+                    precioServicio = float('%.2f' % precioServicio)
+                infoServiceItem = {
+                    "codigoProducto":serviceItem[0],
+                    "codigoProductoSunat":"",
+                    "descripcion":serviceItem[1],
+                    "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                    "unidadMedida":"UNIDAD_BIENES",
+                    "cantidad":1,
+                    "valorVentaUnitarioItem":precioServicio,
+                    "descuento":{
+                        "monto":'0',
+                    },
+                    "numeroOrden":i,
+                    "esPorcentaje":True
+                }
+                finalPrice = finalPrice + precioServicio
+                itemsInvoice.append(infoServiceItem)
+                i = i + 1
+        else:
+            i = 1
+            for serviceItem in totalServicesItems:
+                if serviceItem[3] == 'DOLARES':
+                    precioServicio = Decimal(serviceItem[4])*Decimal(Decimal(1.00) - Decimal(serviceItem[5])/100)
+                    precioServicio = float('%.2f' % precioServicio)
+                if serviceItem[3] == 'SOLES':
+                    precioServicio = (Decimal(serviceItem[4])/Decimal(invoiceObject.erSel))*Decimal(Decimal(1.00) - (Decimal(serviceItem[5])/100))
+                    precioServicio = float('%.2f' % precioServicio)
+                infoServiceItem = {
+                    "codigoProducto":serviceItem[0],
+                    "codigoProductoSunat":"",
+                    "descripcion":serviceItem[1],
+                    "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                    "unidadMedida":"UNIDAD_BIENES",
+                    "cantidad":1,
+                    "valorVentaUnitarioItem":precioServicio,
+                    "descuento":{
+                        "monto":'0',
+                    },
+                    "numeroOrden":i,
+                    "esPorcentaje":True
+                }
+                finalPrice = finalPrice + precioServicio
+                itemsInvoice.append(infoServiceItem)
+                i = i + 1
+    
+    quotesData = []
+    if condicionPago == 'CONTADO':
+        quotesData = None
+    else:
+        totalQuotes = len(invoiceObject.dateQuotesInvoice)
+        finalPrice = float('%.2f' % finalPrice)
+        monto = '%.2f' % ((finalPrice*1.18)/int(totalQuotes))
+        i=0
+        while i < totalQuotes:
+            quoteInfo = {
+                "numero":'00' + str(i+1),
+                "fecha":invoiceObject.dateQuotesInvoice[i],
+                "monto":str(monto),
+                "moneda":currencyInvoice
+            }
+            i = i+1
+            quotesData.append(quoteInfo)
+    
+    if len(documentClient) == 11:
+        tipoDocumentoBoleta = 'RUC'
+    else:
+        tipoDocumentoBoleta = 'DOC_NACIONAL_DE_IDENTIDAD'
+    
+    param_data = {
+        "close2u":refSuperior, 
+        "datosDocumento":
+        {
+            "serie":invoiceObject.endpointInvoice.serieBoleta,
+            "numero":invoiceObject.nroInvoice,
+            "moneda":currencyInvoice,
+            "fechaEmision":invoiceObject.dateInvoice.strftime("%Y-%m-%d"),
+            "horaEmision":None,
+            "fechaVencimiento": None,
+            "formaPago":condicionPago,
+            "ordencompra":invoiceObject.relatedDocumentInvoice,
+            "puntoEmisor":None,
+            "glosa":str(invoiceObject.commentInvoice),
+        },
+        "detalleDocumento":itemsInvoice,
+        "emisor":
+        {
+            "correo":"info@metalprotec.com",
+            "nombreComercial": None,
+            "nombreLegal": "METALPROTEC",
+            "numeroDocumentoIdentidad": "20541628631",
+            "tipoDocumentoIdentidad": "RUC",
+            "domicilioFiscal":
+            {
+                "pais":"PERU",
+                "departamento":"ANCASH",
+                "provincia":"SANTA",
+                "distrito":"NUEVO CHIMBOTE",
+                "direccon":"Mza. J4 Lote. 39",
+                "ubigeo":"02712"
+            }
+        },
+        "informacionAdicional":
+        {
+            "tipoOperacion":"VENTA_INTERNA",
+            "coVendedor":None,
+            "vendedor":sellerInfo
+        },
+        "receptor":
+        {
+            "correo":emailClient,
+            "correoCopia":None,
+            "domicilioFiscal":
+            {
+                "departamento":None,
+                "direccion":addressClient,
+                "distrito":None,
+                "pais":"PERU",
+                "provincia": None,
+                "ubigeo": None,
+                "urbanizacion": None
+            },
+            "nombreComercial":None,
+            "nombreLegal":identificationClient,
+            "numeroDocumentoIdentidad":documentClient,
+            "tipoDocumentoIdentidad":tipoDocumentoBoleta
+        },
+        'referencias':{
+            "documentoReferenciaList":guideJson,
+        },
+        'cuotas':quotesData
+    }
+    return param_data
+
+def getInfoCreditNote(creditNoteObject):
+    if creditNoteObject.originCreditNote == 'INVOICE':
+        invoiceObject = creditNoteObject.asociatedInvoice
+        if invoiceObject.typeItemsInvoice == 'SERVICIOS':
+            refSuperior = {
+                "tipoIntegracion":"OFFLINE",
+                "tipoPlantilla":"01",
+                "tipoRegistro":"PRECIOS_SIN_IGV"
+            }
+        else:
+            refSuperior = {
+                "tipoIntegracion":"OFFLINE",
+                "tipoPlantilla":"01",
+                "tipoRegistro":"PRECIOS_SIN_IGV"
+            }
+
+        if invoiceObject.currencyInvoice == 'DOLARES':
+            currencyInvoice = 'USD'
+        else:
+            currencyInvoice = 'PEN'
+
+        if invoiceObject.originInvoice == 'GUIDE':
+            emailClient = invoiceObject.guidesystem_set.all()[0].asociatedQuotation.quotationclientdata.dataClientQuotation[4]
+            addressClient = invoiceObject.guidesystem_set.all()[0].asociatedQuotation.quotationclientdata.dataClientQuotation[7]
+            identificationClient = invoiceObject.guidesystem_set.all()[0].asociatedQuotation.quotationclientdata.dataClientQuotation[1]
+            documentClient = invoiceObject.guidesystem_set.all()[0].asociatedQuotation.quotationclientdata.dataClientQuotation[2]
+            condicionPago = invoiceObject.guidesystem_set.all()[0].asociatedQuotation.paymentQuotation
+            sellerInfo = invoiceObject.guidesystem_set.all()[0].asociatedQuotation.quotationsellerdata.dataUserQuotation[1]
+            guideJson = []
+            for guideInfo in invoiceObject.guidesystem_set.all():
+                newGuide = {
+                    "tipoDocumento":"GUIAEMISIONREMITENTE",
+                    "numero":guideInfo.nroGuide,
+                    "serie":invoiceObject.endpointInvoice.serieGuia,
+                }
+                guideJson.append(newGuide)
+        else:
+            emailClient = invoiceObject.asociatedQuotation.quotationclientdata.dataClientQuotation[4]
+            addressClient = invoiceObject.asociatedQuotation.quotationclientdata.dataClientQuotation[7]
+            identificationClient = invoiceObject.asociatedQuotation.quotationclientdata.dataClientQuotation[1]
+            documentClient = invoiceObject.asociatedQuotation.quotationclientdata.dataClientQuotation[2]
+            condicionPago = invoiceObject.asociatedQuotation.paymentQuotation
+            sellerInfo = invoiceObject.asociatedQuotation.quotationsellerdata.dataUserQuotation[1]
+            guideJson = None
+
+        itemsInvoice = []
+        if invoiceObject.typeItemsInvoice == 'PRODUCTOS':
+            totalProductsItems = []
+            if invoiceObject.originInvoice == 'GUIDE':
+                for guideInfo in invoiceObject.guidesystem_set.all():
+                    for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all():
+                        if productInfo.asociatedProduct is not None:
+                            if productInfo.asociatedProduct.kitProduct == 'ON':
+                                productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                                totalProductsItems.append([
+                                    productoDatos.id,
+                                    productoDatos.nameProduct,
+                                    productoDatos.codeProduct,
+                                    productoDatos.measureUnit,
+                                    productInfo.dataProductQuotation[4],
+                                    productInfo.dataProductQuotation[5],
+                                    productInfo.dataProductQuotation[6],
+                                    productInfo.dataProductQuotation[7],
+                                    productInfo.dataProductQuotation[8],
+                                    productInfo.dataProductQuotation[9],
+                                ])
+                            else:
+                                totalProductsItems.append(productInfo.dataProductQuotation)
+                        else:
+                            totalProductsItems.append(productInfo.dataProductQuotation)
+            else:
+                for productInfo in invoiceObject.asociatedQuotation.quotationproductdata_set.all():
+                    if productInfo.asociatedProduct is not None:
+                        if productInfo.asociatedProduct.kitProduct == 'ON':
+                            productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                            totalProductsItems.append([
+                                productoDatos.id,
+                                productoDatos.nameProduct,
+                                productoDatos.codeProduct,
+                                productoDatos.measureUnit,
+                                productInfo.dataProductQuotation[4],
+                                productInfo.dataProductQuotation[5],
+                                productInfo.dataProductQuotation[6],
+                                productInfo.dataProductQuotation[7],
+                                productInfo.dataProductQuotation[8],
+                                productInfo.dataProductQuotation[9],
+                            ])
+                        else:
+                            totalProductsItems.append(productInfo.dataProductQuotation)
+                    else:
+                        totalProductsItems.append(productInfo.dataProductQuotation)
+            
+            finalPrice = 0
+            if currencyInvoice == 'PEN':
+                i = 1
+                for productoItem in totalProductsItems:
+                    if productoItem[5] == 'SOLES':
+                        precioProducto = Decimal(productoItem[6])*Decimal(Decimal(1.00) - (Decimal(productoItem[7])/100))
+                        precioProducto = float('%.2f' % precioProducto)
+                    else:
+                        precioProducto = Decimal(productoItem[6])*Decimal(invoiceObject.erSel)*Decimal(Decimal(1.00) - Decimal(productoItem[7])/100)
+                        precioProducto = float('%.2f' % precioProducto)
+                    if productoItem[9] == '1':
+                        infoProductoItem = {
+                            "codigoProducto":productoItem[2],
+                            "codigoProductoSunat":"",
+                            "descripcion":productoItem[1],
+                            "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                            "unidadMedida":"UNIDAD_BIENES",
+                            "cantidad":str(int(float(precioProducto[8]))),
+                            "valorReferencialUnitarioItem":precioProducto,
+                            "descuento":{
+                                "monto":'0',
+                            },
+                            "numeroOrden":i,
+                            "esPorcentaje":True
+                        }
+                        finalPrice = finalPrice
+                    else:
+                        infoProductoItem = {
+                            "codigoProducto":productoItem[2],
+                            "codigoProductoSunat":"",
+                            "descripcion":productoItem[1],
+                            "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                            "unidadMedida":"UNIDAD_BIENES",
+                            "cantidad":str(int(float(productoItem[8]))),
+                            "valorVentaUnitarioItem":precioProducto,
+                            "descuento":{
+                                "monto":'0',
+                            },
+                            "numeroOrden":i,
+                            "esPorcentaje":True
+                        }
+                        finalPrice = finalPrice + precioProducto*round(float(productoItem[8]),2)
+                    itemsInvoice.append(infoProductoItem)
+                    i = i +1
+            else:
+                i = 1
+                for productoItem in totalProductsItems:
+                    if productoItem[5] == 'SOLES':
+                        precioProducto = (Decimal(productoItem[6])/Decimal(invoiceObject.erSel))*Decimal(Decimal(1.00) - (Decimal(productoItem[7])/100))
+                        precioProducto = float('%.2f' % precioProducto)
+                    else:
+                        precioProducto = Decimal(productoItem[6])*Decimal(Decimal(1.00) - Decimal(productoItem[7])/100)
+                        precioProducto = float('%.2f' % precioProducto)
+                    if productoItem[9] == '1':
+                        infoProductoItem = {
+                            "codigoProducto":productoItem[2],
+                            "codigoProductoSunat":"",
+                            "descripcion":productoItem[1],
+                            "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                            "unidadMedida":"UNIDAD_BIENES",
+                            "cantidad":str(int(float(precioProducto[8]))),
+                            "valorReferencialUnitarioItem":precioProducto,
+                            "descuento":{
+                                "monto":'0',
+                            },
+                            "numeroOrden":i,
+                            "esPorcentaje":True
+                        }
+                        finalPrice = finalPrice
+                    else:
+                        infoProductoItem = {
+                            "codigoProducto":productoItem[2],
+                            "codigoProductoSunat":"",
+                            "descripcion":productoItem[1],
+                            "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                            "unidadMedida":"UNIDAD_BIENES",
+                            "cantidad":str(int(float(productoItem[8]))),
+                            "valorVentaUnitarioItem":precioProducto,
+                            "descuento":{
+                                "monto":'0',
+                            },
+                            "numeroOrden":i,
+                            "esPorcentaje":True
+                        }
+                        finalPrice = finalPrice + precioProducto*round(float(productoItem[8]),2)
+                    itemsInvoice.append(infoProductoItem)
+                    i = i +1
+        else:
+            totalServicesItems = []
+            for serviceInfo in invoiceObject.asociatedQuotation.quotationservicedata_set.all():
+                totalServicesItems.append(serviceInfo.dataServiceQuotation)
+            finalPrice = 0
+            if currencyInvoice == 'PEN':
+                i = 1
+                for serviceItem in totalServicesItems:
+                    if serviceItem[3] == 'SOLES':
+                        precioServicio = Decimal(serviceItem[4])*Decimal(Decimal(1.00) - (Decimal(serviceItem[5])/100))
+                        precioServicio = float('%.2f' % precioServicio)
+                    if serviceItem[3] == 'DOLARES':
+                        precioServicio = Decimal(serviceItem[4])*Decimal(invoiceObject.erSel)*Decimal(Decimal(1.00) - (Decimal(serviceItem[5])/100))
+                        precioServicio = float('%.2f' % precioServicio)
+                    infoServiceItem = {
+                        "codigoProducto":serviceItem[0],
+                        "codigoProductoSunat":"",
+                        "descripcion":serviceItem[1],
+                        "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                        "unidadMedida":"UNIDAD_BIENES",
+                        "cantidad":1,
+                        "valorVentaUnitarioItem":precioServicio,
+                        "descuento":{
+                            "monto":'0',
+                        },
+                        "numeroOrden":i,
+                        "esPorcentaje":True
+                    }
+                    finalPrice = finalPrice + precioServicio
+                    itemsInvoice.append(infoServiceItem)
+                    i = i + 1
+            else:
+                i = 1
+                for serviceItem in totalServicesItems:
+                    if serviceItem[3] == 'DOLARES':
+                        precioServicio = Decimal(serviceItem[4])*Decimal(Decimal(1.00) - Decimal(serviceItem[5])/100)
+                        precioServicio = float('%.2f' % precioServicio)
+                    if serviceItem[3] == 'SOLES':
+                        precioServicio = (Decimal(serviceItem[4])/Decimal(invoiceObject.erSel))*Decimal(Decimal(1.00) - (Decimal(serviceItem[5])/100))
+                        precioServicio = float('%.2f' % precioServicio)
+                    infoServiceItem = {
+                        "codigoProducto":serviceItem[0],
+                        "codigoProductoSunat":"",
+                        "descripcion":serviceItem[1],
+                        "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                        "unidadMedida":"UNIDAD_BIENES",
+                        "cantidad":1,
+                        "valorVentaUnitarioItem":precioServicio,
+                        "descuento":{
+                            "monto":'0',
+                        },
+                        "numeroOrden":i,
+                        "esPorcentaje":True
+                    }
+                    finalPrice = finalPrice + precioServicio
+                    itemsInvoice.append(infoServiceItem)
+                    i = i + 1
+        
+        quotesData = []
+        if condicionPago == 'CONTADO':
+            quotesData = None
+        else:
+            totalQuotes = len(invoiceObject.dateQuotesInvoice)
+            finalPrice = float('%.2f' % finalPrice)
+            monto = '%.2f' % ((finalPrice*1.18)/int(totalQuotes))
+            i=0
+            while i < totalQuotes:
+                quoteInfo = {
+                    "numero":'00' + str(i+1),
+                    "fecha":invoiceObject.dateQuotesInvoice[i],
+                    "monto":str(monto),
+                    "moneda":currencyInvoice
+                }
+                i = i+1
+                quotesData.append(quoteInfo)
+        
+        if len(documentClient) == 11:
+            tipoDocumentoBoleta = 'RUC'
+        else:
+            tipoDocumentoBoleta = 'DOC_NACIONAL_DE_IDENTIDAD'
+
+        nroComprobante = int(invoiceObject.nroInvoice)
+        serieComprobante = invoiceObject.endpointInvoice.serieBoleta
+        typeDocument = 'BOLETA'
+        dateDocument = invoiceObject.dateInvoice.strftime("%Y-%m-%d")
+    else:
+        billObject = creditNoteObject.asociatedBill
+        if billObject.typeItemsBill == 'SERVICIOS':
+            refSuperior = {
+                "tipoIntegracion":"OFFLINE",
+                "tipoPlantilla":"01",
+                "tipoRegistro":"PRECIOS_SIN_IGV"
+            }
+        else:
+            refSuperior = {
+                "tipoIntegracion":"OFFLINE",
+                "tipoPlantilla":"01",
+                "tipoRegistro":"PRECIOS_SIN_IGV"
+            }
+
+        if billObject.currencyBill == 'DOLARES':
+            currencyBill = 'USD'
+        else:
+            currencyBill = 'PEN'
+
+        if billObject.originBill == 'GUIDE':
+            emailClient = billObject.guidesystem_set.all()[0].asociatedQuotation.quotationclientdata.dataClientQuotation[4]
+            addressClient = billObject.guidesystem_set.all()[0].asociatedQuotation.quotationclientdata.dataClientQuotation[7]
+            identificationClient = billObject.guidesystem_set.all()[0].asociatedQuotation.quotationclientdata.dataClientQuotation[1]
+            documentClient = billObject.guidesystem_set.all()[0].asociatedQuotation.quotationclientdata.dataClientQuotation[2]
+            condicionPago = billObject.guidesystem_set.all()[0].asociatedQuotation.paymentQuotation
+            sellerInfo = billObject.guidesystem_set.all()[0].asociatedQuotation.quotationsellerdata.dataUserQuotation[1]
+            guideJson = []
+            for guideInfo in billObject.guidesystem_set.all():
+                newGuide = {
+                    "tipoDocumento":"GUIAEMISIONREMITENTE",
+                    "numero":guideInfo.nroGuide,
+                    "serie":billObject.endpointBill.serieGuia,
+                }
+                guideJson.append(newGuide)
+        else:
+            emailClient = billObject.asociatedQuotation.quotationclientdata.dataClientQuotation[4]
+            addressClient = billObject.asociatedQuotation.quotationclientdata.dataClientQuotation[7]
+            identificationClient = billObject.asociatedQuotation.quotationclientdata.dataClientQuotation[1]
+            documentClient = billObject.asociatedQuotation.quotationclientdata.dataClientQuotation[2]
+            condicionPago = billObject.asociatedQuotation.paymentQuotation
+            sellerInfo = billObject.asociatedQuotation.quotationsellerdata.dataUserQuotation[1]
+            guideJson = None
+
+        itemsBill = []
+        if billObject.typeItemsBill == 'PRODUCTOS':
+            totalProductsItems = []
+            if billObject.originBill == 'GUIDE':
+                for guideInfo in billObject.guidesystem_set.all():
+                    for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all():
+                        if productInfo.asociatedProduct is not None:
+                            if productInfo.asociatedProduct.kitProduct == 'ON':
+                                productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                                totalProductsItems.append([
+                                    productoDatos.id,
+                                    productoDatos.nameProduct,
+                                    productoDatos.codeProduct,
+                                    productoDatos.measureUnit,
+                                    productInfo.dataProductQuotation[4],
+                                    productInfo.dataProductQuotation[5],
+                                    productInfo.dataProductQuotation[6],
+                                    productInfo.dataProductQuotation[7],
+                                    productInfo.dataProductQuotation[8],
+                                    productInfo.dataProductQuotation[9],
+                                ])
+                            else:
+                                totalProductsItems.append(productInfo.dataProductQuotation)
+                        else:
+                            totalProductsItems.append(productInfo.dataProductQuotation)
+            else:
+                for productInfo in billObject.asociatedQuotation.quotationproductdata_set.all():
+                    if productInfo.asociatedProduct is not None:
+                        if productInfo.asociatedProduct.kitProduct == 'ON':
+                            productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                            totalProductsItems.append([
+                                productoDatos.id,
+                                productoDatos.nameProduct,
+                                productoDatos.codeProduct,
+                                productoDatos.measureUnit,
+                                productInfo.dataProductQuotation[4],
+                                productInfo.dataProductQuotation[5],
+                                productInfo.dataProductQuotation[6],
+                                productInfo.dataProductQuotation[7],
+                                productInfo.dataProductQuotation[8],
+                                productInfo.dataProductQuotation[9],
+                            ])
+                        else:
+                            totalProductsItems.append(productInfo.dataProductQuotation)
+                    else:
+                        totalProductsItems.append(productInfo.dataProductQuotation)
+            
+            finalPrice = 0
+            if currencyBill == 'PEN':
+                i = 1
+                for productoItem in totalProductsItems:
+                    if productoItem[5] == 'SOLES':
+                        precioProducto = Decimal(productoItem[6])*Decimal(Decimal(1.00) - (Decimal(productoItem[7])/100))
+                        precioProducto = float('%.2f' % precioProducto)
+                    else:
+                        precioProducto = Decimal(productoItem[6])*Decimal(billObject.erSel)*Decimal(Decimal(1.00) - Decimal(productoItem[7])/100)
+                        precioProducto = float('%.2f' % precioProducto)
+                    if productoItem[9] == '1':
+                        infoProductoItem = {
+                            "codigoProducto":productoItem[2],
+                            "codigoProductoSunat":"",
+                            "descripcion":productoItem[1],
+                            "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                            "unidadMedida":"UNIDAD_BIENES",
+                            "cantidad":str(int(float(precioProducto[8]))),
+                            "valorReferencialUnitarioItem":precioProducto,
+                            "descuento":{
+                                "monto":'0',
+                            },
+                            "numeroOrden":i,
+                            "esPorcentaje":True
+                        }
+                        finalPrice = finalPrice
+                    else:
+                        infoProductoItem = {
+                            "codigoProducto":productoItem[2],
+                            "codigoProductoSunat":"",
+                            "descripcion":productoItem[1],
+                            "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                            "unidadMedida":"UNIDAD_BIENES",
+                            "cantidad":str(int(float(productoItem[8]))),
+                            "valorVentaUnitarioItem":precioProducto,
+                            "descuento":{
+                                "monto":'0',
+                            },
+                            "numeroOrden":i,
+                            "esPorcentaje":True
+                        }
+                        finalPrice = finalPrice + precioProducto*round(float(productoItem[8]),2)
+                    itemsBill.append(infoProductoItem)
+                    i = i +1
+            else:
+                i = 1
+                for productoItem in totalProductsItems:
+                    if productoItem[5] == 'SOLES':
+                        precioProducto = (Decimal(productoItem[6])/Decimal(billObject.erSel))*Decimal(Decimal(1.00) - (Decimal(productoItem[7])/100))
+                        precioProducto = float('%.2f' % precioProducto)
+                    else:
+                        precioProducto = Decimal(productoItem[6])*Decimal(Decimal(1.00) - Decimal(productoItem[7])/100)
+                        precioProducto = float('%.2f' % precioProducto)
+                    if productoItem[9] == '1':
+                        infoProductoItem = {
+                            "codigoProducto":productoItem[2],
+                            "codigoProductoSunat":"",
+                            "descripcion":productoItem[1],
+                            "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                            "unidadMedida":"UNIDAD_BIENES",
+                            "cantidad":str(int(float(precioProducto[8]))),
+                            "valorReferencialUnitarioItem":precioProducto,
+                            "descuento":{
+                                "monto":'0',
+                            },
+                            "numeroOrden":i,
+                            "esPorcentaje":True
+                        }
+                        finalPrice = finalPrice
+                    else:
+                        infoProductoItem = {
+                            "codigoProducto":productoItem[2],
+                            "codigoProductoSunat":"",
+                            "descripcion":productoItem[1],
+                            "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                            "unidadMedida":"UNIDAD_BIENES",
+                            "cantidad":str(int(float(productoItem[8]))),
+                            "valorVentaUnitarioItem":precioProducto,
+                            "descuento":{
+                                "monto":'0',
+                            },
+                            "numeroOrden":i,
+                            "esPorcentaje":True
+                        }
+                        finalPrice = finalPrice + precioProducto*round(float(productoItem[8]),2)
+                    itemsBill.append(infoProductoItem)
+                    i = i +1
+        else:
+            totalServicesItems = []
+            for serviceInfo in billObject.asociatedQuotation.quotationservicedata_set.all():
+                totalServicesItems.append(serviceInfo.dataServiceQuotation)
+            finalPrice = 0
+            if currencyBill == 'PEN':
+                i = 1
+                for serviceItem in totalServicesItems:
+                    if serviceItem[3] == 'SOLES':
+                        precioServicio = Decimal(serviceItem[4])*Decimal(Decimal(1.00) - (Decimal(serviceItem[5])/100))
+                        precioServicio = float('%.2f' % precioServicio)
+                    if serviceItem[3] == 'DOLARES':
+                        precioServicio = Decimal(serviceItem[4])*Decimal(billObject.erSel)*Decimal(Decimal(1.00) - (Decimal(serviceItem[5])/100))
+                        precioServicio = float('%.2f' % precioServicio)
+                    infoServiceItem = {
+                        "codigoProducto":serviceItem[0],
+                        "codigoProductoSunat":"",
+                        "descripcion":serviceItem[1],
+                        "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                        "unidadMedida":"UNIDAD_BIENES",
+                        "cantidad":1,
+                        "valorVentaUnitarioItem":precioServicio,
+                        "descuento":{
+                            "monto":'0',
+                        },
+                        "numeroOrden":i,
+                        "esPorcentaje":True
+                    }
+                    finalPrice = finalPrice + precioServicio
+                    itemsBill.append(infoServiceItem)
+                    i = i + 1
+            else:
+                i = 1
+                for serviceItem in totalServicesItems:
+                    if serviceItem[3] == 'DOLARES':
+                        precioServicio = Decimal(serviceItem[4])*Decimal(Decimal(1.00) - Decimal(serviceItem[5])/100)
+                        precioServicio = float('%.2f' % precioServicio)
+                    if serviceItem[3] == 'SOLES':
+                        precioServicio = (Decimal(serviceItem[4])/Decimal(billObject.erSel))*Decimal(Decimal(1.00) - (Decimal(serviceItem[5])/100))
+                        precioServicio = float('%.2f' % precioServicio)
+                    infoServiceItem = {
+                        "codigoProducto":serviceItem[0],
+                        "codigoProductoSunat":"",
+                        "descripcion":serviceItem[1],
+                        "tipoAfectacion":"GRAVADO_OPERACION_ONEROSA",
+                        "unidadMedida":"UNIDAD_BIENES",
+                        "cantidad":1,
+                        "valorVentaUnitarioItem":precioServicio,
+                        "descuento":{
+                            "monto":'0',
+                        },
+                        "numeroOrden":i,
+                        "esPorcentaje":True
+                    }
+                    finalPrice = finalPrice + precioServicio
+                    itemsBill.append(infoServiceItem)
+                    i = i + 1
+        
+        quotesData = []
+        if condicionPago == 'CONTADO':
+            quotesData = None
+        else:
+            totalQuotes = len(billObject.dateQuotesBill)
+            finalPrice = float('%.2f' % finalPrice)
+            monto = '%.2f' % ((finalPrice*1.18)/int(totalQuotes))
+            i=0
+            while i < totalQuotes:
+                quoteInfo = {
+                    "numero":'00' + str(i+1),
+                    "fecha":billObject.dateQuotesBill[i],
+                    "monto":str(monto),
+                    "moneda":currencyBill
+                }
+                i = i+1
+                quotesData.append(quoteInfo)
+        nroComprobante = int(billObject.nroBill)
+        serieComprobante = billObject.endpointBill.serieFactura
+        typeDocument = 'FACTURA'
+        dateDocument = billObject.dateBill.strftime("%Y-%m-%d")
+
+    if creditNoteObject.originCreditNote == 'INVOICE':
+        currencyNote = currencyInvoice
+        serieNota = billObject.endpointBill.serieNotaFactura
+        documentoIdentidad = tipoDocumentoBoleta
+        itemsNote = itemsInvoice
+    else:
+        currencyNote = currencyBill
+        serieNota = invoiceObject.endpointInvoice.serieNotaBoleta
+        documentoIdentidad = 'RUC'
+        itemsNote = itemsBill
+
+    param_data = {
+        "close2u":refSuperior,
+        "comprobanteAjustado":{
+            "serie":serieComprobante,
+            "numero":nroComprobante,
+            "tipoDocumento":typeDocument,
+            "fechaEmision":dateDocument
+        },
+        "datosDocumento":
+        {
+            "serie":serieNota,
+            "numero":creditNoteObject.nroCreditNote,
+            "moneda":currencyNote,
+            "fechaEmision":creditNoteObject.dateCreditNote.strftime("%Y-%m-%d"),
+            "horaEmision":None,
+            "fechaVencimiento": None,
+            "formaPago":"CONTADO",
+            "medioPago": "DEPOSITO_CUENTA",
+            "condicionPago": None,
+            "ordencompra":None,
+            "puntoEmisor":None,
+            "glosa":"Anulacion",
+        },
+        "detalleDocumento":itemsNote,
+        "emisor":
+        {
+            "correo":"info@metalprotec.com",
+            "nombreComercial": None,
+            "nombreLegal": "METALPROTEC",
+            "numeroDocumentoIdentidad": "20541628631",
+            "tipoDocumentoIdentidad": "RUC",
+            "domicilioFiscal":
+            {
+                "pais":"PERU",
+                "departamento":"ANCASH",
+                "provincia":"SANTA",
+                "distrito":"NUEVO CHIMBOTE",
+                "direccon":"Mza. J4 Lote. 39",
+                "ubigeo":"02712"
+            }
+        },
+        "informacionAdicional":
+        {
+            "tipoOperacion":"VENTA_INTERNA",
+            "coVendedor":None,
+        },
+        "motivo":"ANULACION_OPERACION",
+        "receptor":
+        {
+            "correo":emailClient,
+            "correoCopia":None,
+            "domicilioFiscal":
+            {
+                "direccion":addressClient,
+                "pais":"PERU",
+            },
+            "nombreComercial":None,
+            "nombreLegal":identificationClient,
+            "numeroDocumentoIdentidad":documentClient,
+            "tipoDocumentoIdentidad":documentoIdentidad
+        },
+        'referencias':{
+            "documentoReferenciaList":guideJson,
+        },
+        'cuotas':None
     }
     return param_data
