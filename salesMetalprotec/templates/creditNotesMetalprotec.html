@@ -65,15 +65,41 @@
                 <tbody>
                     {% for creditNoteInfo in creditNotesSystem %}
                     <tr>
-                        <td></td>
-                        <td>{{ creditNoteInfo.typeCreditNote }}</td>
-                        <td>{{ creditNoteInfo.dateCreditNote }}</td>
+                        {% if creditNoteInfo.originCreditNote == 'INVOICE' %}
+                            <td>{{ creditNoteInfo.asociatedInvoice.codeInvoice }}</td>
+                        {% else %}
+                            <td>{{ creditNoteInfo.asociatedBill.codeBill }}</td>
+                        {% endif %}
+                        <td>{{ creditNoteInfo.originCreditNote }}</td>
+                        <td>{{ creditNoteInfo.dateCreditNote|date:'d-m-Y' }}</td>
                         <td>{{ creditNoteInfo.codeCreditNote }}</td>
-                        <td>{{ creditNoteInfo.stateCreditNote }}</td>
-                        <td></td>
-                        <td></td>
+                        <td>
+                            {% if creditNoteInfo.stateCreditNote == 'GENERADA' %}
+                            <div class="bg-success rounded-pill text-white text-center">{{ creditNoteInfo.stateCreditNote }}</div>
+                            {% endif %}
+                            {% if creditNoteInfo.stateCreditNote == 'ENVIADA' %}
+                            <div class="bg-primary rounded-pill text-white text-center">{{ creditNoteInfo.stateCreditNote }}</div>
+                            {% endif %}
+                            {% if creditNoteInfo.stateCreditNote == 'EMITIDA' %}
+                            <div class="bg-warning rounded-pill text-white text-center">{{ creditNoteInfo.stateCreditNote }}</div>
+                            {% endif %}
+                        </td>
+                        {% if creditNoteInfo.stateCreditNote == 'ENVIADA' %}
+                            <td class="text-center"><a class="btn btn-info" href="{% url 'salesMetalprotec:downloadCreditNoteTeFacturo' creditNoteInfo.id %}"><i class="fa-solid fa-download"></i></a></td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if creditNoteInfo.stateCreditNote == 'GENERADA' %}
+                            <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:sendCreditNoteTeFacturo' creditNoteInfo.id %}"><i class="fa-solid fa-arrow-right"></i></a></td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
                         <td>{{ creditNoteInfo.stateTeFacturo }}</td>
-                        <td></td>
+                        {% if creditNoteInfo.stateCreditNote != 'GENERADA' %}
+                            <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:verifyCreditNoteTeFacturo' creditNoteInfo.id %}"><i class="fa-solid fa-check"></i></a></td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>

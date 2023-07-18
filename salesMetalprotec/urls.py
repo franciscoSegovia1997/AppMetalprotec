@@ -31,5 +31,11 @@ urlpatterns = [
     path('downloadGuideTeFacturo/<str:idGuide>',views.downloadGuideTeFacturo,name='downloadGuideTeFacturo'),
     path('sendBillTeFacturo/<str:idBill>',views.sendBillTeFacturo,name='sendBillTeFacturo'),
     path('downloadBillTeFacturo/<str:idBill>',views.downloadBillTeFacturo,name='downloadBillTeFacturo'),
-    path('verifyBillTeFacturo/<str:idBill>',views.verifyBillTeFacturo,name='verifyBillTeFacturo')
+    path('verifyBillTeFacturo/<str:idBill>',views.verifyBillTeFacturo,name='verifyBillTeFacturo'),
+    path('downloadInvoiceTeFacturo/<str:idInvoice>',views.downloadInvoiceTeFacturo,name='downloadInvoiceTeFacturo'),
+    path('verifyInvoiceTeFacturo/<str:idInvoice>',views.verifyInvoiceTeFacturo,name='verifyInvoiceTeFacturo'),
+    path('sendCreditNoteTeFacturo/<str:idCreditNote>',views.sendCreditNoteTeFacturo,name='sendCreditNoteTeFacturo'),
+    path('verifyCreditNoteTeFacturo/<str:idCreditNote>',views.verifyCreditNoteTeFacturo,name='verifyCreditNoteTeFacturo'),
+    path('downloadCreditNoteTeFacturo/<str:idCreditNote>',views.downloadCreditNoteTeFacturo,name='downloadCreditNoteTeFacturo'),
+    path('sendInvoiceTeFacturo/<str:idInvoice>',views.sendInvoiceTeFacturo,name='sendInvoiceTeFacturo'),
 ]
