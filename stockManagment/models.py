@@ -7,14 +7,14 @@ from settingsMetalprotec.models import endpointSystem
 
 # Create your models here.
 class incomingItemsRegisterInfo(models.Model):
-    typeIncoming = models.CharField(max_length=12, blank=True, null=True)
+    typeIncoming = models.CharField(max_length=32, blank=True, null=True)
     dateIncoming = models.DateField(blank=True, null=True)
     productCode = models.CharField(max_length=24, blank=True, null=True)
-    nameStore = models.CharField(max_length=12,blank=True,null=True)
-    quantityProduct = models.CharField(max_length=12,blank=True,null=True)
-    lastStock = models.CharField(max_length=12,blank=True,null=True)
-    newStock = models.CharField(max_length=12,blank=True,null=True)
-    referenceIncome = models.CharField(max_length=12,blank=True,null=True)
+    nameStore = models.CharField(max_length=24,blank=True,null=True)
+    quantityProduct = models.CharField(max_length=24,blank=True,null=True)
+    lastStock = models.CharField(max_length=24,blank=True,null=True)
+    newStock = models.CharField(max_length=24,blank=True,null=True)
+    referenceIncome = models.CharField(max_length=24,blank=True,null=True)
     asociatedUserData = models.ForeignKey(User,blank=True, null=True, on_delete=models.SET_NULL)
     asociatedProduct = models.ForeignKey(productSystem,blank=True, null=True, on_delete=models.SET_NULL)
     asociatedCreditNote = models.ForeignKey(creditNoteSystem,blank=True, null=True, on_delete=models.SET_NULL)
@@ -26,14 +26,14 @@ class incomingItemsRegisterInfo(models.Model):
 
 
 class outcomingItemsRegisterInfo(models.Model):
-    typeOutcoming = models.CharField(max_length=12, blank=True, null=True)
+    typeOutcoming = models.CharField(max_length=32, blank=True, null=True)
     dateOutcoming = models.DateField(blank=True, null=True)
     productCode = models.CharField(max_length=24, blank=True, null=True)
-    nameStore = models.CharField(max_length=12,blank=True,null=True)
-    quantityProduct = models.CharField(max_length=12,blank=True,null=True)
-    lastStock = models.CharField(max_length=12,blank=True,null=True)
-    newStock = models.CharField(max_length=12,blank=True,null=True)
-    referenceOutcome = models.CharField(max_length=12,blank=True,null=True)
+    nameStore = models.CharField(max_length=24,blank=True,null=True)
+    quantityProduct = models.CharField(max_length=24,blank=True,null=True)
+    lastStock = models.CharField(max_length=24,blank=True,null=True)
+    newStock = models.CharField(max_length=24,blank=True,null=True)
+    referenceOutcome = models.CharField(max_length=24,blank=True,null=True)
     asociatedUserData = models.ForeignKey(User,blank=True, null=True, on_delete=models.SET_NULL)
     asociatedProduct = models.ForeignKey(productSystem,blank=True, null=True, on_delete=models.SET_NULL)
     asociatedBill = models.ForeignKey(billSystem,blank=True, null=True, on_delete=models.SET_NULL)
