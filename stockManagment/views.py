@@ -10,12 +10,12 @@ from reportlab.lib.pagesizes import A4
 # Create your views here.
 def incomingItems(request):
     return render(request,'incomingItems.html',{
-        'incomingRegistersData':incomingItemsRegisterInfo.objects.filter(endpointIncoming=request.user.extendeduser.endpointUser)
+        'incomingRegistersData':incomingItemsRegisterInfo.objects.filter(endpointIncoming=request.user.extendeduser.endpointUser).order_by('-dateIncoming')
     })
 
 def outcomingItems(request):
     return render(request,'outcomingItems.html',{
-        'outcomingRegistersData':outcomingItemsRegisterInfo.objects.filter(endpointOutcoming=request.user.extendeduser.endpointUser)
+        'outcomingRegistersData':outcomingItemsRegisterInfo.objects.filter(endpointOutcoming=request.user.extendeduser.endpointUser).order_by('-dateOutcoming')
     })
 
 def stockTaking(request):
