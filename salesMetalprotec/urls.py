@@ -38,4 +38,8 @@ urlpatterns = [
     path('verifyCreditNoteTeFacturo/<str:idCreditNote>',views.verifyCreditNoteTeFacturo,name='verifyCreditNoteTeFacturo'),
     path('downloadCreditNoteTeFacturo/<str:idCreditNote>',views.downloadCreditNoteTeFacturo,name='downloadCreditNoteTeFacturo'),
     path('sendInvoiceTeFacturo/<str:idInvoice>',views.sendInvoiceTeFacturo,name='sendInvoiceTeFacturo'),
+    path('createCreditNoteFromInvoice/<str:idInvoice>',views.createCreditNoteFromInvoice,name='createCreditNoteFromInvoice'),
+    path('createCreditNoteFromBill/<str:idBill>',views.createCreditNoteFromBill,name='createCreditNoteFromBill'),
+    path('createInvoiceFromGuides',views.createInvoiceFromGuides,name='createInvoiceFromGuides'),
+    path('createBillFromGuides',views.createBillFromGuides,name='createBillFromGuides')
 ]
