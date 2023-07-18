@@ -25,6 +25,8 @@ def comissions(request):
     return render(request,'comissions.html')
 
 def paymentsRegister(request):
+    if request.method == 'POST':
+        return HttpResponseRedirect(reverse('financeMetalprotec:paymentsRegister'))
     return render(request,'paymentsRegister.html')
 
 def deleteBankRegister(request,idBank):
