@@ -18,6 +18,7 @@ import environ
 import os
 import requests
 from base64 import b64decode
+from bs4 import BeautifulSoup
 
 env = environ.Env()
 env.read_env()
