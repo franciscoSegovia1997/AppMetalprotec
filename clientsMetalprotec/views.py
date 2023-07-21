@@ -3,7 +3,7 @@ from .models import clientSystem, addressClient
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from ApisNetPe import ApisNetPe
+from .ApisNetPe import ApisNetPe
 
 API_TOKEN = "apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N"
 requestCompanyData = ApisNetPe(API_TOKEN)
