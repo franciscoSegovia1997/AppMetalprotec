@@ -750,7 +750,7 @@ def downloadQuotationDolares(request,idQuotation):
             can.drawString(460,760,str(quotationItem.endpointQuotation.serieCoti) + ' - ' + numImp)
 
             #Generacion del logo
-            can.drawImage('./static/salesMetalprotec/images/logoQuotation.png',10,705,width=120,height=120)
+            can.drawImage('./static/salesMetalprotec/images/logo.png',10,705,width=120,height=120)
             
             
             #Informacion del remitente
@@ -1173,7 +1173,7 @@ def downloadQuotationDolares(request,idQuotation):
             can.drawString(460,760,str(quotationItem.endpointQuotation.serieCoti) + ' - ' + numImp)
 
             #Generacion del logo
-            can.drawImage('./static/salesMetalprotec/images/logoQuotation.png',10,705,width=120,height=120)
+            can.drawImage('./static/salesMetalprotec/images/logo.png',10,705,width=120,height=120)
             
             
             #Informacion del remitente
@@ -1599,7 +1599,7 @@ def downloadQuotationSoles(request,idQuotation):
             can.drawString(460,760,str(quotationItem.endpointQuotation.serieCoti) + ' - ' + numImp)
 
             #Generacion del logo
-            can.drawImage('./static/salesMetalprotec/images/logoQuotation.png',10,705,width=120,height=120)
+            can.drawImage('./static/salesMetalprotec/images/logo.png',10,705,width=120,height=120)
             
             
             #Informacion del remitente
@@ -2022,7 +2022,7 @@ def downloadQuotationSoles(request,idQuotation):
             can.drawString(460,760,str(quotationItem.endpointQuotation.serieCoti) + ' - ' + numImp)
 
             #Generacion del logo
-            can.drawImage('./static/salesMetalprotec/images/logoQuotation.png',10,705,width=120,height=120)
+            can.drawImage('./static/salesMetalprotec/images/logo.png',10,705,width=120,height=120)
             
             
             #Informacion del remitente
