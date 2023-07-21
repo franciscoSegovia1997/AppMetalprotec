@@ -750,7 +750,7 @@ def downloadQuotationDolares(request,idQuotation):
             can.drawString(460,760,str(quotationItem.endpointQuotation.serieCoti) + ' - ' + numImp)
 
             #Generacion del logo
-            can.drawImage('./static/salesMetalprotec/images/logo.png',10,705,width=120,height=120)
+            can.drawImage('./static/salesMetalprotec/images/logoQuotation.png',10,705,width=120,height=120)
             
             
             #Informacion del remitente
@@ -1043,7 +1043,6 @@ def downloadQuotationDolares(request,idQuotation):
 
             #Logo de las empresas
             can.drawImage('./static/salesMetalprotec/images/mega.png',20,60,width=90,height=60,mask='auto')
-            can.drawImage('./static/salesMetalprotec/images/sgs.png',240,65,width=100,height=50,mask='auto')
             can.drawImage('./static/salesMetalprotec/images/hodelpe.png',470,65,width=100,height=50,mask='auto')
 
             #Linea inicio de separacion
@@ -1174,7 +1173,7 @@ def downloadQuotationDolares(request,idQuotation):
             can.drawString(460,760,str(quotationItem.endpointQuotation.serieCoti) + ' - ' + numImp)
 
             #Generacion del logo
-            can.drawImage('./static/salesMetalprotec/images/logo.png',10,705,width=120,height=120)
+            can.drawImage('./static/salesMetalprotec/images/logoQuotation.png',10,705,width=120,height=120)
             
             
             #Informacion del remitente
@@ -1462,7 +1461,6 @@ def downloadQuotationDolares(request,idQuotation):
 
             #Logo de las empresas
             can.drawImage('./static/salesMetalprotec/images/mega.png',20,60,width=90,height=60,mask='auto')
-            can.drawImage('./static/salesMetalprotec/images/sgs.png',240,65,width=100,height=50,mask='auto')
             can.drawImage('./static/salesMetalprotec/images/hodelpe.png',470,65,width=100,height=50,mask='auto')
 
             #Linea inicio de separacion
@@ -1601,7 +1599,7 @@ def downloadQuotationSoles(request,idQuotation):
             can.drawString(460,760,str(quotationItem.endpointQuotation.serieCoti) + ' - ' + numImp)
 
             #Generacion del logo
-            can.drawImage('./static/salesMetalprotec/images/logo.png',10,705,width=120,height=120)
+            can.drawImage('./static/salesMetalprotec/images/logoQuotation.png',10,705,width=120,height=120)
             
             
             #Informacion del remitente
@@ -1894,7 +1892,6 @@ def downloadQuotationSoles(request,idQuotation):
 
             #Logo de las empresas
             can.drawImage('./static/salesMetalprotec/images/mega.png',20,60,width=90,height=60,mask='auto')
-            can.drawImage('./static/salesMetalprotec/images/sgs.png',240,65,width=100,height=50,mask='auto')
             can.drawImage('./static/salesMetalprotec/images/hodelpe.png',470,65,width=100,height=50,mask='auto')
 
             #Linea inicio de separacion
@@ -2025,7 +2022,7 @@ def downloadQuotationSoles(request,idQuotation):
             can.drawString(460,760,str(quotationItem.endpointQuotation.serieCoti) + ' - ' + numImp)
 
             #Generacion del logo
-            can.drawImage('./static/salesMetalprotec/images/logo.png',10,705,width=120,height=120)
+            can.drawImage('./static/salesMetalprotec/images/logoQuotation.png',10,705,width=120,height=120)
             
             
             #Informacion del remitente
@@ -2313,7 +2310,6 @@ def downloadQuotationSoles(request,idQuotation):
 
             #Logo de las empresas
             can.drawImage('./static/salesMetalprotec/images/mega.png',20,60,width=90,height=60,mask='auto')
-            can.drawImage('./static/salesMetalprotec/images/sgs.png',240,65,width=100,height=50,mask='auto')
             can.drawImage('./static/salesMetalprotec/images/hodelpe.png',470,65,width=100,height=50,mask='auto')
 
             #Linea inicio de separacion
