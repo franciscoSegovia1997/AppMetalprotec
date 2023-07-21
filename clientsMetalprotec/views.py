@@ -3,6 +3,30 @@ from .models import clientSystem, addressClient
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from .ApisNetPe import ApisNetPe
+
+API_TOKEN = "apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N"
+requestCompanyData = ApisNetPe(API_TOKEN)
+
+def getCompanyInfo(request):
+    rucInfo = request.GET.get('rucInfo')
+    if len(rucInfo) == 11:
+        infoCompany = requestCompanyData.get_company(rucInfo)
+        if infoCompany is not None:
+            legalName = infoCompany['nombre']
+            legalAddress = infoCompany['direccion']
+        else:
+            legalAddress = ''
+            legalName = ''
+    else:
+        legalAddress = ''
+        legalName = ''
+
+    return JsonResponse({
+        'legalAddress':legalAddress,
+        'legalName':legalName
+    })
+
 
 # Create your views here.
 @login_required(login_url='/')

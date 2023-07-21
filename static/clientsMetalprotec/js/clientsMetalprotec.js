@@ -187,3 +187,15 @@ function deleteNewAddress()
     addAddressClient.selectedIndex='0'
     $('#addAddressClient').selectpicker('refresh')
 }
+
+function getCompanyInfo()
+{
+    documentClient = document.getElementById('documentClient').value
+    fetch(`/clientsMetalprotecgetCompanyInfo?rucInfo=${documentClient}`)
+    .then(response => response.json())
+    .then(data => {
+
+        document.getElementById('identificationClient').value = data.legalName
+        document.getElementById('legalAddressClient').value = data.legalAddress
+    })
+}
