@@ -7,5 +7,7 @@ urlpatterns = [
     path('bankRegisters',views.bankRegisters,name='bankRegisters'),
     path('comissions',views.comissions,name='comissions'),
     path('paymentsRegister',views.paymentsRegister,name='paymentsRegister'),
-    path('deleteBankRegister/<str:idBank>',views.deleteBankRegister,name='deleteBankRegister')
+    path('deleteBankRegister/<str:idBank>',views.deleteBankRegister,name='deleteBankRegister'),
+    path('getDocuments',views.getDocuments,name='getDocuments'),
+    path('deletePayment/<str:idPayment>',views.deletePayment,name='deletePayment')
 ]

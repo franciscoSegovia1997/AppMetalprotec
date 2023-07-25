@@ -29,4 +29,51 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
     })
 
+    selectedClient = document.getElementById('selectedClient')
+
+    selectedClient.onchange = function()
+    {
+        if(selectedClient.value !== '')
+        {
+            fetch(`/financeMetalprotecgetDocuments?selectedClient=${selectedClient.value}`)
+            .then(response => response.json())
+            .then(data => {
+                selectedDocument = document.getElementById('selectedDocument')
+                while(selectedDocument.length > 0)
+                {
+                    selectedDocument.remove(0)
+                }
+                firstOption = document.createElement('option')
+                firstOption.value = ''
+                firstOption.innerHTML = ''
+                selectedDocument.appendChild(firstOption)
+                console.log(data)
+                for(let i = 0;i < data.finalDocuments.length; i++)
+                {
+                    newOption = document.createElement('option')
+                    newOption.value = data.finalDocuments[i]
+                    newOption.innerHTML = data.finalDocuments[i]
+                    selectedDocument.appendChild(newOption)
+                }
+                selectedDocument.selectedIndex='0'
+                $('#selectedDocument').selectpicker('refresh')
+            })
+
+        }
+        else
+        {
+            selectedDocument = document.getElementById('selectedDocument')
+            while(selectedDocument.length > 0)
+            {
+                selectedDocument.remove(0)
+            }
+
+            firstOption = document.createElement('option')
+            firstOption.value = ''
+            firstOption.innerHTML = ''
+            selectedDocument.appendChild(firstOption)
+            selectedDocument.selectedIndex = '0'
+            $('#selectedDocument').selectpicker('refresh')
+        }
+    }
 })
