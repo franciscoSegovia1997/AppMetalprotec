@@ -48,6 +48,7 @@
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                 {% if user.extendeduser.roleUser.nameRole == 'ADMIN' or user.extendeduser.roleUser.nameRole == 'SUPERADMIN' %}
 
+                                {% if user.extendeduser.roleUser.nameRole == 'SUPERADMIN' %}
                                 <!-- Link to settingsMetalprotec app -->
                                 <li>
                                     <a href="{% url 'settingsMetalprotec:settingsMetalprotec' %}" class="nav-link text-truncate">
@@ -55,6 +56,7 @@
                                         <span class="ms-1 d-none d-sm-inline text-white" style="font-size: 14px;">Configuración</span>
                                     </a>
                                 </li>
+                                {% endif %}
 
                                 <!-- Link to usersMetalprotec app -->
                                 <li>
@@ -104,6 +106,7 @@
                                     </ul>
                                 </li>                                
 
+                                {% if user.extendeduser.roleUser.nameRole == 'ADMIN' or user.extendeduser.roleUser.nameRole == 'SUPERADMIN' or user.extendeduser.roleUser.nameRole == 'CONTABLE' %}
                                 <!-- Link to financeMetalprotec app -->
                                 <li class="dropdown">
                                     <a href="#" class="nav-link dropdown-toggle  text-truncate" data-bs-toggle="dropdown">
@@ -116,6 +119,7 @@
                                         <li><a class="dropdown-item" href="{% url 'financeMetalprotec:paymentsRegister' %}">Registro de abonos</a></li>
                                     </ul>
                                 </li>
+                                {% endif %}
 
                                 <!-- Link to salesMetalprotec app -->
                                 <li class="dropdown">
@@ -146,6 +150,7 @@
                                     </ul>
                                 </li>
 
+                                {% if user.extendeduser.roleUser.nameRole == 'ADMIN' or user.extendeduser.roleUser.nameRole == 'SUPERADMIN' or user.extendeduser.roleUser.nameRole == 'CONTABLE' %}
                                 <!-- Link to expensesMetalprotec app -->
                                 <li class="dropdown">
                                     <a href="#" class="nav-link dropdown-toggle  text-truncate" data-bs-toggle="dropdown">
@@ -159,6 +164,7 @@
                                         <li><a class="dropdown-item" href="{% url 'expensesMetalprotec:purchaseOrder' %}">Orden de compra</a></li>
                                     </ul>
                                 </li>
+                                {% endif %}
                                 {% endif %}
 
                                 <!-- Link to logout function -->
