@@ -67,6 +67,8 @@ class billSystem(models.Model):
     originBill = models.CharField(max_length=12,null=True,blank=True)
     asociatedQuotation = models.OneToOneField(quotationSystem,on_delete=models.CASCADE, blank=True, null=True)
     endpointBill = models.ForeignKey(endpointSystem, on_delete=models.CASCADE, null=True, blank=True)
+    stockBill = models.CharField(max_length=4,null=True,blank=True)
+    paidBill = models.CharField(max_length=4,null=True,blank=True)
 
 class invoiceSystem(models.Model):
     commentInvoice = models.CharField(max_length=256, null=True, blank=True)
@@ -84,6 +86,8 @@ class invoiceSystem(models.Model):
     originInvoice = models.CharField(max_length=12,null=True,blank=True)
     asociatedQuotation = models.OneToOneField(quotationSystem,on_delete=models.CASCADE, blank=True, null=True)
     endpointInvoice = models.ForeignKey(endpointSystem, on_delete=models.CASCADE, null=True, blank=True)
+    stockInvoice = models.CharField(max_length=4,null=True,blank=True)
+    paidInvoice = models.CharField(max_length=4,null=True,blank=True)
 
 
 class guideSystem(models.Model):
