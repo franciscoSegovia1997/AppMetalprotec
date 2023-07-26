@@ -2,7 +2,7 @@ from django.shortcuts import render
 from . models import bankSystem, paymentSystem, bankOperation, settingsComission
 from django.urls import reverse
 from django.http import HttpResponseRedirect, JsonResponse
-from salesMetalprotec.models import billSystem
+from salesMetalprotec.models import billSystem, quotationClientData, quotationSystem, invoiceSystem, guideSystem
 from clientsMetalprotec.models import clientSystem
 import datetime
 
@@ -118,24 +118,29 @@ def getDocuments(request):
     finalDocuments = []
     selectedClient = request.GET.get('selectedClient')
     clientInfo = clientSystem.objects.get(id=selectedClient)
-    if clientInfo.typeClient == 'PERSONA':
-        allDocuments = invoiceSystem.objects.exclude(paidInvoice='1')
-        for documentInfo in allDocuments:
-            if documentInfo.originInvoice == 'GUIDE':
-                if documentInfo.guidesystem_set.all()[0].asociatedQuotation.quotationclientdata.asociatedClient == clientInfo:
-                    finalDocuments.append(documentInfo.codeBill)
-            else:
-                if documentInfo.asociatedQuotation.quotationclientdata.asociatedClient == clientInfo:
-                    finalDocuments.append(documentInfo.codeBill)
-    else:
-        allDocuments = billSystem.objects.all().exclude(paidBill='1')
-        for documentInfo in allDocuments:
-            if documentInfo.originBill == 'GUIDE':
-                if documentInfo.guidesystem_set.all()[0].asociatedQuotation.quotationclientdata.asociatedClient == clientInfo:
-                    finalDocuments.append(documentInfo.codeBill)
-            else:
-                if documentInfo.asociatedQuotation.quotationclientdata.asociatedClient == clientInfo:
-                    finalDocuments.append(documentInfo.codeBill)
+
+    allInvoicesNoGuide = invoiceSystem.objects.exclude(asociatedQuotation=None).exclude(paidInvoice='1').filter(asociatedQuotation__quotationclientdata__asociatedClient=clientInfo)
+    allBillsNoGuide = billSystem.objects.exclude(asociatedQuotation=None).exclude(paidBill='1').filter(asociatedQuotation__quotationclientdata__asociatedClient=clientInfo)
+
+    allGuidesBills = guideSystem.objects.filter(asociatedQuotation__quotationclientdata__asociatedClient=clientInfo).filter(asociatedInvoice=None).exclude(asociatedBill=None).exclude(asociatedBill__paidBill='1')
+    allGuidesInvoices = guideSystem.objects.filter(asociatedQuotation__quotationclientdata__asociatedClient=clientInfo).filter(asociatedBill=None).exclude(asociatedInvoice=None).exclude(asociatedInvoice__paidInvoice='1')
+
+    for invoiceData in allInvoicesNoGuide:
+        if invoiceData.codeInvoice not in finalDocuments:
+            finalDocuments.append(invoiceData.codeInvoice)
+
+    for billData in allBillsNoGuide:
+        if billData.codeBill not in finalDocuments:
+            finalDocuments.append(billData.codeBill)
+    
+    for guideInfoBill in allGuidesBills:
+        if guideInfoBill.asociatedBill.codeBill not in finalDocuments:
+            finalDocuments.append(guideInfoBill.asociatedBill.codeBill)
+    
+    for gudieInfoInvoice in allGuidesInvoices:
+        if gudieInfoInvoice.asociatedInvoice.codeInvoice not in finalDocuments:
+            finalDocuments.append(gudieInfoInvoice.asociatedInvoice.codeInvoice)
+
     return JsonResponse({
         'finalDocuments':finalDocuments,
     })
