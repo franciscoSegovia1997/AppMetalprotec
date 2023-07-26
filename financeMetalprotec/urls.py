@@ -9,5 +9,7 @@ urlpatterns = [
     path('paymentsRegister',views.paymentsRegister,name='paymentsRegister'),
     path('deleteBankRegister/<str:idBank>',views.deleteBankRegister,name='deleteBankRegister'),
     path('getDocuments',views.getDocuments,name='getDocuments'),
-    path('deletePayment/<str:idPayment>',views.deletePayment,name='deletePayment')
+    path('deletePayment/<str:idPayment>',views.deletePayment,name='deletePayment'),
+    path('updatePayment',views.updatePayment,name='updatePayment'),
+    path('getPaymentData',views.getPaymentData,name='getPaymentData'),
 ]

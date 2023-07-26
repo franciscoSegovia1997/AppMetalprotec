@@ -161,3 +161,78 @@ def deletePayment(request,idPayment):
 def deleteBankRegister(request,idBank):
     bankSystem.objects.get(id=idBank).delete()
     return HttpResponseRedirect(reverse('financeMetalprotec:bankRegisters'))
+
+def updatePayment(request):
+    if request.method == 'POST':
+        idPayment = request.POST.get('idPayment')
+        paymentObject = paymentSystem.objects.get(id=idPayment)
+        idBank = request.POST.get('editBank')
+        bankObject = bankSystem.objects.get(id=idBank)
+        operationNumber = request.POST.get('editNumber')
+        operationNumber2 = request.POST.get('editNumber2')
+        datePayment = request.POST.get('editDate')
+        paymentObject.asociatedBank = bankObject
+        paymentObject.operationNumber = operationNumber
+        paymentObject.operationNumber2 = operationNumber2
+        paymentObject.datePayment = datetime.datetime.strptime(datePayment,"%Y-%m-%d")
+        paymentObject.save()
+        statePayment = request.POST.get('editPaid')
+        if statePayment == 'on':
+            statePayment = 'CANCELADO'
+            totalRegisters = paymentSystem.objects.filter(codeDocument=paymentObject.codeDocument)
+            for paymentInfo in totalRegisters:
+                paymentInfo.statePayment = 'CANCELADO'
+                paymentInfo.save()
+            if paymentObject.asociatedBill is None:
+                asociatedInvoice = paymentObject.asociatedInvoice
+                asociatedInvoice.paidInvoice = '1'
+                asociatedInvoice.save()
+            else:
+                asociatedBill = paymentObject.asociatedBill
+                asociatedBill.paidBill = '1'
+                asociatedBill.save()
+        else:
+            statePayment = 'PARCIAL'
+            totalRegisters = paymentSystem.objects.filter(codeDocument=paymentObject.codeDocument)
+            for paymentInfo in totalRegisters:
+                paymentInfo.statePayment = 'PARCIAL'
+                paymentInfo.save()
+            if paymentObject.asociatedBill is None:
+                asociatedInvoice = paymentObject.asociatedInvoice
+                asociatedInvoice.paidInvoice = '0'
+                asociatedInvoice.save()
+            else:
+                asociatedBill = paymentObject.asociatedBill
+                asociatedBill.paidBill = '0'
+                asociatedBill.save()
+        paymentObject.statePayment = statePayment
+        enabledComission = request.POST.get('editComission')
+        if enabledComission == 'on':
+            enabledComission = 'ON'
+            totalRegisters = paymentSystem.objects.filter(codeDocument=paymentObject.codeDocument)
+            for paymentInfo in totalRegisters:
+                paymentInfo.enabledComission = 'ON'
+                paymentInfo.save()
+        else:
+            enabledComission = 'OFF'
+            totalRegisters = paymentSystem.objects.filter(codeDocument=paymentObject.codeDocument)
+            for paymentInfo in totalRegisters:
+                paymentInfo.enabledComission = 'OFF'
+                paymentInfo.save()
+        paymentObject.enabledComission = enabledComission
+        paymentObject.save()
+        return HttpResponseRedirect(reverse('financeMetalprotec:paymentsRegister'))
+
+def getPaymentData(request):
+    idPayment = request.GET.get('idPayment')
+    paymentInfo = paymentSystem.objects.get(id=idPayment)
+    return JsonResponse({
+        'editDate':paymentInfo.datePayment.strftime('%Y-%m-%d'),
+        'editDocument':paymentInfo.codeDocument,
+        'editComission':paymentInfo.enabledComission,
+        'editPaid':paymentInfo.statePayment,
+        'editClient':paymentInfo.nameClient,
+        'editNumber2':paymentInfo.operationNumber2,
+        'editNumber':paymentInfo.operationNumber,
+        'idBank':str(paymentInfo.asociatedBank.id)
+    })

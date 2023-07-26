@@ -58,7 +58,7 @@
                         <td>{{ paymentInfo.codeDocument }}</td>
                         <td></td>
                         <td></td>
-                        <td></td>
+                        <td class="text-center"><button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editPayment" id="edit{{ paymentInfo.id }}" onclick="chargeEditData(this.id)"><i class="fa-solid fa-edit"></i></button></td>
                         <td class="text-center"><a class="btn btn-danger" href="{% url 'financeMetalprotec:deletePayment' paymentInfo.id %}"><i class="fa-solid fa-trash"></i></a></td>
                     </tr>
                     {% endfor %}
@@ -72,7 +72,7 @@
 
 {% block modalContent %}
 
-    <!-- New client modal window -->
+    <!-- New payment modal window -->
     <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="newPayment">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -80,13 +80,13 @@
                     {% csrf_token %}
                     <div class="modal-header">
                         <h5 class="modal-title">Nuevo Abono</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="cleanNewPayment()"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row mb-3 mt-3">
                             <div class="col-12">
                                 <label>Banco</label>
-                                <select class="selectpicker form-control" name="selectedBank">
+                                <select class="selectpicker form-control" name="selectedBank" id="selectedBank">
                                     <option value="" selected></option>
                                     {% for bankInfo in allBanks %}
                                     <option value="{{ bankInfo.id }}">{{ bankInfo.nameBank }} - {{ bankInfo.currencyBank }}</option>
@@ -97,11 +97,11 @@
                         <div class="row mb-3 mt-3">
                             <div class="col-6">
                                 <label>Nro de operacion</label>
-                                <input type="text" class="form-control" name="operationNumber">
+                                <input type="text" class="form-control" name="operationNumber" id="operationNumber">
                             </div>
                             <div class="col-6">
                                 <label>Nro de operacion 2</label>
-                                <input type="text" class="form-control" name="operationNumber2">
+                                <input type="text" class="form-control" name="operationNumber2" id="operationNumber2">
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -116,7 +116,7 @@
                             </div>
                             <div class="col-6">
                                 <br>
-                                <input class="form-check-input" type="checkbox" name="paidDocument">
+                                <input class="form-check-input" type="checkbox" name="paidDocument" id="paidDocument">
                                 <label> Cancelado</label>
                             </div>
                         </div>
@@ -129,34 +129,121 @@
                             </div>
                             <div class="col-6">
                                 <label>Guia</label>
-                                <input type="text" class="form-control" readonly>
+                                <input type="text" class="form-control" readonly id="guideInfo">
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-6">
                                 <label>Cotizacion</label>
-                                <input type="text" class="form-control" readonly>
+                                <input type="text" class="form-control" readonly id="quotationInfo">
                             </div>
                             <div class="col-6">
                                 <label>Vendedor</label>
-                                <input type="text" class="form-control" readonly>
+                                <input type="text" class="form-control" readonly id="sellerInfo">
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-6">
                                 <label>Fecha de registro</label>
-                                <input type="date" class="form-control" name="datePayment">
+                                <input type="date" class="form-control" name="datePayment" id="datePayment">
                             </div>
                             <div class="col-6">
                                 <br>
-                                <input class="form-check-input" type="checkbox" name="enabledComission">
+                                <input class="form-check-input" type="checkbox" name="enabledComission" id="enabledComission">
                                 <label> Habilitado para comisiones</label>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary" name="newClient">Agregar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="cleanNewPayment()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="newPayment">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit payment modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="editPayment">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'financeMetalprotec:updatePayment' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <div style="display: none;">
+                            <input type="text" id="idPayment" value="" name="idPayment">
+                        </div>
+                        <h5 class="modal-title">Editar Abono</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="cleanEditPayment()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-12">
+                                <label>Banco</label>
+                                <select class="selectpicker form-control" name="editBank" id="editBank">
+                                    <option value="" selected></option>
+                                    {% for bankInfo in allBanks %}
+                                    <option value="{{ bankInfo.id }}">{{ bankInfo.nameBank }} - {{ bankInfo.currencyBank }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3 mt-3">
+                            <div class="col-6">
+                                <label>Nro de operacion</label>
+                                <input type="text" class="form-control" name="editNumber" id="editNumber" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Nro de operacion 2</label>
+                                <input type="text" class="form-control" name="editNumber2" id="editNumber2" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Cliente</label>
+                                <input type="text" class="form-control" id="editClient" readonly>
+                            </div>
+                            <div class="col-6">
+                                <br>
+                                <input class="form-check-input" type="checkbox" name="editPaid" id="editPaid">
+                                <label> Cancelado</label>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Comprobantes</label>
+                                <input type="text" class="form-control" id="editDocument" readonly>
+                            </div>
+                            <div class="col-6">
+                                <label>Guia</label>
+                                <input type="text" class="form-control" readonly id="editGuide">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Cotizacion</label>
+                                <input type="text" class="form-control" readonly id="editQuotation">
+                            </div>
+                            <div class="col-6">
+                                <label>Vendedor</label>
+                                <input type="text" class="form-control" readonly id="editSeller">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Fecha de registro</label>
+                                <input type="date" class="form-control" name="editDate" id="editDate" required>
+                            </div>
+                            <div class="col-6">
+                                <br>
+                                <input class="form-check-input" type="checkbox" name="editComission" id="editComission">
+                                <label> Habilitado para comisiones</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="cleanEditPayment()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="editPayment">Actualizar</button>
                     </div>
                 </form>
             </div>

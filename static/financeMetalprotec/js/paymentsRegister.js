@@ -77,3 +77,108 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
     }
 })
+
+function cleanNewPayment()
+{
+    selectedBank = document.getElementById('selectedBank')
+    selectedBank.selectedIndex = '0'
+    $('#selectedBank').selectpicker('refresh')
+
+    document.getElementById('operationNumber').value = ''
+    document.getElementById('operationNumber2').value = ''
+
+    selectedClient = document.getElementById('selectedClient')
+    selectedClient.selectedIndex = '0'
+    $('#selectedClient').selectpicker('refresh')
+
+    paidDocument = document.getElementById('paidDocument')
+    paidDocument.checked = false
+
+    enabledComission = document.getElementById('enabledComission')
+    enabledComission.checked = false
+
+    datePayment = document.getElementById('datePayment')
+    datePayment.value = '2023-01-01'
+
+    selectedDocument = document.getElementById('selectedDocument')
+    while(selectedDocument.length > 0)
+    {
+        selectedDocument.remove(0)
+    }
+    firstOption = document.createElement('option')
+    firstOption.value = ''
+    firstOption.innerHTML = ''
+    selectedDocument.appendChild(firstOption)
+    selectedDocument.selectedIndex='0'
+    $('#selectedDocument').selectpicker('refresh')
+
+    document.getElementById('guideInfo').value = ''
+    document.getElementById('quotationInfo').value = ''
+    document.getElementById('sellerInfo').value = ''
+}
+
+function chargeEditData(idPayment)
+{
+    idPayment = idPayment.slice(4)
+    document.getElementById('idPayment').value = idPayment
+    fetch(`/financeMetalprotecgetPaymentData?idPayment=${idPayment}`)
+    .then(response => response.json())
+    .then(data => {
+
+        document.getElementById('editDate').value = data.editDate
+        document.getElementById('editNumber').value = data.editNumber
+        document.getElementById('editNumber2').value = data.editNumber2
+        document.getElementById('editClient').value = data.editClient
+        document.getElementById('editDocument').value = data.editDocument
+
+        if(data.editPaid === 'CANCELADO')
+        {
+            document.getElementById('editPaid').checked = true
+        }
+        else 
+        {
+            document.getElementById('editPaid').checked = false
+        }
+
+        if(data.editComission === 'ON')
+        {
+            document.getElementById('editComission').checked = true
+        }
+        else
+        {
+            document.getElementById('editComission').checked = false
+        }
+
+        editBank = document.getElementById('editBank')
+        for(let i = 0; i < editBank.options.length; i++ )
+        {
+            if(editBank.options[i].value === data.idBank)
+            {
+                editBank.selectedIndex = String(i)
+                $('#editBank').selectpicker('refresh')
+                break;
+            }
+        }
+    })
+}
+
+function cleanEditPayment()
+{
+    document.getElementById('idPayment').value = ''
+    
+    editBank = document.getElementById('editBank')
+    editBank.selectedIndex = '0'
+    $('#editBank').selectpicker('refresh')
+
+    document.getElementById('editNumber').value = ''
+    document.getElementById('editNumber2').value = ''
+    document.getElementById('editClient').value = ''
+    document.getElementById('editPaid').checked = false
+    document.getElementById('editDocument').value = ''
+    document.getElementById('editGuide').value = ''
+    document.getElementById('editQuotation').value = ''
+    document.getElementById('editSeller').value = ''
+    document.getElementById('editDate').value = '2023-01-01'
+    document.getElementById('editComission').checked = false
+
+}
