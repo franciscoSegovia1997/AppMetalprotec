@@ -23,6 +23,11 @@ def productsMetalprotec(request):
             pvcIGV = str(Decimal('%.2f' % (Decimal(pvnIGV)*Decimal(1.18))))
             pcnIGV = str(Decimal('%.2f' % Decimal(request.POST.get('pcnIGV'))))
             pccIGV = str(Decimal('%.2f' % (Decimal(pcnIGV)*Decimal(1.18))))
+            kitProduct = request.POST.get('kitProduct')
+            if kitProduct == 'on':
+                kitProduct = 'ON'
+            else:
+                kitProduct = 'OFF'
             endpointProduct=request.user.extendeduser.endpointUser
 
             productObjectCreated = productSystem.objects.create(
@@ -38,6 +43,7 @@ def productsMetalprotec(request):
                 pvcIGV=pvcIGV,
                 pcnIGV=pcnIGV,
                 pccIGV=pccIGV,
+                kitProduct=kitProduct,
                 endpointProduct=endpointProduct,
             )
 
@@ -79,6 +85,7 @@ def getProductData(request):
         'editPcnIGV':editProduct.pcnIGV,
         'editWeightProduct':editProduct.weightProduct,
         'editCurrencyProduct':editProduct.currencyProduct,
+        'editKit':editProduct.kitProduct,
     })
 
 @login_required(login_url='/')
@@ -97,6 +104,12 @@ def updateProduct(request):
         editPccIGV=str(Decimal('%.2f' % (Decimal(editPcnIGV)*Decimal(1.18))))
         editWeightProduct=request.POST.get('editWeightProduct')
         editCurrencyProduct=request.POST.get('editCurrencyProduct')
+        editKit = request.POST.get('editKit')
+
+        if editKit == 'on':
+            editKit = 'ON'
+        else:
+            editKit = 'OFF'
 
         editProduct=productSystem.objects.get(id=editIdProduct)
         editProduct.nameProduct=editNameProduct
@@ -111,7 +124,12 @@ def updateProduct(request):
         editProduct.pccIGV=editPccIGV
         editProduct.weightProduct=editWeightProduct
         editProduct.currencyProduct=editCurrencyProduct
+        editProduct.kitProduct = editKit
         editProduct.save()
+
+        if editKit == 'OFF':
+            editProduct.kitInfo = []
+            editProduct.save()
         return HttpResponseRedirect(reverse('productsMetalprotec:productsMetalprotec'))
 
 @login_required(login_url='/')
@@ -155,4 +173,53 @@ def checkStockExist(productInfo,storeInfo):
     
 def importProductsData(request):
     if request.method == 'POST':
+        return HttpResponseRedirect(reverse('productsMetalprotec:productsMetalprotec'))
+
+def getProductKit(request):
+    arrayKit = []
+    idProduct = request.GET.get('idProduct')
+    productObject = productSystem.objects.get(id=idProduct)
+    print(productObject.kitInfo)
+    if productObject.kitInfo is not None:
+        i = 0
+        while i < len(productObject.kitInfo):
+            arrayKit.append([productObject.kitInfo[i],productObject.kitInfo[i+1]])
+            i = i + 2
+    else:
+        arrayKit = []
+    return JsonResponse({
+        'arrayKit':arrayKit
+    })
+
+def addProductKit(request):
+    if request.method == 'POST':
+        idProductKit = request.POST.get('idProductKit')
+        idNewProduct = request.POST.get('newProductKit')
+        qtNewProduct = request.POST.get('qtProductKit')
+
+        productObject = productSystem.objects.get(id=idProductKit)
+
+        if productObject.kitInfo is not None:
+            try:
+                relatedProduct = productSystem.objects.get(id=idNewProduct)
+                productObject.kitInfo.append(relatedProduct.codeProduct)
+                productObject.kitInfo.append(qtNewProduct)
+                productObject.save()
+            except:
+                productObject.kitInfo.append('NOCODE')
+                productObject.kitInfo.append(qtNewProduct)
+                productObject.save()
+        else:
+            productObject.kitInfo = []
+            productObject.save()
+            try:
+                relatedProduct = productSystem.objects.get(id=idNewProduct)
+                productObject.kitInfo.append(relatedProduct.codeProduct)
+                productObject.kitInfo.append(qtNewProduct)
+                productObject.save()
+            except:
+                productObject.kitInfo.append('NOCODE')
+                productObject.kitInfo.append(qtNewProduct)
+                productObject.save()
+        
         return HttpResponseRedirect(reverse('productsMetalprotec:productsMetalprotec'))
