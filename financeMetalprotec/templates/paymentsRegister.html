@@ -49,7 +49,7 @@
                 <tbody>
                     {% for paymentInfo in allPayments %}
                     <tr>
-                        <td>{{ paymentInfo.datePayment }}</td>
+                        <td>{{ paymentInfo.datePayment|date:"d-m-Y" }}</td>
                         <td>{{ paymentInfo.asociatedBank.nameBank }}</td>
                         <td>{{ paymentInfo.asociatedBank.currencyBank }}</td>
                         <td>{{ paymentInfo.operationNumber }}</td>
