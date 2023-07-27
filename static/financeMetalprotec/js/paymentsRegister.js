@@ -76,6 +76,29 @@ document.addEventListener('DOMContentLoaded', ()=>{
             $('#selectedDocument').selectpicker('refresh')
         }
     }
+
+    selectedDocument = document.getElementById('selectedDocument')
+
+    selectedDocument.onchange = function()
+    {
+        if(selectedDocument.value !== '')
+        {
+            fetch(`/financeMetalprotecgetRelatedDocuments?documentCode=${selectedDocument.value}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('guideInfo').value = data.guideCode
+                document.getElementById('quotationInfo').value = data.quotationCode
+                document.getElementById('sellerInfo').value = data.userCode
+            })
+        }
+        else
+        {
+            document.getElementById('guideInfo').value = ''
+            document.getElementById('quotationInfo').value = ''
+            document.getElementById('sellerInfo').value = ''
+
+        }
+    }
 })
 
 function cleanNewPayment()
@@ -130,6 +153,9 @@ function chargeEditData(idPayment)
         document.getElementById('editNumber2').value = data.editNumber2
         document.getElementById('editClient').value = data.editClient
         document.getElementById('editDocument').value = data.editDocument
+        document.getElementById('editGuide').value = data.guideInfo
+        document.getElementById('editQuotation').value = data.quotationInfo
+        document.getElementById('editSeller').value = data.sellerInfo
 
         if(data.editPaid === 'CANCELADO')
         {

@@ -151,15 +151,15 @@
                         {% if editGuide.purposeTransportation == 'VENTA' %}
                         <option value="" ></option>
                         <option value="VENTA" selected>VENTA</option>
-                        <option value="TRASLADO">TRASLADO ENTRE ESTABLECIMIENTOS</option>
+                        <option value="TRASLADO_ESTABLECIMIENTOS">TRASLADO ENTRE ESTABLECIMIENTOS</option>
                         {% elif editGuide.purposeTransportation == 'TRASLADO' %}
                         <option value="" ></option>
                         <option value="VENTA">VENTA</option>
-                        <option value="TRASLADO" selected>TRASLADO ENTRE ESTABLECIMIENTOS</option>
+                        <option value="TRASLADO_ESTABLECIMIENTOS" selected>TRASLADO ENTRE ESTABLECIMIENTOS</option>
                         {% else %}
                         <option value="" selected></option>
                         <option value="VENTA">VENTA</option>
-                        <option value="TRASLADO">TRASLADO ENTRE ESTABLECIMIENTOS</option>
+                        <option value="TRASLADO_ESTABLECIMIENTOS">TRASLADO ENTRE ESTABLECIMIENTOS</option>
                         {% endif %}
                     </select>
                 </div>

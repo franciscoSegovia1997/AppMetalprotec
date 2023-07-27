@@ -12,4 +12,5 @@ urlpatterns = [
     path('deletePayment/<str:idPayment>',views.deletePayment,name='deletePayment'),
     path('updatePayment',views.updatePayment,name='updatePayment'),
     path('getPaymentData',views.getPaymentData,name='getPaymentData'),
+    path('getRelatedDocuments',views.getRelatedDocuments,name='getRelatedDocuments'),
 ]
