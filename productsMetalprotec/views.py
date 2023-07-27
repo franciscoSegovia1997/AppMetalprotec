@@ -182,9 +182,8 @@ def getProductKit(request):
     print(productObject.kitInfo)
     if productObject.kitInfo is not None:
         i = 0
-        while i < len(productObject.kitInfo):
-            arrayKit.append([productObject.kitInfo[i],productObject.kitInfo[i+1]])
-            i = i + 2
+        for productInformation in productObject.kitInfo:
+            arrayKit.append([productSystem.objects.get(id=productInformation[0]).codeProduct,productInformation[1]])
     else:
         arrayKit = []
     return JsonResponse({
@@ -201,25 +200,19 @@ def addProductKit(request):
 
         if productObject.kitInfo is not None:
             try:
-                relatedProduct = productSystem.objects.get(id=idNewProduct)
-                productObject.kitInfo.append(relatedProduct.codeProduct)
-                productObject.kitInfo.append(qtNewProduct)
+                productObject.kitInfo.append([idNewProduct,qtNewProduct])
                 productObject.save()
             except:
-                productObject.kitInfo.append('NOCODE')
-                productObject.kitInfo.append(qtNewProduct)
+                productObject.kitInfo.append(['NOCODE',qtNewProduct])
                 productObject.save()
         else:
             productObject.kitInfo = []
             productObject.save()
             try:
-                relatedProduct = productSystem.objects.get(id=idNewProduct)
-                productObject.kitInfo.append(relatedProduct.codeProduct)
-                productObject.kitInfo.append(qtNewProduct)
+                productObject.kitInfo.append([idNewProduct,qtNewProduct])
                 productObject.save()
             except:
-                productObject.kitInfo.append('NOCODE')
-                productObject.kitInfo.append(qtNewProduct)
+                productObject.kitInfo.append(['NOCODE',qtNewProduct])
                 productObject.save()
         
         return HttpResponseRedirect(reverse('productsMetalprotec:productsMetalprotec'))
