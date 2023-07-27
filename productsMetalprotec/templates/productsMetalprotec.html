@@ -95,6 +95,7 @@
                     <th scope="col">Unidad</th>
                     <th scope="col">Stock total</th>
                     <th scope="col">Ver Stock</th>
+                    <th scope="col">Ver Kit</th>
                     <th scope="col">Editar</th>
                     <th scope="col">Eliminar</th>
                 </thead>
@@ -111,6 +112,12 @@
                         <td>{{ productInfo.measureUnit }}</td>
                         <td>{{ productInfo.getStockTotal }}</td>
                         <td class="text-center"><a class="btn btn-info" data-bs-toggle="modal" data-bs-target="#showStock" id="show{{ productInfo.id }}" onclick="loadShowStockData(this.id)"><i class="fa-solid fa-eye"></i></a></td>
+                        <td class="text-center">
+                            {% if productInfo.kitProduct == 'ON' %}
+                                <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kitInfo" id="kit{{ productInfo.id }}" onclick="chargeKitInfo(this.id)"><i class="fa-solid fa-sitemap"></i></a>
+                            {% else %}
+                            {% endif %}
+                        </td>
                         <td class="text-center"><a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editProduct" id="edit{{ productInfo.id }}" onclick="loadEditProductData(this.id)"><i class="fa-solid fa-pen-to-square"></i></a></td>
                         <td class="text-center"><a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteProduct" id="delete{{ productInfo.id }}" onclick="loadDeleteData(this.id)"><i class="fa-solid fa-trash-can"></i></a></td>
                     </tr>
@@ -122,6 +129,61 @@
 {% endblock %}
 
 {% block modalContent %}
+
+    <!-- Kit of the products -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="kitInfo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Productos del kit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteKitInfoProduct()"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                            <th scope="col">Codigo</th>
+                            <th scope="col">Cantidad</th>
+                        </thead>
+                        <tbody id="kitInfoProduct">
+                        </tbody>
+                    </table>
+                    <br>
+                    <form method="post" action="{% url 'productsMetalprotec:addProductKit' %}" id="newProductKitSection">
+                    {% csrf_token %}
+                        <div class="form-control" style="display: none;">
+                            <input name="idProductKit" id="idProductKit" type="text">
+                        </div>
+                        <div class="row mb-3 mt-3">
+                            <div class="col-12">
+                                <label>Seleccionar producto</label>
+                                <select class="selectpicker form-control" data-live-search="true" name="newProductKit" id="newProductKit">
+                                    <option value="" selected></option>
+                                    {% for productInfo in productsSystem %}
+                                    <option value="{{ productInfo.id }}">{{ productInfo.nameProduct }} - {{ productInfo.codeProduct }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label>Cantidad</label>
+                                <input class="form-control" name="qtProductKit" id="qtProductKit" type="number">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                <button type="submit" class="btn btn-primary">Agregar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteKitInfoProduct()">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 
     <!-- Import products -->
     <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="importProducts">
@@ -212,6 +274,13 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <br>
+                                <input class="form-check-input" type="checkbox" name="kitProduct" id="kitProduct">
+                                <label>Producto Kit</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteNewProductInfo()">Cancelar</button>
@@ -288,6 +357,13 @@
                                     <option value="SOLES">SOLES</option>
                                     <option value="DOLARES">DOLARES</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <br>
+                                <input class="form-check-input" type="checkbox" name="editKit" id="editKit">
+                                <label>Producto Kit</label>
                             </div>
                         </div>
                     </div>

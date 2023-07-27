@@ -42,6 +42,7 @@ function deleteNewProductInfo()
     pcnIGV=document.getElementById('pcnIGV')
     weightProduct=document.getElementById('weightProduct')
     currencyProduct=document.getElementById('currencyProduct')
+    kitProduct=document.getElementById('kitProduct')
 
     nameProduct.value=''
     measureUnit.value=''
@@ -53,6 +54,7 @@ function deleteNewProductInfo()
     pcnIGV.value=''
     weightProduct.value=''
     currencyProduct.selectedIndex='0'
+    kitProduct.checked = false
     $('#currencyProduct').selectpicker('refresh')
 
 }
@@ -84,6 +86,7 @@ function deleteEditProductInfo()
     editPcnIGV=document.getElementById('editPcnIGV')
     editWeightProduct=document.getElementById('editWeightProduct')
     editCurrencyProduct=document.getElementById('editCurrencyProduct')
+    editKit=document.getElementById('editKit')
 
     editIdProduct.value=''
     editNameProduct.value=''
@@ -95,6 +98,7 @@ function deleteEditProductInfo()
     editPvnIGV.value=''
     editPcnIGV.value=''
     editWeightProduct.value=''
+    editKit.checked = false
     editCurrencyProduct.selectedIndex='0'
     $('#editCurrencyProduct').selectpicker('refresh')
 }
@@ -112,6 +116,7 @@ function loadEditProductData(idProduct)
     editPcnIGV=document.getElementById('editPcnIGV')
     editWeightProduct=document.getElementById('editWeightProduct')
     editCurrencyProduct=document.getElementById('editCurrencyProduct')
+    editKit=document.getElementById('editKit')
 
     editIdProduct.value=''
     editNameProduct.value=''
@@ -150,6 +155,15 @@ function loadEditProductData(idProduct)
                 $('#editCurrencyProduct').selectpicker('refresh')
                 break;
             }
+        }
+
+        if(data.editKit === 'ON')
+        {
+            editKit.checked = true
+        }
+        else
+        {
+            editKit.checked = false
         }
     })
 }
@@ -192,4 +206,53 @@ function deleteAddStockInfo()
     addStockIdStore.selectedIndex = '0'
     $('#addStockIdStore').selectpicker('refresh')
     addStockQt.value = ''
+}
+
+function chargeKitInfo(idProduct)
+{
+    idProduct = idProduct.slice(3)
+    kitInfoProduct = document.getElementById('kitInfoProduct')
+    kitInfoProduct.innerHTML = ''
+    idProductKit = document.getElementById('idProductKit')
+    idProductKit.value = ''
+
+    idProductKit.value = idProduct
+    fetch(`/productsMetalprotecgetProductKit?idProduct=${idProduct}`)
+    .then(response => response.json())
+    .then(data => {
+        console.log(data)
+        for(let i = 0;i < data.arrayKit.length; i++)
+        {
+            nuevaFila = `
+                      <tr>
+                        <td>${data.arrayKit[i][0]}</td>
+                        <td>${data.arrayKit[i][1]}</td>
+                      </tr>
+                      `
+            kitInfoProduct.innerHTML += nuevaFila
+        }
+
+        if(data.arrayKit.length > 4)
+        {
+            document.getElementById('newProductKitSection').style.display = 'none'
+        }
+        else
+        {
+            document.getElementById('newProductKitSection').style.display = ''
+        }
+    })
+}
+
+function deleteKitInfoProduct()
+{
+    kitInfoProduct = document.getElementById('kitInfoProduct')
+    newProductKit = document.getElementById('newProductKit')
+    qtProductKit = document.getElementById('qtProductKit')
+    idProductKit = document.getElementById('idProductKit')
+
+    idProductKit.value = ''
+    kitInfoProduct.innerHTML = ''
+    qtProductKit.value = ''
+    newProductKit.selectedIndex = '0'
+    $('#newProductKit').selectpicker('refresh')
 }
