@@ -37,6 +37,9 @@ def paymentsRegister(request):
         datePayment = request.POST.get('datePayment')
         enabledComission = request.POST.get('enabledComission')
         paidDocument = request.POST.get('paidDocument')
+        guideInfo = request.POST.get('guideInfo')
+        quotationInfo = request.POST.get('quotationInfo')
+        sellerInfo = request.POST.get('sellerInfo')
         asociatedBank = bankSystem.objects.get(id=selectedBank)
         endpointPayment = request.user.extendeduser.endpointUser
         asociatedClient = clientSystem.objects.get(id=selectedClient)
@@ -97,9 +100,9 @@ def paymentsRegister(request):
             nameClient = asociatedClient.identificationClient,
             statePayment = statePayment,
             codeDocument = selectedDocument,
-            codeGuide = '',
-            codeQuotation = '',
-            codeSeller = '',
+            codeGuide = guideInfo,
+            codeQuotation = quotationInfo,
+            codeSeller = sellerInfo,
             typeDocumentPayment = typeDocumentPayment,
             enabledComission = enabledComission,
             asociatedBank = asociatedBank,
@@ -239,5 +242,47 @@ def getPaymentData(request):
         'editClient':paymentInfo.nameClient,
         'editNumber2':paymentInfo.operationNumber2,
         'editNumber':paymentInfo.operationNumber,
-        'idBank':str(paymentInfo.asociatedBank.id)
+        'idBank':str(paymentInfo.asociatedBank.id),
+        'guideInfo':paymentInfo.codeGuide,
+        'quotatioInfo':paymentInfo.codeQuotation,
+        'sellerInfo':paymentInfo.codeSeller
+    })
+
+def getRelatedDocuments(request):
+    guideCode = ''
+    quotationCode = ''
+    userCode = ''
+    documentCode = request.GET.get('documentCode')
+    if documentCode[0] == 'F':
+        documentObject = billSystem.objects.get(codeBill=documentCode)
+    else:
+        documentObject = invoiceSystem.objects.get(codeInvoice=documentCode)
+    if len(documentObject.guidesystem_set.all()) > 0:
+        guideObject = documentObject.guidesystem_set.all()[0]
+        guideCode = guideObject.codeGuide
+        if guideObject.asociatedQuotation is not None:
+            quotationCode = guideObject.asociatedQuotation.codeQuotation
+            if guideObject.asociatedQuotation.quotationsellerdata is not None:
+                userCode = guideObject.asociatedQuotation.quotationsellerdata.dataUserQuotation[2]
+            else:
+                userCode = ''
+        else:
+            quotationCode = ''
+            userCode = ''
+    else:
+        if documentObject.asociatedQuotation is not None:
+            guideCode = ''
+            quotationCode = documentObject.asociatedQuotation.codeQuotation
+            if documentObject.asociatedQuotation.quotationsellerdata is not None:
+                userCode = documentObject.asociatedQuotation.quotationsellerdata.dataUserQuotation[2]
+            else:
+                userCode = ''
+        else:
+            guideCode = ''
+            quotationCode = ''
+            userCode = ''
+    return JsonResponse({
+        'guideCode':guideCode,
+        'quotationCode':quotationCode,
+        'userCode':userCode
     })

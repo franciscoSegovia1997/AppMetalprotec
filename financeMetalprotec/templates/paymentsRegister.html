@@ -56,8 +56,8 @@
                         <td>{{ paymentInfo.nameClient }}</td>
                         <td>{{ paymentInfo.statePayment }}</td>
                         <td>{{ paymentInfo.codeDocument }}</td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ paymentInfo.codeGuide }}</td>
+                        <td>{{ paymentInfo.codeQuotation }}</td>
                         <td class="text-center"><button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editPayment" id="edit{{ paymentInfo.id }}" onclick="chargeEditData(this.id)"><i class="fa-solid fa-edit"></i></button></td>
                         <td class="text-center"><a class="btn btn-danger" href="{% url 'financeMetalprotec:deletePayment' paymentInfo.id %}"><i class="fa-solid fa-trash"></i></a></td>
                     </tr>
@@ -129,17 +129,17 @@
                             </div>
                             <div class="col-6">
                                 <label>Guia</label>
-                                <input type="text" class="form-control" readonly id="guideInfo">
+                                <input type="text" class="form-control" readonly id="guideInfo" name="guideInfo">
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-6">
                                 <label>Cotizacion</label>
-                                <input type="text" class="form-control" readonly id="quotationInfo">
+                                <input type="text" class="form-control" readonly id="quotationInfo" name="quotationInfo">
                             </div>
                             <div class="col-6">
                                 <label>Vendedor</label>
-                                <input type="text" class="form-control" readonly id="sellerInfo">
+                                <input type="text" class="form-control" readonly id="sellerInfo" name="sellerInfo">
                             </div>
                         </div>
                         <div class="row mb-3">
