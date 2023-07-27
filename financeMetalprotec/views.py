@@ -114,7 +114,7 @@ def paymentsRegister(request):
     return render(request,'paymentsRegister.html',{
         'allBanks':bankSystem.objects.all().order_by('id'),
         'allClients':clientSystem.objects.all().order_by('id'),
-        'allPayments':paymentSystem.objects.filter(endpointPayment=request.user.extendeduser.endpointUser)
+        'allPayments':paymentSystem.objects.filter(endpointPayment=request.user.extendeduser.endpointUser).order_by('-datePayment')
     })
 
 def getDocuments(request):
