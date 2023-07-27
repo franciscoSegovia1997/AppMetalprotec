@@ -244,7 +244,7 @@ def getPaymentData(request):
         'editNumber':paymentInfo.operationNumber,
         'idBank':str(paymentInfo.asociatedBank.id),
         'guideInfo':paymentInfo.codeGuide,
-        'quotatioInfo':paymentInfo.codeQuotation,
+        'quotationInfo':paymentInfo.codeQuotation,
         'sellerInfo':paymentInfo.codeSeller
     })
 

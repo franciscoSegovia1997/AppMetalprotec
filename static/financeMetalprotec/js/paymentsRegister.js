@@ -155,7 +155,7 @@ function chargeEditData(idPayment)
         document.getElementById('editDocument').value = data.editDocument
         document.getElementById('editGuide').value = data.guideInfo
         document.getElementById('editQuotation').value = data.quotationInfo
-        document.getElementById('editSeller').value = data.selerInfo
+        document.getElementById('editSeller').value = data.sellerInfo
 
         if(data.editPaid === 'CANCELADO')
         {
