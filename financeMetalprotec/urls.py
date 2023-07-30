@@ -13,4 +13,8 @@ urlpatterns = [
     path('updatePayment',views.updatePayment,name='updatePayment'),
     path('getPaymentData',views.getPaymentData,name='getPaymentData'),
     path('getRelatedDocuments',views.getRelatedDocuments,name='getRelatedDocuments'),
+    path('settingsComissions',views.settingsComissions,name='settingsComissions'),
+    path('deleteSettingComssion/<str:idComission>',views.deleteSettingComssion,name='deleteSettingComssion'),
+    path('getConfigComission',views.getConfigComission,name='getConfigComission'),
+    path('getComissionData',views.getComissionData,name='getComissionData')
 ]
