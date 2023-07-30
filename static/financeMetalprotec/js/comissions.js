@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', ()=>{
-    $('#comisionTable').DataTable({
+    comisionTable = $('#comisionTable').DataTable({
         paging: true,
         pageLength: 20,
         lenghtChange: true,
@@ -28,5 +28,84 @@ document.addEventListener('DOMContentLoaded', ()=>{
             }
         }
     })
+
+    filterComission = document.getElementById('filterComission')
+    userComission = document.getElementById('userComission')
+    configComission = document.getElementById('configComission') 
+
+    userComission.onchange = function()
+    {
+        if(userComission !== '')
+        {
+            while(configComission.length > 0)
+            {
+                configComission.remove(0)
+            }
+
+            firstOption = document.createElement('option')
+            firstOption.value = ''
+            firstOption.innerHTML = ''
+            configComission.appendChild(firstOption)
+            configComission.selectedIndex = '0'
+            $('#configComission').selectpicker('refresh')
+
+            fetch(`/financeMetalprotecgetConfigComission?userComission=${userComission.value}`)
+            .then(response => response.json())
+            .then(data => {
+                for(let i = 0;i < data.allConfig.length; i++)
+                {
+                    newOption = document.createElement('option')
+                    newOption.value = data.allConfig[i][0]
+                    newOption.innerHTML = data.allConfig[i][1]
+                    configComission.appendChild(newOption)
+                }
+                configComission.selectedIndex = '0'
+                $('#configComission').selectpicker('refresh')
+            })
+        }
+        else
+        {
+            while(configComission.length > 0)
+            {
+                configComission.remove(0)
+            }
+
+            firstOption = document.createElement('option')
+            firstOption.value = ''
+            firstOption.innerHTML = ''
+            configComission.appendChild(firstOption)
+            configComission.selectedIndex = '0'
+            $('#configComission').selectpicker('refresh')
+        }
+    }
+
+    filterComission.onclick = function ()
+    {
+        idUserComission = document.getElementById('userComission').value
+        configComission = document.getElementById('configComission').value
+        monthComission = document.getElementById('monthComission').value
+        yearComission = document.getElementById('yearComission').value
+
+        if(idUserComission !== '' && configComission !== '' && monthComission !== '' && yearComission !== '')
+        {
+            comisionTable.clear().draw()
+            fetch(`/financeMetalprotecgetComissionData?idUserComission=${userComission.value}&configComission=${configComission}&monthComission=${monthComission}&yearComission=${yearComission}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+            })
+
+        }
+        else
+        {
+            comisionTable.clear().draw()
+        }
+        /*
+        Ejemplo de agregar filas a un datatable
+        console.log('Agregnado fila')
+        nuevaFila = ['2023-07-02', 'BCP', 'CLIENTE INFORMACION', 'F001-0878', 'C001-0876','0938484','7585743']
+        comisionTable.row.add(nuevaFila).draw();
+        */
+    }
 
 })

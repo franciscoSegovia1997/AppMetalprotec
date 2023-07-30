@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from salesMetalprotec.models import billSystem, quotationClientData, quotationSystem, invoiceSystem, guideSystem
 from clientsMetalprotec.models import clientSystem
 import datetime
+from django.contrib.auth.models import User
 
 # Create your views here.
 def bankRegisters(request):
@@ -25,7 +26,9 @@ def bankRegisters(request):
     })
 
 def comissions(request):
-    return render(request,'comissions.html')
+    return render(request,'comissions.html',{
+        'allUsers':User.objects.all().order_by('id').filter(extendeduser__endpointUser=request.user.extendeduser.endpointUser),
+    })
 
 def paymentsRegister(request):
     if request.method == 'POST':
@@ -285,4 +288,104 @@ def getRelatedDocuments(request):
         'guideCode':guideCode,
         'quotationCode':quotationCode,
         'userCode':userCode
+    })
+
+def settingsComissions(request):
+    if request.method == 'POST':
+        if 'newPartialComission' in request.POST:
+            selectedUserComission = request.POST.get('selectedUserComission')
+            asociatedUser = User.objects.get(id=selectedUserComission)
+            percentageComission = request.POST.get('percentageComission')
+            igvIncluded = request.POST.get('igvIncluded')
+            if igvIncluded == 'on':
+                igvIncluded = 'ON'
+            else:
+                igvIncluded = 'OFF'
+            objComission = settingsComission.objects.create(
+                asociatedUserComission=asociatedUser,
+                dateRegistered=datetime.datetime.today(),
+                igvIncluded=igvIncluded,
+                percentageComision=percentageComission,
+                typeComission='PARCIAL',
+                endpointComission=request.user.extendeduser.endpointUser
+            )
+            comissionCode = str(objComission.id)
+            while len(comissionCode) < 4:
+                comissionCode = '0' + comissionCode
+            comissionCode = 'COM-' + comissionCode
+            objComission.comissionCode = comissionCode
+            objComission.save()
+            return HttpResponseRedirect(reverse('financeMetalprotec:settingsComissions'))
+        if 'newGlobalComission' in request.POST:
+            idMainUser = request.POST.get('mainUser')
+            asociatedUserComission = User.objects.get(id=idMainUser)
+            typeComission = 'GLOBAL'
+            endpointComission = request.user.extendeduser.endpointUser
+            dateRegistered = datetime.datetime.today()
+            idAsociatedUserInfo = request.POST.getlist('idAsociatedUserInfo')
+            globalPercentageInfo = request.POST.getlist('globalPercentageInfo')
+            globalIgvIncludedInfo = request.POST.getlist('globalIgvIncludedInfo')
+            asociatedUsers = []
+            for elemento1, elemento2, elemento3 in zip(idAsociatedUserInfo,globalPercentageInfo,globalIgvIncludedInfo):
+                asociatedUsers.append([elemento1,elemento2,elemento3])
+            objComission = settingsComission.objects.create(
+                asociatedUserComission=asociatedUserComission,
+                dateRegistered=dateRegistered,
+                typeComission=typeComission,
+                endpointComission=endpointComission,
+                asociatedUsers=asociatedUsers,
+            )
+            comissionCode = str(objComission.id)
+            while len(comissionCode) < 4:
+                comissionCode = '0' + comissionCode
+            comissionCode = 'COM-' + comissionCode
+            objComission.comissionCode = comissionCode
+            objComission.save()
+            return HttpResponseRedirect(reverse('financeMetalprotec:settingsComissions'))
+    return render(request,'settingsComissions.html',{
+        'allComissions':settingsComission.objects.all().order_by('-dateRegistered'),
+        'allUsers':User.objects.all().order_by('id').filter(extendeduser__endpointUser=request.user.extendeduser.endpointUser),
+    })
+
+def deleteSettingComssion(request,idComission):
+    selectedComssion = settingsComission.objects.get(id=idComission)
+    selectedComssion.delete()
+    return HttpResponseRedirect(reverse('financeMetalprotec:settingsComissions'))
+
+def getConfigComission(request):
+    userComission = request.GET.get('userComission')
+    selectedUser = User.objects.get(id=userComission)
+    allConfigComission = settingsComission.objects.filter(asociatedUserComission=selectedUser)
+    allConfig = []
+    for comissionInfo in allConfigComission:
+        allConfig.append([comissionInfo.id,comissionInfo.comissionCode])
+    return JsonResponse({
+        'allConfig':allConfig,
+    })
+
+def getComissionData(request):
+    comissionData = []
+    idUserComission = request.GET.get('idUserComission')
+    configComission = request.GET.get('configComission')
+    monthComission = request.GET.get('monthComission')
+    yearComission = request.GET.get('yearComission')
+    print(idUserComission)
+    print(configComission)
+    print(monthComission)
+    print(yearComission)
+    userObject = User.objects.get(id=idUserComission)
+    allPayments = paymentSystem.objects.filter(enabledComission='ON').filter(datePayment__year=int(yearComission)).filter(datePayment__month=int(monthComission)).filter(statePayment='CANCELADO').filter(codeSeller=userObject.extendeduser.userCode)
+    billsPayments = allPayments.filter(asociatedInvoice=None).exclude(asociatedBill=None)
+    invoicesPayments = allPayments.filter(asociatedBill=None).exclude(asociatedInvoice=None)
+    for billInfo in billsPayments:
+        comissionData.append([
+            billInfo.datePayment.strptime('%d-%m-%Y'),
+            billInfo.nameBankPayment,
+            billInfo.nameClient,
+            billInfo.codeDocument,
+            billInfo.codeQuotation,
+            billInfo.operationNumber,
+            billInfo.operationNumber2])
+    return JsonResponse({
+        'comissionData':comissionData,
     })

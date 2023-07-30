@@ -52,9 +52,10 @@ class bankOperation(models.Model):
 
 class settingsComission(models.Model):
     dateRegistered = models.DateField(blank=True, null=True)
+    asociatedUserComission = models.ForeignKey(User ,blank=True ,null=True, on_delete=models.CASCADE)
     igvIncluded = models.CharField(max_length=10, blank=True, null=True)
     percentageComision = models.CharField(max_length=10, blank=True, null=True)
     typeComission = models.CharField(max_length=12, blank=True, null=True)
     comissionCode = models.CharField(max_length=12, blank=True, null=True)
-    asociatedUsers = ArrayField(models.CharField(max_length=8),null=True, blank=True)
+    asociatedUsers = ArrayField(ArrayField(models.CharField(max_length=8),null=True, blank=True),null=True, blank=True)
     endpointComission = models.ForeignKey(endpointSystem, on_delete=models.SET_NULL, null=True, blank=True)
