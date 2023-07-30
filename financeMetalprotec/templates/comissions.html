@@ -26,45 +26,74 @@
             <div class="col-2">
                 <div class="row mx-0">
                     <label>Seleccionar usuario :</label>
-                    <select class="selectpicker form-control">
-                        <option value=""></option>
+                    <select class="selectpicker form-control" id="userComission">
+                        <option value="" selected></option>
+                        {% for userInfo in allUsers %}
+                        <option value="{{ userInfo.id }}">{{ userInfo.username }}</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
             <div class="col-2">
                 <div class="row mx-0">
                     <label>Seleccionar config :</label>
-                    <select class="selectpicker form-control">
-                        <option value=""></option>
+                    <select class="selectpicker form-control" id="configComission">
+                        <option value="" selected></option>
                     </select>
                 </div>
             </div>
             <div class="col-2">
                 <div class="row mx-0">
                     <label>Mes :</label>
-                    <select class="selectpicker form-control">
-                        <option value=""></option>
+                    <select class="selectpicker form-control" id="monthComission">
+                        <option value="" selected></option>
+                        <option value="1">ENERO</option>
+                        <option value="1">FEBRERO</option>
+                        <option value="1">MARZO</option>
+                        <option value="1">ABRIL</option>
+                        <option value="1">MAYO</option>
+                        <option value="1">JUNIO</option>
+                        <option value="1">JULIO</option>
+                        <option value="1">AGOSTO</option>
+                        <option value="1">SEPTIEMBRE</option>
+                        <option value="1">OCTUBRE</option>
+                        <option value="1">NOVIEMBRE</option>
+                        <option value="1">DICIEMBRE</option>
                     </select>
                 </div>
             </div>
             <div class="col-2">
                 <div class="row mx-0">
                     <label>Año :</label>
-                    <select class="selectpicker form-control">
-                        <option value=""></option>
+                    <select class="selectpicker form-control" id="yearComission">
+                        <option value="" selected></option>
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2027">2028</option>
+                        <option value="2027">2029</option>
+                        <option value="2027">2030</option>
                     </select>
                 </div>
             </div>
             <div class="col-1">
                 <br>
                 <div class="row mx-0">
-                    <button class="btn btn-success" name="filterGuides">Filtrar</button>
+                    <button class="btn btn-success" id="filterComission">Filtrar</button>
                 </div>
             </div>
             <div class="col-1">
                 <br>
                 <div class="row mx-0">
-                    <button class="btn btn-success" name="exportGuides">Exportar</button>
+                    <button class="btn btn-success" name="exportComission">Exportar</button>
+                </div>
+            </div>
+            <div class="col-2">
+                <br>
+                <div class="row mx-0">
+                    <a class="btn btn-info" href="{% url 'financeMetalprotec:settingsComissions' %}">Configurar</a>
                 </div>
             </div>
         </div>
@@ -80,7 +109,7 @@
                     <th scope="col">Nro Operacion</th>
                     <th scope="col">Nro Operacion 2</th>
                 </thead>
-                <tbody>
+                <tbody id="infoComission">
                 </tbody>
             </table>
         </div>
