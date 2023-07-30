@@ -81,6 +81,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     filterComission.onclick = function ()
     {
+
+        document.getElementById('sellerCodeInfo').innerHTML = 'VENDEDOR-CODIGO'
+        document.getElementById('qtUserInfo').innerHTML = 'CANTIDAD-VENDEDOR'
+        document.getElementById('comisionInfoSeller').innerHTML = 'COMISION-VENDEDOR'
         idUserComission = document.getElementById('userComission').value
         configComission = document.getElementById('configComission').value
         monthComission = document.getElementById('monthComission').value
@@ -92,12 +96,22 @@ document.addEventListener('DOMContentLoaded', ()=>{
             fetch(`/financeMetalprotecgetComissionData?idUserComission=${userComission.value}&configComission=${configComission}&monthComission=${monthComission}&yearComission=${yearComission}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
+                for(let i = 0; i < data.comissionData.length; i++)
+                {
+                    comisionTable.row.add(data.comissionData[i]).draw()
+                }
+
+                document.getElementById('sellerCodeInfo').innerHTML = data.codeUserInfo
+                document.getElementById('qtUserInfo').innerHTML = data.finalValue
+                document.getElementById('comisionInfoSeller').innerHTML = data.finalComission
             })
 
         }
         else
         {
+            document.getElementById('sellerCodeInfo').innerHTML = 'VENDEDOR-CODIGO'
+            document.getElementById('qtUserInfo').innerHTML = 'CANTIDAD-VENDEDOR'
+            document.getElementById('comisionInfoSeller').innerHTML = 'COMISION-VENDEDOR'
             comisionTable.clear().draw()
         }
         /*
