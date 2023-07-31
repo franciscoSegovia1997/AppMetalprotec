@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.urls import reverse
 from clientsMetalprotec.models import clientSystem
-from productsMetalprotec.models import productSystem
+from productsMetalprotec.models import productSystem, storeSystem, storexproductSystem
 from django.contrib.auth.models import User
 from servicesMetalprotec.models import serviceSystem
 from usersMetalprotec.models import extendedUser
@@ -19,6 +19,7 @@ import os
 import requests
 from base64 import b64decode
 from bs4 import BeautifulSoup
+from stockManagment.models import outcomingItemsRegisterInfo
 
 env = environ.Env()
 env.read_env()
@@ -2494,6 +2495,99 @@ def verifyBillTeFacturo(request,idBill):
     else:
         billObject.stateTeFacturo = 'Aceptado con Obs.'
         billObject.save()
+
+    if (billObject.stockBill != '2' and billObject.stockBill != '1') and billObject.typeItemsBill=='PRODUCTOS':
+        billObject.stockBill = '1'
+        billObject.save()
+        if billObject.originBill == 'QUOTATION':
+            asociatedQuotation = billObject.asociatedQuotation
+            allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+            try:
+                for productInfo in allProductsInfo:
+                    asociatedProduct = productInfo.asociatedProduct
+                    storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
+                    stockEdit = storexproductSystem.objects.filter(asociatedProduct=asociatedProduct).get(asociatedStore=storeObject)
+                    lastStock = stockEdit.quantityProduct
+                    addStockQt = productInfo.dataProductQuotation[8]
+                    stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) - Decimal(addStockQt))))
+                    stockEdit.save()
+                    newStock = stockEdit.quantityProduct
+                    typeOutcoming = 'EGRESO-FACTURA'
+                    dateOutcoming = datetime.datetime.today()
+                    productCode = asociatedProduct.codeProduct
+                    nameStore = storeObject.nameStore
+                    quantityProduct = addStockQt
+                    referenceOutcome = billObject.codeBill
+                    asociatedUserData = request.user
+                    asociatedProduct = asociatedProduct
+                    asociatedStoreData = storeObject
+                    endpointOutcoming = request.user.extendeduser.endpointUser
+                    outcomingItemsRegisterInfo.objects.create(
+                        typeOutcoming=typeOutcoming,
+                        dateOutcoming=dateOutcoming,
+                        productCode=productCode,
+                        nameStore=nameStore,
+                        quantityProduct=quantityProduct,
+                        lastStock=lastStock,
+                        newStock=newStock,
+                        referenceOutcome=referenceOutcome,
+                        asociatedUserData=asociatedUserData,
+                        asociatedProduct=asociatedProduct,
+                        asociatedBill=billObject,
+                        asociatedStoreData=storeObject,
+                        endpointOutcoming=endpointOutcoming
+                    )
+                billObject.stockBill = '2'
+                billObject.save()
+            except:
+                print('Se ha fallado')
+                billObject.stockBill = '1'
+                billObject.save()
+
+        else:
+            asociatedQuotation = billObject.guidesystem_set.all()[0].asociatedQuotation
+            allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+            try:
+                for productInfo in allProductsInfo:
+                    asociatedProduct = productInfo.asociatedProduct
+                    storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
+                    stockEdit = storexproductSystem.objects.filter(asociatedProduct=asociatedProduct).get(asociatedStore=storeObject)
+                    lastStock = stockEdit.quantityProduct
+                    addStockQt = productInfo.dataProductQuotation[8]
+                    stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) - Decimal(addStockQt))))
+                    stockEdit.save()
+                    newStock = stockEdit.quantityProduct
+                    typeOutcoming = 'EGRESO-FACTURA'
+                    dateOutcoming = datetime.datetime.today()
+                    productCode = asociatedProduct.codeProduct
+                    nameStore = storeObject.nameStore
+                    quantityProduct = addStockQt
+                    referenceOutcome = billObject.codeBill
+                    asociatedUserData = request.user
+                    asociatedProduct = asociatedProduct
+                    asociatedStoreData = storeObject
+                    endpointOutcoming = request.user.extendeduser.endpointUser
+                    outcomingItemsRegisterInfo.objects.create(
+                        typeOutcoming=typeOutcoming,
+                        dateOutcoming=dateOutcoming,
+                        productCode=productCode,
+                        nameStore=nameStore,
+                        quantityProduct=quantityProduct,
+                        lastStock=lastStock,
+                        newStock=newStock,
+                        referenceOutcome=referenceOutcome,
+                        asociatedUserData=asociatedUserData,
+                        asociatedProduct=asociatedProduct,
+                        asociatedBill=billObject,
+                        asociatedStoreData=storeObject,
+                        endpointOutcoming=endpointOutcoming
+                    )
+                billObject.stockBill = '2'
+                billObject.save()
+            except:
+                print('Se ha fallado')
+                billObject.stockBill = '1'
+                billObject.save()
     return HttpResponseRedirect(reverse('salesMetalprotec:billsMetalprotec'))
 
 def verifyInvoiceTeFacturo(request,idInvoice):
@@ -2515,6 +2609,98 @@ def verifyInvoiceTeFacturo(request,idInvoice):
     else:
         invoiceObject.stateTeFacturo = 'Aceptado con Obs.'
         invoiceObject.save()
+    if (invoiceObject.stockInvoice != '2' and invoiceObject.stockInvoice != '1') and invoiceObject.stockInvoice=='PRODUCTOS':
+        invoiceObject.stockInvoice = '1'
+        invoiceObject.save()
+        if invoiceObject.originInvoice == 'QUOTATION':
+            asociatedQuotation = invoiceObject.asociatedQuotation
+            allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+            try:
+                for productInfo in allProductsInfo:
+                    asociatedProduct = productInfo.asociatedProduct
+                    storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
+                    stockEdit = storexproductSystem.objects.filter(asociatedProduct=asociatedProduct).get(asociatedStore=storeObject)
+                    lastStock = stockEdit.quantityProduct
+                    addStockQt = productInfo.dataProductQuotation[8]
+                    stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) - Decimal(addStockQt))))
+                    stockEdit.save()
+                    newStock = stockEdit.quantityProduct
+                    typeOutcoming = 'EGRESO-INVOICE'
+                    dateOutcoming = datetime.datetime.today()
+                    productCode = asociatedProduct.codeProduct
+                    nameStore = storeObject.nameStore
+                    quantityProduct = addStockQt
+                    referenceOutcome = invoiceObject.codeInvoice
+                    asociatedUserData = request.user
+                    asociatedProduct = asociatedProduct
+                    asociatedStoreData = storeObject
+                    endpointOutcoming = request.user.extendeduser.endpointUser
+                    outcomingItemsRegisterInfo.objects.create(
+                        typeOutcoming=typeOutcoming,
+                        dateOutcoming=dateOutcoming,
+                        productCode=productCode,
+                        nameStore=nameStore,
+                        quantityProduct=quantityProduct,
+                        lastStock=lastStock,
+                        newStock=newStock,
+                        referenceOutcome=referenceOutcome,
+                        asociatedUserData=asociatedUserData,
+                        asociatedProduct=asociatedProduct,
+                        asociatedInvoice=invoiceObject,
+                        asociatedStoreData=storeObject,
+                        endpointOutcoming=endpointOutcoming
+                    )
+                invoiceObject.stockInvoice = '2'
+                invoiceObject.save()
+            except:
+                print('Se ha fallado')
+                invoiceObject.stockInvoice = '1'
+                invoiceObject.save()
+
+        else:
+            asociatedQuotation = invoiceObject.guidesystem_set.all()[0].asociatedQuotation
+            allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+            try:
+                for productInfo in allProductsInfo:
+                    asociatedProduct = productInfo.asociatedProduct
+                    storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
+                    stockEdit = storexproductSystem.objects.filter(asociatedProduct=asociatedProduct).get(asociatedStore=storeObject)
+                    lastStock = stockEdit.quantityProduct
+                    addStockQt = productInfo.dataProductQuotation[8]
+                    stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) - Decimal(addStockQt))))
+                    stockEdit.save()
+                    newStock = stockEdit.quantityProduct
+                    typeOutcoming = 'EGRESO-INVOICE'
+                    dateOutcoming = datetime.datetime.today()
+                    productCode = asociatedProduct.codeProduct
+                    nameStore = storeObject.nameStore
+                    quantityProduct = addStockQt
+                    referenceOutcome = invoiceObject.codeInvoice
+                    asociatedUserData = request.user
+                    asociatedProduct = asociatedProduct
+                    asociatedStoreData = storeObject
+                    endpointOutcoming = request.user.extendeduser.endpointUser
+                    outcomingItemsRegisterInfo.objects.create(
+                        typeOutcoming=typeOutcoming,
+                        dateOutcoming=dateOutcoming,
+                        productCode=productCode,
+                        nameStore=nameStore,
+                        quantityProduct=quantityProduct,
+                        lastStock=lastStock,
+                        newStock=newStock,
+                        referenceOutcome=referenceOutcome,
+                        asociatedUserData=asociatedUserData,
+                        asociatedProduct=asociatedProduct,
+                        asociatedInvoice=invoiceObject,
+                        asociatedStoreData=storeObject,
+                        endpointOutcoming=endpointOutcoming
+                    )
+                invoiceObject.stockInvoice = '2'
+                invoiceObject.save()
+            except:
+                print('Se ha fallado')
+                invoiceObject.stockInvoice = '1'
+                invoiceObject.save()
     return HttpResponseRedirect(reverse('salesMetalprotec:invoicesMetalprotec'))
 
 def downloadGuideTeFacturo(request,idGuide):
