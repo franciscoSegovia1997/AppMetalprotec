@@ -2532,7 +2532,7 @@ def verifyBillTeFacturo(request,idBill):
                         newStock=newStock,
                         referenceOutcome=referenceOutcome,
                         asociatedUserData=asociatedUserData,
-                        asociatedProduct=asociatedProduct
+                        asociatedProduct=asociatedProduct,
                         asociatedBill=billInfo,
                         asociatedStoreData=storeObject,
                         endpointOutcoming=endpointOutcoming
@@ -2576,7 +2576,7 @@ def verifyBillTeFacturo(request,idBill):
                         newStock=newStock,
                         referenceOutcome=referenceOutcome,
                         asociatedUserData=asociatedUserData,
-                        asociatedProduct=asociatedProduct
+                        asociatedProduct=asociatedProduct,
                         asociatedBill=billInfo,
                         asociatedStoreData=storeObject,
                         endpointOutcoming=endpointOutcoming
