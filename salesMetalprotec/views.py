@@ -19,6 +19,7 @@ import os
 import requests
 from base64 import b64decode
 from bs4 import BeautifulSoup
+from stockManagment.models import outcomingItemsRegisterInfo
 
 env = environ.Env()
 env.read_env()
@@ -2494,6 +2495,97 @@ def verifyBillTeFacturo(request,idBill):
     else:
         billObject.stateTeFacturo = 'Aceptado con Obs.'
         billObject.save()
+
+    if billObject.stockBill != '2' or billObject.stockBill != '1' and billObject.typeItemsBill=='PRODUCTOS':
+        billObject.stockBill = '1'
+        billObject.save()
+        if billObject.originBill == 'QUOTATION':
+            asociatedQuotation = billObject.asociatedQuotation
+            allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+            try:
+                for productInfo in allProductsInfo:
+                    asociatedProduct = productInfo.asociatedProduct
+                    storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
+                    stockEdit = storexproductSystem.objects.filter(asociatedProduct=asociatedProduct).get(asociatedStore=storeObject)
+                    lastStock = stockEdit.quantityProduct
+                    addStockQt = productInfo.dataProductQuotation[8]
+                    stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) - Decimal(addStockQt))))
+                    stockEdit.save()
+                    newStock = stockEdit.quantityProduct
+                    typeOutcoming = 'EGRESO-FACTURA'
+                    dateOutcoming = datetime.datetime.today()
+                    productCode = asociatedProduct.codeProduct
+                    nameStore = storeObject.nameStore
+                    quantityProduct = addStockQt
+                    referenceOutcome = billObject.codeBill
+                    asociatedUserData = request.user
+                    asociatedProduct = asociatedProduct
+                    asociatedStoreData = storeObject
+                    endpointOutcoming = request.user.extendeduser.endpointUser
+                    outcomingItemsRegisterInfo.objects.create(
+                        typeOutcoming=typeOutcoming,
+                        dateOutcoming=dateOutcoming,
+                        productCode=productCode,
+                        nameStore=nameStore,
+                        quantityProduct=quantityProduct,
+                        lastStock=lastStock,
+                        newStock=newStock,
+                        referenceOutcome=referenceOutcome,
+                        asociatedUserData=asociatedUserData,
+                        asociatedProduct=asociatedProduct
+                        asociatedBill=billInfo,
+                        asociatedStoreData=storeObject,
+                        endpointOutcoming=endpointOutcoming
+                    )
+                billObject.stockBill = '2'
+                billObject.save()
+            except:
+                billObject.stockBill = '1'
+                billObject.save()
+
+        else:
+            asociatedQuotation = billObject.guidesystem_set.all()[0].asociatedQuotation
+            allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+            try:
+                for productInfo in allProductsInfo:
+                    asociatedProduct = productInfo.asociatedProduct
+                    storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
+                    stockEdit = storexproductSystem.objects.filter(asociatedProduct=asociatedProduct).get(asociatedStore=storeObject)
+                    lastStock = stockEdit.quantityProduct
+                    addStockQt = productInfo.dataProductQuotation[8]
+                    stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) - Decimal(addStockQt))))
+                    stockEdit.save()
+                    newStock = stockEdit.quantityProduct
+                    typeOutcoming = 'EGRESO-FACTURA'
+                    dateOutcoming = datetime.datetime.today()
+                    productCode = asociatedProduct.codeProduct
+                    nameStore = storeObject.nameStore
+                    quantityProduct = addStockQt
+                    referenceOutcome = billObject.codeBill
+                    asociatedUserData = request.user
+                    asociatedProduct = asociatedProduct
+                    asociatedStoreData = storeObject
+                    endpointOutcoming = request.user.extendeduser.endpointUser
+                    outcomingItemsRegisterInfo.objects.create(
+                        typeOutcoming=typeOutcoming,
+                        dateOutcoming=dateOutcoming,
+                        productCode=productCode,
+                        nameStore=nameStore,
+                        quantityProduct=quantityProduct,
+                        lastStock=lastStock,
+                        newStock=newStock,
+                        referenceOutcome=referenceOutcome,
+                        asociatedUserData=asociatedUserData,
+                        asociatedProduct=asociatedProduct
+                        asociatedBill=billInfo,
+                        asociatedStoreData=storeObject,
+                        endpointOutcoming=endpointOutcoming
+                    )
+                billObject.stockBill = '2'
+                billObject.save()
+            except:
+                billObject.stockBill = '1'
+                billObject.save()
     return HttpResponseRedirect(reverse('salesMetalprotec:billsMetalprotec'))
 
 def verifyInvoiceTeFacturo(request,idInvoice):
