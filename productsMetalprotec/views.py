@@ -4,6 +4,8 @@ from decimal import Decimal, DecimalException,getcontext
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from stockManagment.models import incomingItemsRegisterInfo
+import datetime
 
 getcontext().prec = 10
 
@@ -154,8 +156,34 @@ def addStockProduct(request):
         addStockStore=storeSystem.objects.get(id=addStockIdStore)
         if checkStockExist(addStockProduct,addStockStore):
             stockEdit = storexproductSystem.objects.filter(asociatedProduct=addStockProduct).get(asociatedStore=addStockStore)
+            lastStock = stockEdit.quantityProduct
             stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) + Decimal(addStockQt))))
             stockEdit.save()
+            newStock = stockEdit.quantityProduct
+            typeIncoming = 'INGRESO-PRODUCTOS'
+            dateIncoming = datetime.datetime.today()
+            productCode = addStockProduct.codeProduct
+            nameStore = addStockStore.nameStore
+            quantityProduct = addStockQt
+            referenceIncome = 'INGRESO'
+            asociatedUserData = request.user
+            asociatedProduct = addStockProduct
+            asociatedStoreData = addStockStore
+            endpointIncoming = request.user.extendeduser.endpointUser
+            incomingItemsRegisterInfo.objects.create(
+                typeIncoming=typeIncoming,
+                dateIncoming=dateIncoming,
+                productCode=productCode,
+                nameStore=nameStore,
+                quantityProduct=quantityProduct,
+                lastStock=lastStock,
+                newStock=newStock,
+                referenceIncome=referenceIncome,
+                asociatedUserData=asociatedUserData,
+                asociatedProduct=asociatedProduct,
+                asociatedStoreData=asociatedStoreData,
+                endpointIncoming=endpointIncoming
+            )
         else:
             storexproductSystem.objects.create(
                 asociatedProduct=addStockProduct,
