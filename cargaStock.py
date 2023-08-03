@@ -42,6 +42,10 @@ with open(filename, 'r') as csv_file:
             infoProducto = productSystem.objects.get(codeProduct=row[0])
             print(f"CODIGO UNICO - {row[0]} CON STOCK {row[1]}.00")
             objProducto = infoProducto.storexproductsystem_set.all().get(asociatedStore__nameStore='CHIMBOTE')
+            objProducto.quantityProduct = f"{row[1]}.00"
+            objProducto.save()
             print(f"DATOS: {objProducto.quantityProduct} - {objProducto.asociatedStore.nameStore} - {objProducto.asociatedProduct.nameProduct}")
         except:
             print(f"CODIGO REPETIDO!! - {row[0]}")
+
+print(f"Carga del archivo {filename} finalizado")
