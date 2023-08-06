@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', ()=>{
-    $('#incomingInfoTable').DataTable({
+    incomingInfoTable = $('#incomingInfoTable').DataTable({
         paging: true,
         pageLength: 20,
         lenghtChange: true,
@@ -29,4 +29,28 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
     })
 
+    filterIncomingData = document.getElementById('filterIncomingData')
+
+    filterIncomingData.onclick = function()
+    {
+        startDate = document.getElementById('startDate')
+        endDate = document.getElementById('endDate')
+        incomingInfoTable.clear().draw()
+        if(startDate.value !== '' && endDate.value !== '')
+        {
+            incomingInfoTable.clear().draw()
+            fetch(`/stockManagmentfilterIncomingItemsJson?startDate=${startDate.value}&endDate=${endDate.value}`)
+            .then(response => response.json())
+            .then(data => {
+                for(let i = 0; i < data.incomingData.length; i++)
+                {
+                    comisionTable.row.add(data.incomingData[i]).draw()
+                }
+            })
+        }
+        else
+        {
+            console.log('INGRESE LAS FECHAS CORRECTAMENTE')
+        }        
+    }
 })

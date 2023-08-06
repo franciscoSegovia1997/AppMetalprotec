@@ -1,11 +1,14 @@
 from django.shortcuts import render
 from .models import incomingItemsRegisterInfo,outcomingItemsRegisterInfo,stockTakingData, infoStockTaking
 from productsMetalprotec.models import storeSystem, productSystem
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse
 import datetime
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
+from django.db.models import Q
+import pandas as pd
+import openpyxl
 
 # Create your views here.
 def incomingItems(request):
@@ -109,3 +112,73 @@ def downloadStockTaking(request,idStockTaking):
     nombre = 'attachment; ' + 'filename=' + nombre_doc
     response['Content-Disposition'] = nombre
     return response
+
+
+def exportFilteredIncomingItems(request):
+    if request.method == 'POST':
+        startDate = request.POST.get('startDate')
+        endDate = request.POST.get('endDate')
+        incomingData = []
+        if startDate != '' and endDate != '':
+            fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+            fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+            incomingItemsFilter = incomingItemsRegisterInfo.objects.filter(
+                Q(dateIncoming__gte=fechaInicio) &
+                Q(dateIncoming__lte=fechaFin)
+            ).order_by('dateIncoming')
+            for incomingRegister in incomingItemsFilter:
+                incomingData.append([incomingRegister.dateIncoming.strftime('%Y-%m-%d'),
+                    incomingRegister.productCode,
+                    incomingRegister.asociatedProduct.nameProduct,
+                    incomingRegister.quantityProduct,
+                    incomingRegister.lastStock,
+                    incomingRegister.newStock,
+                ])
+            exportTable = pd.DataFrame(incomingData,columns=['Fecha','Codigo de producto','Producto','Cantidad','Stock anterior','Nuevo Stock'])
+            exportTable.to_excel('incomingItems.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("incomingItems.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 30
+            doc_excel.active.column_dimensions['B'].width = 30
+            doc_excel.active.column_dimensions['C'].width = 80
+            doc_excel.active.column_dimensions['D'].width = 30
+            doc_excel.active.column_dimensions['E'].width = 30
+            doc_excel.active.column_dimensions['F'].width = 30
+            doc_excel.save("incomingItems.xlsx")
+        else:
+            incomingData.append(['INGRESAR AMBAS FECHAS'])
+            exportTable = pd.DataFrame(incomingData,columns=['INFORMACION'])
+            exportTable.to_excel('incomingItems.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("incomingItems.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 60
+            doc_excel.save("incomingItems.xlsx")
+        response = HttpResponse(open('incomingItems.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'incomingItems.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
+
+def filterIncomingItemsJson(request):
+    starDate = request.GET.get('startDate')
+    endDate = request.GET.get('endDate')
+    incomingData = []
+    fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+    fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+    incomingItemsFilter = incomingItemsRegisterInfo.objects.filter(
+        Q(dateIncoming__gte=fechaInicio) &
+        Q(dateIncoming__lte=fechaFin)
+    ).order_by('dateIncoming')
+    for incomingRegister in incomingItemsFilter:
+        incomingData.append([
+            incomingRegister.dateIncoming.strftime('%Y-%m-%d'),
+            incomingRegister.productCode,
+            incomingRegister.asociatedProduct.nameProduct,
+            incomingRegister.nameStore,
+            incomingRegister.quantityProduct,
+            incomingRegister.lastStock,
+            incomingRegister.newStock,
+            incomingRegister.typeIncoming,
+            incomingRegister.referenceIncome,
+            incomingRegister.asociatedUserData.extendeduser.codeUser
+        ])
+    return JsonResponse({
+        'incomingData':incomingData
+    })
