@@ -157,7 +157,7 @@ def exportFilteredIncomingItems(request):
         return response
 
 def filterIncomingItemsJson(request):
-    starDate = request.GET.get('startDate')
+    startDate = request.GET.get('startDate')
     endDate = request.GET.get('endDate')
     incomingData = []
     fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
