@@ -11,4 +11,6 @@ urlpatterns = [
     path('downloadStockTaking/<str:idStockTaking>',views.downloadStockTaking,name='downloadStockTaking'),
     path('exportFilteredIncomingItems',views.exportFilteredIncomingItems,name='exportFilteredIncomingItems'),
     path('filterIncomingItemsJson',views.filterIncomingItemsJson,name='filterIncomingItemsJson'),
+    path('exportFilteredOutcomingItems',views.exportFilteredOutcomingItems,name='exportFilteredOutcomingItems'),
+    path('filterOutcomingItemsJson',views.filterOutcomingItemsJson,name='filterOutcomingItemsJson'),
 ]
