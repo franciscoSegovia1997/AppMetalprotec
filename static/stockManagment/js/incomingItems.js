@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
             .then(data => {
                 for(let i = 0; i < data.incomingData.length; i++)
                 {
-                    comisionTable.row.add(data.incomingData[i]).draw()
+                    incomingInfoTable.row.add(data.incomingData[i]).draw()
                 }
             })
         }
