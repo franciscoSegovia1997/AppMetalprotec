@@ -125,7 +125,7 @@ def exportFilteredIncomingItems(request):
             incomingItemsFilter = incomingItemsRegisterInfo.objects.filter(
                 Q(dateIncoming__gte=fechaInicio) &
                 Q(dateIncoming__lte=fechaFin)
-            ).order_by('dateIncoming')
+            ).order_by('-dateIncoming')
             for incomingRegister in incomingItemsFilter:
                 incomingData.append([incomingRegister.dateIncoming.strftime('%Y-%m-%d'),
                     incomingRegister.productCode,
@@ -165,7 +165,7 @@ def filterIncomingItemsJson(request):
     incomingItemsFilter = incomingItemsRegisterInfo.objects.filter(
         Q(dateIncoming__gte=fechaInicio) &
         Q(dateIncoming__lte=fechaFin)
-    ).order_by('dateIncoming')
+    ).order_by('-dateIncoming')
     for incomingRegister in incomingItemsFilter:
         incomingData.append([
             incomingRegister.dateIncoming.strftime('%Y-%m-%d'),
@@ -182,3 +182,73 @@ def filterIncomingItemsJson(request):
     return JsonResponse({
         'incomingData':incomingData
     })
+
+def filterOutcomingItemsJson(request):
+    startDate = request.GET.get('startDate')
+    endDate = request.GET.get('endDate')
+    outcomingData = []
+    fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+    fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+    outcomingItemsFilter = outcomingItemsRegisterInfo.objects.filter(
+        Q(dateOutcoming__gte=fechaInicio) &
+        Q(dateOutcoming__lte=fechaFin)
+    ).order_by('-dateOutcoming')
+    for outcomingRegister in outcomingItemsFilter:
+        outcomingData.append([
+            outcomingRegister.dateOutcoming.strftime('%Y-%m-%d'),
+            outcomingRegister.productCode,
+            outcomingRegister.asociatedProduct.nameProduct,
+            outcomingRegister.nameStore,
+            outcomingRegister.quantityProduct,
+            outcomingRegister.lastStock,
+            outcomingRegister.newStock,
+            outcomingRegister.typeOutcoming,
+            outcomingRegister.referenceOutcome,
+            outcomingRegister.asociatedUserData.extendeduser.codeUser
+        ])
+    return JsonResponse({
+        'outcomingData':outcomingData
+    })
+
+def exportFilteredOutcomingItems(request):
+    if request.method == 'POST':
+        startDate = request.POST.get('startDate')
+        endDate = request.POST.get('endDate')
+        outcomingData = []
+        if startDate != '' and endDate != '':
+            fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+            fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+            outcomingItemsFilter = outcomingItemsRegisterInfo.objects.filter(
+                Q(dateOutcoming__gte=fechaInicio) &
+                Q(dateOutcoming__lte=fechaFin)
+            ).order_by('-dateOutcoming')
+            for outcomingRegister in outcomingItemsFilter:
+                outcomingData.append([
+                    outcomingRegister.dateOutcoming.strftime('%Y-%m-%d'),
+                    outcomingRegister.productCode,
+                    outcomingRegister.asociatedProduct.nameProduct,
+                    outcomingRegister.quantityProduct,
+                    outcomingRegister.lastStock,
+                    outcomingRegister.newStock,
+                ])
+            exportTable = pd.DataFrame(outcomingData,columns=['Fecha','Codigo de producto','Producto','Cantidad','Stock anterior','Nuevo Stock'])
+            exportTable.to_excel('outcomingItems.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("outcomingItems.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 30
+            doc_excel.active.column_dimensions['B'].width = 30
+            doc_excel.active.column_dimensions['C'].width = 80
+            doc_excel.active.column_dimensions['D'].width = 30
+            doc_excel.active.column_dimensions['E'].width = 30
+            doc_excel.active.column_dimensions['F'].width = 30
+            doc_excel.save("outcomingItems.xlsx")
+        else:
+            outcomingData.append(['INGRESAR AMBAS FECHAS'])
+            exportTable = pd.DataFrame(outcomingData,columns=['INFORMACION'])
+            exportTable.to_excel('outcomingItems.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("outcomingItems.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 60
+            doc_excel.save("outcomingItems.xlsx")
+        response = HttpResponse(open('outcomingItems.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'outcomingItems.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
