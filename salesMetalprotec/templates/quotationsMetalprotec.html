@@ -31,30 +31,39 @@
         </div>
         <br>
         <div class="row">
-            <div class="col-2">
-                <div class="row mx-0">
-                    <label>Fecha inicial</label>
-                    <input type="date" class="form-control" name="startDate">
+            <form method="post" action="{% url 'salesMetalprotec:exportFilteredQuotations' %}">
+            {% csrf_token %}
+                <div class="col-2">
+                    <div class="row mx-0">
+                        <label>Fecha inicial</label>
+                        <input type="date" class="form-control" name="startDate" id="startDate">
+                    </div>
                 </div>
-            </div>
-            <div class="col-2">
-                <div class="row mx-0">
-                    <label>Fecha final</label>
-                    <input type="date" class="form-control" name="endDate">
+                <div class="col-2">
+                    <div class="row mx-0">
+                        <label>Fecha final</label>
+                        <input type="date" class="form-control" name="endDate" id="endDate">
+                    </div>
                 </div>
-            </div>
-            <div class="col-2">
-                <br>
-                <div class="row mx-0">
-                    <button class="btn btn-success" name="filterQuotations">Filtrar</button>
+                <div class="col-2">
+                    <br>
+                    <div class="row mx-0">
+                        <button type="button" class="btn btn-success" name="filterQuotations">Filtrar</button>
+                    </div>
                 </div>
-            </div>
-            <div class="col-2">
-                <br>
-                <div class="row mx-0">
-                    <button class="btn btn-success" name="exportQuotations">Exportar</button>
+                <div class="col-2">
+                    <br>
+                    <div class="row mx-0">
+                        <button type="submit" class="btn btn-success" name="exportQuotations">Exportar</button>
+                    </div>
                 </div>
-            </div>
+                <div class="col-2">
+                    <br>
+                    <div class="row mx-0">
+                        <a class="btn btn-success" href="{% url 'salesMetalprotec:quotationsMetalprotec' %}">Reestablecer</a>
+                    </div>
+                </div>
+            </form>
         </div>
         <br>
         <div>
