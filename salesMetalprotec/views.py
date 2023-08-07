@@ -4683,6 +4683,7 @@ def getSolesValue(quotationItem):
             valueSoles = Decimal(round(float(Decimal(getValueQuotation(quotationItem))*Decimal(quotationItem.erSel)),2))
     except:
         valueSoles = Decimal(0.000)
+    valueSoles = Decimal('%.2f' % valueSoles)
     valueSoles = str(valueSoles)
     return valueSoles
 

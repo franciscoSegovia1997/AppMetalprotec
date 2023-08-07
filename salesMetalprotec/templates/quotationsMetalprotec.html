@@ -31,7 +31,7 @@
         </div>
         <br>
         <div class="row">
-            <form method="post" action="{% url 'salesMetalprotec:exportFilteredQuotations' %}">
+            <form class="row" method="post" action="{% url 'salesMetalprotec:exportFilteredQuotations' %}">
             {% csrf_token %}
                 <div class="col-2">
                     <div class="row mx-0">
@@ -45,7 +45,7 @@
                         <input type="date" class="form-control" name="endDate" id="endDate">
                     </div>
                 </div>
-                <div class="col-2">
+                <div class="col-2" style="display: none;">
                     <br>
                     <div class="row mx-0">
                         <button type="button" class="btn btn-success" name="filterQuotations">Filtrar</button>
