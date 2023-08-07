@@ -38,9 +38,22 @@ def stockTaking(request):
         )
         for asociatedProsductInfo in totalProductsInfo:
             infoData = asociatedProsductInfo.storexproductsystem_set.all().filter(asociatedStore=asociatedStoreData)
+            priceProduct = '0.00'
+            try:
+                float(asociatedProsductInfo.pcnIGV)
+                priceProduct = asociatedProsductInfo.pcnIGV
+            except:
+                priceProduct = '0.00'
             if len(infoData)==1:
                 if float(infoData[0].quantityProduct) != 0:
-                    dataStockTakingInfo = [asociatedProsductInfo.nameProduct,asociatedProsductInfo.codeProduct,infoData[0].quantityProduct,asociatedProsductInfo.pcnIGV,asociatedProsductInfo.pvnIGV]
+                    dataStockTakingInfo = [
+                        asociatedProsductInfo.nameProduct,
+                        asociatedProsductInfo.codeProduct,
+                        infoData[0].quantityProduct,
+                        asociatedProsductInfo.currencyProduct,
+                        priceProduct,
+                        asociatedProsductInfo.pvnIGV,
+                    ]
                     infoStockTaking.objects.create(
                         asociatedStockTaking=asociatedStockTaking,
                         asociatedProsductInfo=asociatedProsductInfo,
@@ -78,13 +91,16 @@ def downloadStockTaking(request,idStockTaking):
         can.drawString(25,770,'Almacen : ')
         can.drawString(150,770,stockTakingInfo.storeStokTaking)
         can.setFont('Helvetica',12)
-        lista_x = [25,50,100,310,360,410,460,530]
+        lista_x = [25,50,100,310,360,420,480,540]
         lista_y = [730,745]
         #Ingreso de campo cantidad
         can.setFillColorRGB(0,0,0)
         can.setFont('Helvetica-Bold',7)
         can.drawString(lista_x[0] + 5, lista_y[0] + 3,'Producto')
         can.drawString(lista_x[4] + 5, lista_y[0] + 3,'Stock')
+        can.drawString(lista_x[5] + 5, lista_y[0] + 3,'Valor')
+        can.drawString(lista_x[6] + 5, lista_y[0] + 3,'Total')
+        can.drawString(lista_x[7] + 5, lista_y[0] + 3,'Moneda')
         can.setFont('Helvetica',7)
         can.setFillColorRGB(0,0,0)
         lista_y = [lista_y[0] - 16,lista_y[1] - 16]
@@ -92,6 +108,9 @@ def downloadStockTaking(request,idStockTaking):
         for productInfo in groupQuantity[indicatorGroup]:
             can.drawString(lista_x[0] + 5,lista_y[0] + 3,str(productInfo.dataStockTakingInfo[0]))
             can.drawRightString(lista_x[4] + 20,lista_y[0] + 3,str(productInfo.dataStockTakingInfo[2]))
+            can.drawRightString(lista_x[5] + 20,lista_y[0] + 3,str(productInfo.dataStockTakingInfo[4]))
+            can.drawRightString(lista_x[6] + 20,lista_y[0] + 3,str(round(float(productInfo.dataStockTakingInfo[2])*float(productInfo.dataStockTakingInfo[4]),2)))
+            can.drawString(lista_x[7] + 5,lista_y[0] + 3,str(productInfo.dataStockTakingInfo[3]))
             lista_y = [lista_y[0] - 16,lista_y[1] - 16]
             counter_stock = counter_stock + 1
         indicatorGroup = indicatorGroup + 1

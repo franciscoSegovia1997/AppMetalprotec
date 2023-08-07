@@ -4217,12 +4217,12 @@ def getInfoCreditNote(creditNoteObject):
 
     if creditNoteObject.originCreditNote == 'INVOICE':
         currencyNote = currencyInvoice
-        serieNota = billObject.endpointBill.serieNotaFactura
+        serieNota = invoiceObject.endpointInvoice.serieNotaBoleta
         documentoIdentidad = tipoDocumentoBoleta
         itemsNote = itemsInvoice
     else:
         currencyNote = currencyBill
-        serieNota = invoiceObject.endpointInvoice.serieNotaBoleta
+        serieNota = billObject.endpointBill.serieNotaFactura
         documentoIdentidad = 'RUC'
         itemsNote = itemsBill
 
@@ -4287,16 +4287,13 @@ def getInfoCreditNote(creditNoteObject):
             "numeroDocumentoIdentidad":documentClient,
             "tipoDocumentoIdentidad":documentoIdentidad
         },
-        'referencias':{
-            "documentoReferenciaList":guideJson,
-        },
         'cuotas':None
     }
     return param_data
 
 
 def createCreditNoteFromBill(request,idBill):
-    asociatedBill = billSystem.objects.create(id=idBill)
+    asociatedBill = billSystem.objects.get(id=idBill)
     endpointCreditNote = request.user.extendeduser.endpointUser
     serieCreditNote = endpointCreditNote.serieNotaFactura
     nroCreditNote = endpointCreditNote.nroNotaFactura
