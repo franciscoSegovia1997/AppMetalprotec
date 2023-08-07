@@ -252,3 +252,15 @@ def exportFilteredOutcomingItems(request):
         nombre = 'attachment; ' + 'filename=' + 'outcomingItems.xlsx'
         response['Content-Disposition'] = nombre
         return response
+
+def aproveStockTaking(request,idStockTaking):
+    stockTakingObject = stockTakingData.objects.get(id=idStockTaking)
+    stockTakingObject.stateStockTaking = 'APROBADO'
+    stockTakingObject.save()
+    return HttpResponseRedirect(reverse('stockManagment:stockTaking'))
+
+def observeStockTaking(request,idStockTaking):
+    stockTakingObject = stockTakingData.objects.get(id=idStockTaking)
+    stockTakingObject.stateStockTaking = 'OBSERVADO'
+    stockTakingObject.save()
+    return HttpResponseRedirect(reverse('stockManagment:stockTaking'))

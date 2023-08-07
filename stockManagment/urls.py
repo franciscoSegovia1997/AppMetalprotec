@@ -13,4 +13,6 @@ urlpatterns = [
     path('filterIncomingItemsJson',views.filterIncomingItemsJson,name='filterIncomingItemsJson'),
     path('exportFilteredOutcomingItems',views.exportFilteredOutcomingItems,name='exportFilteredOutcomingItems'),
     path('filterOutcomingItemsJson',views.filterOutcomingItemsJson,name='filterOutcomingItemsJson'),
+    path('aproveStockTaking/<str:idStockTaking>',views.aproveStockTaking,name='aproveStockTaking'),
+    path('observeStockTaking/<str:idStockTaking>'.views.observeStockTaking,name='observeStockTaking'),
 ]
