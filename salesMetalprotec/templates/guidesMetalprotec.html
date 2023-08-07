@@ -38,7 +38,7 @@
         </div>
         <br>
         <div class="row">
-            <form method="post" action="{% url 'salesMetalprotec:exportFilteredGuides' %}">
+            <form class="row" method="post" action="{% url 'salesMetalprotec:exportFilteredGuides' %}">
             {% csrf_token %}
                 <div class="col-2">
                     <div class="row mx-0">
@@ -52,16 +52,22 @@
                         <input type="date" class="form-control" name="endDate">
                     </div>
                 </div>
-                <div class="col-2">
+                <div class="col-2" style="display: none;">
                     <br>
                     <div class="row mx-0">
-                        <button type="button" style="display: none;" class="btn btn-success" name="filterGuides">Filtrar</button>
+                        <button type="button" class="btn btn-success" name="filterGuides">Filtrar</button>
                     </div>
                 </div>
                 <div class="col-2">
                     <br>
                     <div class="row mx-0">
                         <button class="btn btn-success" type="submit" name="exportGuides">Exportar</button>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <br>
+                    <div class="row mx-0">
+                        <a class="btn btn-success" href="{% url 'salesMetalprotec:guidesMetalprotec' %}">Reestablecer</a>
                     </div>
                 </div>
             </form>

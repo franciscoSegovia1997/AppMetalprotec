@@ -4521,46 +4521,115 @@ def exportFilteredBills(request):
         if startDate != '' and endDate != '':
             fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
             fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
-            quotationFilter = quotationSystem.objects.filter(
-                Q(dateQuotation__gte=fechaInicio) &
-                Q(dateQuotation__lte=fechaFin)
-            ).order_by('-dateQuotation')
-            for quotationItem in quotationFilter:
-                quotationData.append([
-                    quotationItem.dateQuotation.strftime('%Y-%m-%d'),
-                    quotationItem.codeQuotation,
-                    quotationItem.quotationclientdata.dataClientQuotation[1],
-                    quotationItem.stateQuotation,
-                    quotationItem.currencyQuotation,
-                    getValueQuotation(quotationItem),
-                    getSolesValue(quotationItem),
+            billsFilter = billSystem.objects.filter(
+                Q(dateBill__gte=fechaInicio) &
+                Q(dateBill__lte=fechaFin)
+            ).order_by('-dateBill')
+            for billItem in billsFilter:
+                billsData.append([
+                    billItem.dateBill.strftime('%Y-%m-%d'),
+                    billItem.codeBill,
+                    getBillClientName(billItem),
+                    billItem.stateTeFacturo,
+                    getBillSellerCode(billItem),
+                    getBillListGuides(billItem),
+                    billItem.currencyBill,
+                    getValueBill(billItem),
+                    getSolesBill(billItem),
                 ])
             finalPrice = Decimal(0.00)
-            for itemInfo in quotationData:
-                finalPrice = Decimal(finalPrice) + Decimal(itemInfo[6])
-            quotationData.append(['','','','','','MONTO TOTAL',str(finalPrice)])
-            exportTable = pd.DataFrame(quotationData,columns=['FECHA','COMPROBANTE','CLIENTE','ESTADO','MONEDA','MONTO DE LA PROFORMA','MONTO (S./)'])
-            exportTable.to_excel('CotizacionesInfo.xlsx',index=False)
-            doc_excel = openpyxl.load_workbook("CotizacionesInfo.xlsx")
+            for itemInfo in billsData:
+                finalPrice = Decimal(finalPrice) + Decimal(itemInfo[8])
+            billsData.append(['','','','','','','','MONTO TOTAL',str(finalPrice)])
+            exportTable = pd.DataFrame(billsData,columns=['FECHA','COMPROBANTE','CLIENTE','ESTADO','VENDEDOR','GUIAS','MONEDA','MONTO DE LA FACTURA','MONTO (S./)'])
+            exportTable.to_excel('BillsInfo.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("BillsInfo.xlsx")
             doc_excel.active.column_dimensions['A'].width = 20
             doc_excel.active.column_dimensions['B'].width = 20
             doc_excel.active.column_dimensions['C'].width = 60
             doc_excel.active.column_dimensions['D'].width = 20
             doc_excel.active.column_dimensions['E'].width = 20
             doc_excel.active.column_dimensions['F'].width = 30
-            doc_excel.active.column_dimensions['G'].width = 30
-            doc_excel.save("CotizacionesInfo.xlsx")
+            doc_excel.active.column_dimensions['G'].width = 20
+            doc_excel.active.column_dimensions['H'].width = 30
+            doc_excel.active.column_dimensions['I'].width = 30
+            doc_excel.save("BillsInfo.xlsx")
         else:
             quotationData.append(['INGRESAR AMBAS FECHAS'])
-            exportTable = pd.DataFrame(quotationData,columns=['INFORMACION'])
-            exportTable.to_excel('CotizacionesInfo.xlsx',index=False)
-            doc_excel = openpyxl.load_workbook("CotizacionesInfo.xlsx")
+            exportTable = pd.DataFrame(billsData,columns=['INFORMACION'])
+            exportTable.to_excel('BillsInfo.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("BillsInfo.xlsx")
             doc_excel.active.column_dimensions['A'].width = 60
-            doc_excel.save("CotizacionesInfo.xlsx")
-        response = HttpResponse(open('CotizacionesInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        nombre = 'attachment; ' + 'filename=' + 'CotizacionesInfo.xlsx'
+            doc_excel.save("BillsInfo.xlsx")
+        response = HttpResponse(open('BillsInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'BillsInfo.xlsx'
         response['Content-Disposition'] = nombre
         return response
+
+
+def getBillListGuides(billItem):
+    listGuides = ''
+    try:
+        totalGuides = billItem.guidesystem_set.all()
+        for guideItem in totalGuides:
+            listGuides = listGuides + guideItem.codeGuide + ' '
+    except:
+        listGuides = ''
+    return listGuides
+
+
+def getBillSellerCode(billItem):
+    sellerCode = ''
+    try:
+        quotationItem = None
+        if billItem.originBill == 'GUIDE':
+            quotationItem = billItem.guidesystem_set.all()[0].asociatedQuotation
+        else:
+            quotationItem = billItem.asociatedQuotation
+        sellerCode = quotationItem.quotationsellerdata.dataUserQuotation[2]
+    except:
+        sellerCode = ''
+    return sellerCode
+
+def getBillClientName(billItem):
+    clientName = ''
+    try:
+        quotationItem = None
+        if billItem.originBill == 'GUIDE':
+            quotationItem = billItem.guidesystem_set.all()[0].asociatedQuotation
+        else:
+            quotationItem = billItem.asociatedQuotation
+        clientName = quotationItem.quotationclientdata.dataClientQuotation[1]
+    except:
+        clientName = '0.00'
+    return clientName
+
+def getValueBill(billItem):
+    valueBill = '0.00'
+    try:
+        quotationItem = None
+        if billItem.originBill == 'GUIDE':
+            quotationItem = billItem.guidesystem_set.all()[0].asociatedQuotation
+        else:
+            quotationItem = billItem.asociatedQuotation
+        valueBill = getValueQuotation(quotationItem)
+    except:
+        valueBill = '0.00'
+    return valueBill
+
+
+def getSolesBill(billItem):
+    valueSoles = '0.00'
+    try:
+        quotationItem = None
+        if billItem.originBill == 'GUIDE':
+            quotationItem = billItem.guidesystem_set.all()[0].asociatedQuotation
+        else:
+            quotationItem = billItem.asociatedQuotation
+        valueSoles = getSolesValue(quotationItem)
+    except:
+        valueSoles = '0.00'
+    return valueSoles
 
 def getValueQuotation(quotationItem):
     valueQuotation = Decimal(0.000)

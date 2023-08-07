@@ -44,4 +44,5 @@ urlpatterns = [
     path('createBillFromGuides',views.createBillFromGuides,name='createBillFromGuides'),
     path('exportFilteredQuotations',views.exportFilteredQuotations,name='exportFilteredQuotations'),
     path('exportFilteredGuides',views.exportFilteredGuides,name='exportFilteredGuides'),
+    path('exportFilteredBills',views.exportFilteredBills,name='exportFilteredBills'),
 ]
