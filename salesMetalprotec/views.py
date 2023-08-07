@@ -4680,7 +4680,7 @@ def getSolesValue(quotationItem):
         if quotationItem.currencyQuotation == 'SOLES':
             valueSoles = Decimal(getValueQuotation(quotationItem))
         else:
-            valueSoles = Deciaml(round(float(Decimal(getValueQuotation(quotationItem))*Decimal(quotationItem.erSel)),2))
+            valueSoles = Decimal(round(float(Decimal(getValueQuotation(quotationItem))*Decimal(quotationItem.erSel)),2))
     except:
         valueSoles = Decimal(0.000)
     valueSoles = str(valueSoles)
