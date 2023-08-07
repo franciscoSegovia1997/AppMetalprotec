@@ -2612,7 +2612,7 @@ def verifyInvoiceTeFacturo(request,idInvoice):
     else:
         invoiceObject.stateTeFacturo = 'Aceptado con Obs.'
         invoiceObject.save()
-    if (invoiceObject.stockInvoice != '2' and invoiceObject.stockInvoice != '1') and invoiceObject.stockInvoice=='PRODUCTOS':
+    if (invoiceObject.stockInvoice != '2' and invoiceObject.stockInvoice != '1') and invoiceObject.typeItemsInvoice=='PRODUCTOS':
         invoiceObject.stockInvoice = '1'
         invoiceObject.save()
         if invoiceObject.originInvoice == 'QUOTATION':
@@ -4513,6 +4513,124 @@ def exportFilteredQuotations(request):
         response['Content-Disposition'] = nombre
         return response
 
+def exportFilteredBills(request):
+    if request.method == 'POST':
+        startDate = request.POST.get('startDate')
+        endDate = request.POST.get('endDate')
+        billsData = []
+        if startDate != '' and endDate != '':
+            fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+            fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+            billsFilter = billSystem.objects.filter(
+                Q(dateBill__gte=fechaInicio) &
+                Q(dateBill__lte=fechaFin)
+            ).order_by('-dateBill')
+            for billItem in billsFilter:
+                billsData.append([
+                    billItem.dateBill.strftime('%Y-%m-%d'),
+                    billItem.codeBill,
+                    getBillClientName(billItem),
+                    billItem.stateTeFacturo,
+                    getBillSellerCode(billItem),
+                    getBillListGuides(billItem),
+                    billItem.currencyBill,
+                    getValueBill(billItem),
+                    getSolesBill(billItem),
+                ])
+            finalPrice = Decimal(0.00)
+            for itemInfo in billsData:
+                finalPrice = Decimal(finalPrice) + Decimal(itemInfo[8])
+            billsData.append(['','','','','','','','MONTO TOTAL',str(finalPrice)])
+            exportTable = pd.DataFrame(billsData,columns=['FECHA','COMPROBANTE','CLIENTE','ESTADO','VENDEDOR','GUIAS','MONEDA','MONTO DE LA FACTURA','MONTO (S./)'])
+            exportTable.to_excel('BillsInfo.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("BillsInfo.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 20
+            doc_excel.active.column_dimensions['B'].width = 20
+            doc_excel.active.column_dimensions['C'].width = 60
+            doc_excel.active.column_dimensions['D'].width = 20
+            doc_excel.active.column_dimensions['E'].width = 20
+            doc_excel.active.column_dimensions['F'].width = 30
+            doc_excel.active.column_dimensions['G'].width = 20
+            doc_excel.active.column_dimensions['H'].width = 30
+            doc_excel.active.column_dimensions['I'].width = 30
+            doc_excel.save("BillsInfo.xlsx")
+        else:
+            quotationData.append(['INGRESAR AMBAS FECHAS'])
+            exportTable = pd.DataFrame(billsData,columns=['INFORMACION'])
+            exportTable.to_excel('BillsInfo.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("BillsInfo.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 60
+            doc_excel.save("BillsInfo.xlsx")
+        response = HttpResponse(open('BillsInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'BillsInfo.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
+
+
+def getBillListGuides(billItem):
+    listGuides = ''
+    try:
+        totalGuides = billItem.guidesystem_set.all()
+        for guideItem in totalGuides:
+            listGuides = listGuides + guideItem.codeGuide + ' '
+    except:
+        listGuides = ''
+    return listGuides
+
+
+def getBillSellerCode(billItem):
+    sellerCode = ''
+    try:
+        quotationItem = None
+        if billItem.originBill == 'GUIDE':
+            quotationItem = billItem.guidesystem_set.all()[0].asociatedQuotation
+        else:
+            quotationItem = billItem.asociatedQuotation
+        sellerCode = quotationItem.quotationsellerdata.dataUserQuotation[2]
+    except:
+        sellerCode = ''
+    return sellerCode
+
+def getBillClientName(billItem):
+    clientName = ''
+    try:
+        quotationItem = None
+        if billItem.originBill == 'GUIDE':
+            quotationItem = billItem.guidesystem_set.all()[0].asociatedQuotation
+        else:
+            quotationItem = billItem.asociatedQuotation
+        clientName = quotationItem.quotationclientdata.dataClientQuotation[1]
+    except:
+        clientName = '0.00'
+    return clientName
+
+def getValueBill(billItem):
+    valueBill = '0.00'
+    try:
+        quotationItem = None
+        if billItem.originBill == 'GUIDE':
+            quotationItem = billItem.guidesystem_set.all()[0].asociatedQuotation
+        else:
+            quotationItem = billItem.asociatedQuotation
+        valueBill = getValueQuotation(quotationItem)
+    except:
+        valueBill = '0.00'
+    return valueBill
+
+
+def getSolesBill(billItem):
+    valueSoles = '0.00'
+    try:
+        quotationItem = None
+        if billItem.originBill == 'GUIDE':
+            quotationItem = billItem.guidesystem_set.all()[0].asociatedQuotation
+        else:
+            quotationItem = billItem.asociatedQuotation
+        valueSoles = getSolesValue(quotationItem)
+    except:
+        valueSoles = '0.00'
+    return valueSoles
+
 def getValueQuotation(quotationItem):
     valueQuotation = Decimal(0.000)
     try:
@@ -4567,6 +4685,51 @@ def getSolesValue(quotationItem):
         valueSoles = Decimal(0.000)
     valueSoles = str(valueSoles)
     return valueSoles
+
+
+def exportFilteredGuides(request):
+    if request.method == 'POST':
+        startDate = request.POST.get('startDate')
+        endDate = request.POST.get('endDate')
+        guideData = []
+        if startDate != '' and endDate != '':
+            fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+            fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+            guideFilter = guideSystem.objects.filter(
+                Q(dateGuide__gte=fechaInicio) &
+                Q(dateGuide__lte=fechaFin)
+            ).order_by('-dateGuide')
+            for guideItem in guideFilter:
+                guideData.append([
+                    guideItem.codeGuide,
+                    guideItem.asociatedQuotation.quotationsellerdata.dataUserQuotation[2],
+                    guideItem.dateGuide.strftime('%Y-%m-%d'),
+                    guideItem.asociatedQuotation.currencyQuotation,
+                    guideItem.stateGuide,
+                    guideItem.asociatedQuotation.quotationclientdata.dataClientQuotation[1],
+                ])
+            exportTable = pd.DataFrame(guideData,columns=['CODIGO','VENDEDOR','FECHA','MONEDA','ESTADO','CLIENTE'])
+            exportTable.to_excel('GuiasInfo.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("GuiasInfo.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 20
+            doc_excel.active.column_dimensions['B'].width = 20
+            doc_excel.active.column_dimensions['C'].width = 20
+            doc_excel.active.column_dimensions['D'].width = 20
+            doc_excel.active.column_dimensions['E'].width = 20
+            doc_excel.active.column_dimensions['F'].width = 50
+            doc_excel.save("GuiasInfo.xlsx")
+        else:
+            guideData.append(['INGRESAR AMBAS FECHAS'])
+            exportTable = pd.DataFrame(guideData,columns=['INFORMACION'])
+            exportTable.to_excel('GuiasInfo.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("GuiasInfo.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 60
+            doc_excel.save("GuiasInfo.xlsx")
+        response = HttpResponse(open('GuiasInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'GuiasInfo.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
+
 
 
 """
