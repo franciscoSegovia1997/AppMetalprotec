@@ -63,9 +63,24 @@
                         <td>{{ stockTakingInfo.dateStockTaking }}</td>
                         <td>{{ stockTakingInfo.codeStockTaking }}</td>
                         <td>{{ stockTakingInfo.stateStockTaking }}</td>
+                        <td>
+                            {% if stockTakingInfo.stateStockTaking == 'REVISION' %}
+                            <div class="bg-success rounded-pill text-white text-center">{{ stockTakingInfo.stateStockTaking }}</div>
+                            {% endif %}
+                            {% if stockTakingInfo.stateStockTaking == 'APROBADO' %}
+                            <div class="bg-primary rounded-pill text-white text-center">{{ stockTakingInfo.stateStockTaking }}</div>
+                            {% endif %}
+                            {% if stockTakingInfo.stateStockTaking == 'OBSERVADO' %}
+                            <div class="bg-warning rounded-pill text-white text-center">{{ stockTakingInfo.stateStockTaking }}</div>
+                            {% endif %}
+                        </td>
                         <td>{{ stockTakingInfo.storeStokTaking }}</td>
                         <td>{{ stockTakingInfo.asociatedUserData.extendeduser.codeUser }}</td>
-                        <td></td>
+                        <td>
+                            {% if stockTakingInfo.stateStockTaking == 'REVISION' %}
+                                <a class="btn btn-warning" href="{% url 'stockManagment:aproveStockTaking' stockTakingInfo.id %}">A</a> <a class="btn btn-success" href="{% url 'stockManagment:observeStockTaking' stockTakingInfo.id %}">O</a>
+                            {% endif %}
+                        </td>
                         <td class="text-center"><a class="btn btn-info" href="{% url 'stockManagment:downloadStockTaking' stockTakingInfo.id %}"><i class="fa-solid fa-download"></i></a></td>
                         <td class="text-center"><a class="btn btn-danger" href="{% url 'stockManagment:deleteStockTaking' stockTakingInfo.id %}"><i class="fa-solid fa-trash-can"></i></a></td>
                     </tr>

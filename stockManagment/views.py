@@ -39,7 +39,7 @@ def stockTaking(request):
         for asociatedProsductInfo in totalProductsInfo:
             infoData = asociatedProsductInfo.storexproductsystem_set.all().filter(asociatedStore=asociatedStoreData)
             if len(infoData)==1:
-                if float(infoData[0].quantityProduct) > 0:
+                if float(infoData[0].quantityProduct) != 0:
                     dataStockTakingInfo = [asociatedProsductInfo.nameProduct,asociatedProsductInfo.codeProduct,infoData[0].quantityProduct,asociatedProsductInfo.pcnIGV,asociatedProsductInfo.pvnIGV]
                     infoStockTaking.objects.create(
                         asociatedStockTaking=asociatedStockTaking,
@@ -252,3 +252,15 @@ def exportFilteredOutcomingItems(request):
         nombre = 'attachment; ' + 'filename=' + 'outcomingItems.xlsx'
         response['Content-Disposition'] = nombre
         return response
+
+def aproveStockTaking(request,idStockTaking):
+    stockTakingObject = stockTakingData.objects.get(id=idStockTaking)
+    stockTakingObject.stateStockTaking = 'APROBADO'
+    stockTakingObject.save()
+    return HttpResponseRedirect(reverse('stockManagment:stockTaking'))
+
+def observeStockTaking(request,idStockTaking):
+    stockTakingObject = stockTakingData.objects.get(id=idStockTaking)
+    stockTakingObject.stateStockTaking = 'OBSERVADO'
+    stockTakingObject.save()
+    return HttpResponseRedirect(reverse('stockManagment:stockTaking'))
