@@ -4460,3 +4460,232 @@ def getExchangeRate():
         exchangeRate.append(str(tc_compra))
         exchangeRate.append(str(tc_venta))
     return exchangeRate
+
+def exportFilteredQuotations(request):
+    if request.method == 'POST':
+        startDate = request.POST.get('startDate')
+        endDate = request.POST.get('endDate')
+        quotationData = []
+        if startDate != '' and endDate != '':
+            fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+            fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+            quotationFilter = quotationSystem.objects.filter(
+                Q(dateQuotation__gte=fechaInicio) &
+                Q(dateQuotation__lte=fechaFin)
+            ).order_by('-dateQuotation')
+            for quotationItem in incomingItemsFilter:
+                quotationData.append([
+                    quotationItem.dateQuotation.strftime('%Y-%m-%d'),
+                    quotationItem.codeQuotation,
+                    quotationItem.quotationclientdata.dataClientQuotation[1],
+                    quotationItem.stateQuotation,
+                    quotationItem.currencyQuotation,
+                    getValueQuotation(quotationItem),
+                    getSolesValue(quotationItem),
+                ])
+            finalPrice = Decimal(0.00)
+            for itemInfo in quotationData:
+                finalPrice = Decimal(finalPrice) + Decimal(itemInfo[6])
+            quotataionData.append(['','','','','','MONTO TOTAL',str(finalPrice)])
+            exportTable = pd.DataFrame(incomingData,columns=['FECHA','COMPROBANTE','CLIENTE','ESTADO','MONEDA','MONTO DE LA PROFORMA','MONTO (S./)'])
+            exportTable.to_excel('CotizacionesInfo.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("CotizacionesInfo.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 20
+            doc_excel.active.column_dimensions['B'].width = 20
+            doc_excel.active.column_dimensions['C'].width = 60
+            doc_excel.active.column_dimensions['D'].width = 20
+            doc_excel.active.column_dimensions['E'].width = 20
+            doc_excel.active.column_dimensions['F'].width = 30
+            doc_excel.active.column_dimensions['F'].width = 30
+            doc_excel.save("CotizacionesInfo.xlsx")
+        else:
+            incomingData.append(['INGRESAR AMBAS FECHAS'])
+            exportTable = pd.DataFrame(incomingData,columns=['INFORMACION'])
+            exportTable.to_excel('CotizacionesInfo.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("CotizacionesInfo.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 60
+            doc_excel.save("CotizacionesInfo.xlsx")
+        response = HttpResponse(open('CotizacionesInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'CotizacionesInfo.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
+
+def getValueQuotation(quotatioItem):
+    valueQuotation = Decimal(0.000)
+    try:
+        if quotationItem.typeQuotation == 'PRODUCTOS':
+            totalProductsQuotation = quotationItem.quotationproductdata_set.all()
+            for productInfo in totalProductsQuotation:
+                if quotationItem.currencyQuotation == 'SOLES':
+                    if productInfo.dataProductQuotation[5] == 'DOLARES':
+                        vu_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(quotationItem.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                    if productInfo.dataProductQuotation[5] == 'SOLES':
+                        vu_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                if quotationItem.currencyQuotation == 'DOLARES':
+                    if productInfo.dataProductQuotation[5] == 'SOLES':
+                        vu_producto = (Decimal(productInfo.dataProductQuotation[6])/Decimal(quotationItem.erSel))*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                    if productInfo.dataProductQuotation[5] == 'DOLARES':
+                        vu_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                if productInfo.dataProductQuotation[9] == '1':
+                    vu_producto = Decimal(0.00)
+                valueQuotation = Decimal(valueQuotation) + Decimal(vu_producto)
+        else:
+            totalServicesQuotation = quotationItem.quotationservicedata_set.all()
+            for serviceInfo in groupQuantity[indicatorGroup]:
+                if quotationItem.currencyQuotation == 'SOLES':
+                    if serviceInfo.dataServiceQuotation[3] == 'DOLARES':
+                        vu_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(quotationItem.erSel)*Decimal(Decimal(1.00) - Decimal(serviceInfo.dataServiceQuotation[5])/100)
+                    if serviceInfo.dataServiceQuotation[3] == 'SOLES':
+                        vu_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(Decimal(1.00) - (Decimal(serviceInfo.dataServiceQuotation[5])/100))
+                if quotationItem.currencyQuotation == 'DOLARES':
+                    if serviceInfo.dataServiceQuotation[3] == 'SOLES':
+                        vu_servicio = (Decimal(serviceInfo.dataServiceQuotation[4])/Decimal(quotationItem.erSel))*Decimal(Decimal(1.00) - (Decimal(serviceInfo.dataServiceQuotation[5])/100))
+                    if serviceInfo.dataServiceQuotation[3] == 'DOLARES':
+                        vu_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(Decimal(1.00) - Decimal(serviceInfo.dataServiceQuotation[5])/100)
+                valueQuotation = Decimal(valueQuotation) + Decimal(vu_servicio)
+    except:
+        valueQuotation = Decimal(0.00)
+    
+    valueQuotation = str(valueQuotation)
+    return valueQuotation
+
+def getSolesValue(quotationItem):
+    valueSoles = Decimal(0.000)
+    try:
+        if quotationItem.currencyItem == 'SOLES':
+            valueSoles = Decimal(getValueQuotation(quotationItem))
+        else:
+            valueSoles = Deciaml(round(float(Decimal(getValueQuotation(quotationItem))*Decimal(quotationItem.erSel)),2))
+    except:
+        valueSoles = Decimal(0.000)
+    valueSoles = str(valueSoles)
+    return valueSoles
+
+
+"""
+def exportFilteredGuides(request):
+    if request.method == 'POST':
+        startDate = request.POST.get('startDate')
+        endDate = request.POST.get('endDate')
+        incomingData = []
+        if startDate != '' and endDate != '':
+            fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+            fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+            incomingItemsFilter = incomingItemsRegisterInfo.objects.filter(
+                Q(dateIncoming__gte=fechaInicio) &
+                Q(dateIncoming__lte=fechaFin)
+            ).order_by('-dateIncoming')
+            for incomingRegister in incomingItemsFilter:
+                incomingData.append([incomingRegister.dateIncoming.strftime('%Y-%m-%d'),
+                    incomingRegister.productCode,
+                    incomingRegister.asociatedProduct.nameProduct,
+                    incomingRegister.quantityProduct,
+                    incomingRegister.lastStock,
+                    incomingRegister.newStock,
+                ])
+            exportTable = pd.DataFrame(incomingData,columns=['Fecha','Codigo de producto','Producto','Cantidad','Stock anterior','Nuevo Stock'])
+            exportTable.to_excel('incomingItems.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("incomingItems.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 30
+            doc_excel.active.column_dimensions['B'].width = 30
+            doc_excel.active.column_dimensions['C'].width = 80
+            doc_excel.active.column_dimensions['D'].width = 30
+            doc_excel.active.column_dimensions['E'].width = 30
+            doc_excel.active.column_dimensions['F'].width = 30
+            doc_excel.save("incomingItems.xlsx")
+        else:
+            incomingData.append(['INGRESAR AMBAS FECHAS'])
+            exportTable = pd.DataFrame(incomingData,columns=['INFORMACION'])
+            exportTable.to_excel('incomingItems.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("incomingItems.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 60
+            doc_excel.save("incomingItems.xlsx")
+        response = HttpResponse(open('incomingItems.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'incomingItems.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
+
+def exportFilteredBills(request):
+    if request.method == 'POST':
+        startDate = request.POST.get('startDate')
+        endDate = request.POST.get('endDate')
+        incomingData = []
+        if startDate != '' and endDate != '':
+            fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+            fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+            incomingItemsFilter = incomingItemsRegisterInfo.objects.filter(
+                Q(dateIncoming__gte=fechaInicio) &
+                Q(dateIncoming__lte=fechaFin)
+            ).order_by('-dateIncoming')
+            for incomingRegister in incomingItemsFilter:
+                incomingData.append([incomingRegister.dateIncoming.strftime('%Y-%m-%d'),
+                    incomingRegister.productCode,
+                    incomingRegister.asociatedProduct.nameProduct,
+                    incomingRegister.quantityProduct,
+                    incomingRegister.lastStock,
+                    incomingRegister.newStock,
+                ])
+            exportTable = pd.DataFrame(incomingData,columns=['Fecha','Codigo de producto','Producto','Cantidad','Stock anterior','Nuevo Stock'])
+            exportTable.to_excel('incomingItems.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("incomingItems.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 30
+            doc_excel.active.column_dimensions['B'].width = 30
+            doc_excel.active.column_dimensions['C'].width = 80
+            doc_excel.active.column_dimensions['D'].width = 30
+            doc_excel.active.column_dimensions['E'].width = 30
+            doc_excel.active.column_dimensions['F'].width = 30
+            doc_excel.save("incomingItems.xlsx")
+        else:
+            incomingData.append(['INGRESAR AMBAS FECHAS'])
+            exportTable = pd.DataFrame(incomingData,columns=['INFORMACION'])
+            exportTable.to_excel('incomingItems.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("incomingItems.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 60
+            doc_excel.save("incomingItems.xlsx")
+        response = HttpResponse(open('incomingItems.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'incomingItems.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
+
+def exportFilteredInvoices(request):
+    if request.method == 'POST':
+        startDate = request.POST.get('startDate')
+        endDate = request.POST.get('endDate')
+        incomingData = []
+        if startDate != '' and endDate != '':
+            fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+            fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+            incomingItemsFilter = incomingItemsRegisterInfo.objects.filter(
+                Q(dateIncoming__gte=fechaInicio) &
+                Q(dateIncoming__lte=fechaFin)
+            ).order_by('-dateIncoming')
+            for incomingRegister in incomingItemsFilter:
+                incomingData.append([incomingRegister.dateIncoming.strftime('%Y-%m-%d'),
+                    incomingRegister.productCode,
+                    incomingRegister.asociatedProduct.nameProduct,
+                    incomingRegister.quantityProduct,
+                    incomingRegister.lastStock,
+                    incomingRegister.newStock,
+                ])
+            exportTable = pd.DataFrame(incomingData,columns=['Fecha','Codigo de producto','Producto','Cantidad','Stock anterior','Nuevo Stock'])
+            exportTable.to_excel('incomingItems.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("incomingItems.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 30
+            doc_excel.active.column_dimensions['B'].width = 30
+            doc_excel.active.column_dimensions['C'].width = 80
+            doc_excel.active.column_dimensions['D'].width = 30
+            doc_excel.active.column_dimensions['E'].width = 30
+            doc_excel.active.column_dimensions['F'].width = 30
+            doc_excel.save("incomingItems.xlsx")
+        else:
+            incomingData.append(['INGRESAR AMBAS FECHAS'])
+            exportTable = pd.DataFrame(incomingData,columns=['INFORMACION'])
+            exportTable.to_excel('incomingItems.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("incomingItems.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 60
+            doc_excel.save("incomingItems.xlsx")
+        response = HttpResponse(open('incomingItems.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'incomingItems.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
+"""
