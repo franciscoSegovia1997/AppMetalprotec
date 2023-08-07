@@ -38,30 +38,33 @@
         </div>
         <br>
         <div class="row">
-            <div class="col-2">
-                <div class="row mx-0">
-                    <label>Fecha inicial</label>
-                    <input type="date" class="form-control" name="startDate">
+            <form method="post" action="{% url 'salesMetalprotec:exportFilteredGuides' %}">
+            {% csrf_token %}
+                <div class="col-2">
+                    <div class="row mx-0">
+                        <label>Fecha inicial</label>
+                        <input type="date" class="form-control" name="startDate">
+                    </div>
                 </div>
-            </div>
-            <div class="col-2">
-                <div class="row mx-0">
-                    <label>Fecha final</label>
-                    <input type="date" class="form-control" name="endDate">
+                <div class="col-2">
+                    <div class="row mx-0">
+                        <label>Fecha final</label>
+                        <input type="date" class="form-control" name="endDate">
+                    </div>
                 </div>
-            </div>
-            <div class="col-2">
-                <br>
-                <div class="row mx-0">
-                    <button class="btn btn-success" name="filterGuides">Filtrar</button>
+                <div class="col-2">
+                    <br>
+                    <div class="row mx-0">
+                        <button type="button" style="display: none;" class="btn btn-success" name="filterGuides">Filtrar</button>
+                    </div>
                 </div>
-            </div>
-            <div class="col-2">
-                <br>
-                <div class="row mx-0">
-                    <button class="btn btn-success" name="exportGuides">Exportar</button>
+                <div class="col-2">
+                    <br>
+                    <div class="row mx-0">
+                        <button class="btn btn-success" type="submit" name="exportGuides">Exportar</button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
         <br>
         <div>

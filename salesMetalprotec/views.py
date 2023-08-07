@@ -4513,6 +4513,55 @@ def exportFilteredQuotations(request):
         response['Content-Disposition'] = nombre
         return response
 
+def exportFilteredBills(request):
+    if request.method == 'POST':
+        startDate = request.POST.get('startDate')
+        endDate = request.POST.get('endDate')
+        billsData = []
+        if startDate != '' and endDate != '':
+            fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+            fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+            quotationFilter = quotationSystem.objects.filter(
+                Q(dateQuotation__gte=fechaInicio) &
+                Q(dateQuotation__lte=fechaFin)
+            ).order_by('-dateQuotation')
+            for quotationItem in quotationFilter:
+                quotationData.append([
+                    quotationItem.dateQuotation.strftime('%Y-%m-%d'),
+                    quotationItem.codeQuotation,
+                    quotationItem.quotationclientdata.dataClientQuotation[1],
+                    quotationItem.stateQuotation,
+                    quotationItem.currencyQuotation,
+                    getValueQuotation(quotationItem),
+                    getSolesValue(quotationItem),
+                ])
+            finalPrice = Decimal(0.00)
+            for itemInfo in quotationData:
+                finalPrice = Decimal(finalPrice) + Decimal(itemInfo[6])
+            quotationData.append(['','','','','','MONTO TOTAL',str(finalPrice)])
+            exportTable = pd.DataFrame(quotationData,columns=['FECHA','COMPROBANTE','CLIENTE','ESTADO','MONEDA','MONTO DE LA PROFORMA','MONTO (S./)'])
+            exportTable.to_excel('CotizacionesInfo.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("CotizacionesInfo.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 20
+            doc_excel.active.column_dimensions['B'].width = 20
+            doc_excel.active.column_dimensions['C'].width = 60
+            doc_excel.active.column_dimensions['D'].width = 20
+            doc_excel.active.column_dimensions['E'].width = 20
+            doc_excel.active.column_dimensions['F'].width = 30
+            doc_excel.active.column_dimensions['G'].width = 30
+            doc_excel.save("CotizacionesInfo.xlsx")
+        else:
+            quotationData.append(['INGRESAR AMBAS FECHAS'])
+            exportTable = pd.DataFrame(quotationData,columns=['INFORMACION'])
+            exportTable.to_excel('CotizacionesInfo.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("CotizacionesInfo.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 60
+            doc_excel.save("CotizacionesInfo.xlsx")
+        response = HttpResponse(open('CotizacionesInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'CotizacionesInfo.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
+
 def getValueQuotation(quotationItem):
     valueQuotation = Decimal(0.000)
     try:
@@ -4567,6 +4616,51 @@ def getSolesValue(quotationItem):
         valueSoles = Decimal(0.000)
     valueSoles = str(valueSoles)
     return valueSoles
+
+
+def exportFilteredGuides(request):
+    if request.method == 'POST':
+        startDate = request.POST.get('startDate')
+        endDate = request.POST.get('endDate')
+        guideData = []
+        if startDate != '' and endDate != '':
+            fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+            fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+            guideFilter = guideSystem.objects.filter(
+                Q(dateGuide__gte=fechaInicio) &
+                Q(dateGuide__lte=fechaFin)
+            ).order_by('-dateGuide')
+            for guideItem in guideFilter:
+                guideData.append([
+                    guideItem.codeGuide,
+                    guideItem.asociatedQuotation.quotationsellerdata.dataUserQuotation[2],
+                    guideItem.dateGuide.strftime('%Y-%m-%d'),
+                    guideItem.asociatedQuotation.currencyQuotation,
+                    guideItem.stateGuide,
+                    guideItem.asociatedQuotation.quotationclientdata.dataClientQuotation[1],
+                ])
+            exportTable = pd.DataFrame(guideData,columns=['CODIGO','VENDEDOR','FECHA','MONEDA','ESTADO','CLIENTE'])
+            exportTable.to_excel('GuiasInfo.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("GuiasInfo.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 20
+            doc_excel.active.column_dimensions['B'].width = 20
+            doc_excel.active.column_dimensions['C'].width = 20
+            doc_excel.active.column_dimensions['D'].width = 20
+            doc_excel.active.column_dimensions['E'].width = 20
+            doc_excel.active.column_dimensions['F'].width = 50
+            doc_excel.save("GuiasInfo.xlsx")
+        else:
+            guideData.append(['INGRESAR AMBAS FECHAS'])
+            exportTable = pd.DataFrame(guideData,columns=['INFORMACION'])
+            exportTable.to_excel('GuiasInfo.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("GuiasInfo.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 60
+            doc_excel.save("GuiasInfo.xlsx")
+        response = HttpResponse(open('GuiasInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'GuiasInfo.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
+
 
 
 """

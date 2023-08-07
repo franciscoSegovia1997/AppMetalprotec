@@ -42,5 +42,6 @@ urlpatterns = [
     path('createCreditNoteFromBill/<str:idBill>',views.createCreditNoteFromBill,name='createCreditNoteFromBill'),
     path('createInvoiceFromGuides',views.createInvoiceFromGuides,name='createInvoiceFromGuides'),
     path('createBillFromGuides',views.createBillFromGuides,name='createBillFromGuides'),
-    path('exportFilteredQuotations',views.exportFilteredQuotations,name='exportFilteredQuotations')
+    path('exportFilteredQuotations',views.exportFilteredQuotations,name='exportFilteredQuotations'),
+    path('exportFilteredGuides',views.exportFilteredGuides,name='exportFilteredGuides'),
 ]
