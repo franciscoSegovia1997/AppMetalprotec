@@ -2612,7 +2612,7 @@ def verifyInvoiceTeFacturo(request,idInvoice):
     else:
         invoiceObject.stateTeFacturo = 'Aceptado con Obs.'
         invoiceObject.save()
-    if (invoiceObject.stockInvoice != '2' and invoiceObject.stockInvoice != '1') and invoiceObject.stockInvoice=='PRODUCTOS':
+    if (invoiceObject.stockInvoice != '2' and invoiceObject.stockInvoice != '1') and invoiceObject.typeItemsInvoice=='PRODUCTOS':
         invoiceObject.stockInvoice = '1'
         invoiceObject.save()
         if invoiceObject.originInvoice == 'QUOTATION':
