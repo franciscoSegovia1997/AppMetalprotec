@@ -39,7 +39,7 @@ def stockTaking(request):
         for asociatedProsductInfo in totalProductsInfo:
             infoData = asociatedProsductInfo.storexproductsystem_set.all().filter(asociatedStore=asociatedStoreData)
             if len(infoData)==1:
-                if float(infoData[0].quantityProduct) > 0:
+                if float(infoData[0].quantityProduct) != 0:
                     dataStockTakingInfo = [asociatedProsductInfo.nameProduct,asociatedProsductInfo.codeProduct,infoData[0].quantityProduct,asociatedProsductInfo.pcnIGV,asociatedProsductInfo.pvnIGV]
                     infoStockTaking.objects.create(
                         asociatedStockTaking=asociatedStockTaking,
