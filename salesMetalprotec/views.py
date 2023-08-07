@@ -20,6 +20,9 @@ import requests
 from base64 import b64decode
 from bs4 import BeautifulSoup
 from stockManagment.models import outcomingItemsRegisterInfo
+from django.db.models import Q
+import pandas as pd
+import openpyxl
 
 env = environ.Env()
 env.read_env()
@@ -4473,7 +4476,7 @@ def exportFilteredQuotations(request):
                 Q(dateQuotation__gte=fechaInicio) &
                 Q(dateQuotation__lte=fechaFin)
             ).order_by('-dateQuotation')
-            for quotationItem in incomingItemsFilter:
+            for quotationItem in quotationFilter:
                 quotationData.append([
                     quotationItem.dateQuotation.strftime('%Y-%m-%d'),
                     quotationItem.codeQuotation,
@@ -4486,8 +4489,8 @@ def exportFilteredQuotations(request):
             finalPrice = Decimal(0.00)
             for itemInfo in quotationData:
                 finalPrice = Decimal(finalPrice) + Decimal(itemInfo[6])
-            quotataionData.append(['','','','','','MONTO TOTAL',str(finalPrice)])
-            exportTable = pd.DataFrame(incomingData,columns=['FECHA','COMPROBANTE','CLIENTE','ESTADO','MONEDA','MONTO DE LA PROFORMA','MONTO (S./)'])
+            quotationData.append(['','','','','','MONTO TOTAL',str(finalPrice)])
+            exportTable = pd.DataFrame(quotationData,columns=['FECHA','COMPROBANTE','CLIENTE','ESTADO','MONEDA','MONTO DE LA PROFORMA','MONTO (S./)'])
             exportTable.to_excel('CotizacionesInfo.xlsx',index=False)
             doc_excel = openpyxl.load_workbook("CotizacionesInfo.xlsx")
             doc_excel.active.column_dimensions['A'].width = 20
@@ -4496,11 +4499,11 @@ def exportFilteredQuotations(request):
             doc_excel.active.column_dimensions['D'].width = 20
             doc_excel.active.column_dimensions['E'].width = 20
             doc_excel.active.column_dimensions['F'].width = 30
-            doc_excel.active.column_dimensions['F'].width = 30
+            doc_excel.active.column_dimensions['G'].width = 30
             doc_excel.save("CotizacionesInfo.xlsx")
         else:
-            incomingData.append(['INGRESAR AMBAS FECHAS'])
-            exportTable = pd.DataFrame(incomingData,columns=['INFORMACION'])
+            quotationData.append(['INGRESAR AMBAS FECHAS'])
+            exportTable = pd.DataFrame(quotationData,columns=['INFORMACION'])
             exportTable.to_excel('CotizacionesInfo.xlsx',index=False)
             doc_excel = openpyxl.load_workbook("CotizacionesInfo.xlsx")
             doc_excel.active.column_dimensions['A'].width = 60
@@ -4510,11 +4513,13 @@ def exportFilteredQuotations(request):
         response['Content-Disposition'] = nombre
         return response
 
-def getValueQuotation(quotatioItem):
+def getValueQuotation(quotationItem):
     valueQuotation = Decimal(0.000)
     try:
         if quotationItem.typeQuotation == 'PRODUCTOS':
+            print('El error esta en la captura de productos')
             totalProductsQuotation = quotationItem.quotationproductdata_set.all()
+            print('Se tienen los productos')
             for productInfo in totalProductsQuotation:
                 if quotationItem.currencyQuotation == 'SOLES':
                     if productInfo.dataProductQuotation[5] == 'DOLARES':
@@ -4529,6 +4534,7 @@ def getValueQuotation(quotatioItem):
                 if productInfo.dataProductQuotation[9] == '1':
                     vu_producto = Decimal(0.00)
                 valueQuotation = Decimal(valueQuotation) + Decimal(vu_producto)
+            print('El error esta en el bucle')
         else:
             totalServicesQuotation = quotationItem.quotationservicedata_set.all()
             for serviceInfo in groupQuantity[indicatorGroup]:
@@ -4544,15 +4550,16 @@ def getValueQuotation(quotatioItem):
                         vu_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(Decimal(1.00) - Decimal(serviceInfo.dataServiceQuotation[5])/100)
                 valueQuotation = Decimal(valueQuotation) + Decimal(vu_servicio)
     except:
+        print('Hubo un error')
         valueQuotation = Decimal(0.00)
-    
+    valueQuotation = Decimal('%.2f' % valueQuotation)
     valueQuotation = str(valueQuotation)
     return valueQuotation
 
 def getSolesValue(quotationItem):
     valueSoles = Decimal(0.000)
     try:
-        if quotationItem.currencyItem == 'SOLES':
+        if quotationItem.currencyQuotation == 'SOLES':
             valueSoles = Decimal(getValueQuotation(quotationItem))
         else:
             valueSoles = Deciaml(round(float(Decimal(getValueQuotation(quotationItem))*Decimal(quotationItem.erSel)),2))
