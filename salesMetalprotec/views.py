@@ -4641,32 +4641,36 @@ def getValueQuotation(quotationItem):
             for productInfo in totalProductsQuotation:
                 if quotationItem.currencyQuotation == 'SOLES':
                     if productInfo.dataProductQuotation[5] == 'DOLARES':
-                        vu_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(quotationItem.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(quotationItem.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
                     if productInfo.dataProductQuotation[5] == 'SOLES':
-                        vu_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
                 if quotationItem.currencyQuotation == 'DOLARES':
                     if productInfo.dataProductQuotation[5] == 'SOLES':
-                        vu_producto = (Decimal(productInfo.dataProductQuotation[6])/Decimal(quotationItem.erSel))*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                        v_producto = (Decimal(productInfo.dataProductQuotation[6])/Decimal(quotationItem.erSel))*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
                     if productInfo.dataProductQuotation[5] == 'DOLARES':
-                        vu_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
                 if productInfo.dataProductQuotation[9] == '1':
-                    vu_producto = Decimal(0.00)
-                valueQuotation = Decimal(valueQuotation) + Decimal(vu_producto)
+                    v_producto = Decimal(0.00)
+                valueQuotation = Decimal(valueQuotation) + Decimal(v_producto)
             print('El error esta en el bucle')
         else:
             totalServicesQuotation = quotationItem.quotationservicedata_set.all()
             for serviceInfo in groupQuantity[indicatorGroup]:
                 if quotationItem.currencyQuotation == 'SOLES':
                     if serviceInfo.dataServiceQuotation[3] == 'DOLARES':
-                        vu_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(quotationItem.erSel)*Decimal(Decimal(1.00) - Decimal(serviceInfo.dataServiceQuotation[5])/100)
+                        v_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(quotationItem.erSel)*Decimal(Decimal(1.00) - Decimal(serviceInfo.dataServiceQuotation[5])/100)
                     if serviceInfo.dataServiceQuotation[3] == 'SOLES':
-                        vu_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(Decimal(1.00) - (Decimal(serviceInfo.dataServiceQuotation[5])/100))
+                        v_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(Decimal(1.00) - (Decimal(serviceInfo.dataServiceQuotation[5])/100))
                 if quotationItem.currencyQuotation == 'DOLARES':
                     if serviceInfo.dataServiceQuotation[3] == 'SOLES':
-                        vu_servicio = (Decimal(serviceInfo.dataServiceQuotation[4])/Decimal(quotationItem.erSel))*Decimal(Decimal(1.00) - (Decimal(serviceInfo.dataServiceQuotation[5])/100))
+                        v_servicio = (Decimal(serviceInfo.dataServiceQuotation[4])/Decimal(quotationItem.erSel))*Decimal(Decimal(1.00) - (Decimal(serviceInfo.dataServiceQuotation[5])/100))
                     if serviceInfo.dataServiceQuotation[3] == 'DOLARES':
-                        vu_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(Decimal(1.00) - Decimal(serviceInfo.dataServiceQuotation[5])/100)
-                valueQuotation = Decimal(valueQuotation) + Decimal(vu_servicio)
+                        v_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(Decimal(1.00) - Decimal(serviceInfo.dataServiceQuotation[5])/100)
+                valueQuotation = Decimal(valueQuotation) + Decimal(v_servicio)
     except:
         print('Hubo un error')
         valueQuotation = Decimal(0.00)
