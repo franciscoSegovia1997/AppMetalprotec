@@ -4725,30 +4725,39 @@ def getBillClientName(billItem):
     return clientName
 
 def getValueBill(billItem):
-    valueBill = '0.00'
+    valueBill = Decimal(0.0000)
     try:
         quotationItem = None
         if billItem.originBill == 'GUIDE':
-            quotationItem = billItem.guidesystem_set.all()[0].asociatedQuotation
+            for guideItem in billItem.guidesystem_set.all():
+                quotationItem = guideItem.asociatedQuotation
+                tempValueQuotation = getValueQuotation(quotationItem)
+                print(tempValueQuotation)
+                valueBill = Decimal(valueBill) + Decimal(tempValueQuotation)
         else:
             quotationItem = billItem.asociatedQuotation
-        valueBill = getValueQuotation(quotationItem)
+            valueBill = getValueQuotation(quotationItem)
     except:
         valueBill = '0.00'
+    valueBill = str(valueBill)
     return valueBill
 
 
 def getSolesBill(billItem):
-    valueSoles = '0.00'
+    valueSoles = Decimal(0.0000)
     try:
         quotationItem = None
         if billItem.originBill == 'GUIDE':
-            quotationItem = billItem.guidesystem_set.all()[0].asociatedQuotation
+            for guideItem in billItem.guidesystem_set.all():
+                quotationItem = guideItem.asociatedQuotation
+                tempValueQuotation = getSolesValue(quotationItem)
+                valueSoles = Decimal(valueSoles) + Decimal(tempValueQuotation)
         else:
             quotationItem = billItem.asociatedQuotation
-        valueSoles = getSolesValue(quotationItem)
+            valueSoles = getSolesValue(quotationItem)
     except:
         valueSoles = '0.00'
+    valueSoles = str(valueSoles)
     return valueSoles
 
 def getValueQuotation(quotationItem):
@@ -4854,133 +4863,3 @@ def exportFilteredGuides(request):
         nombre = 'attachment; ' + 'filename=' + 'GuiasInfo.xlsx'
         response['Content-Disposition'] = nombre
         return response
-
-
-
-"""
-def exportFilteredGuides(request):
-    if request.method == 'POST':
-        startDate = request.POST.get('startDate')
-        endDate = request.POST.get('endDate')
-        incomingData = []
-        if startDate != '' and endDate != '':
-            fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
-            fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
-            incomingItemsFilter = incomingItemsRegisterInfo.objects.filter(
-                Q(dateIncoming__gte=fechaInicio) &
-                Q(dateIncoming__lte=fechaFin)
-            ).order_by('-dateIncoming')
-            for incomingRegister in incomingItemsFilter:
-                incomingData.append([incomingRegister.dateIncoming.strftime('%Y-%m-%d'),
-                    incomingRegister.productCode,
-                    incomingRegister.asociatedProduct.nameProduct,
-                    incomingRegister.quantityProduct,
-                    incomingRegister.lastStock,
-                    incomingRegister.newStock,
-                ])
-            exportTable = pd.DataFrame(incomingData,columns=['Fecha','Codigo de producto','Producto','Cantidad','Stock anterior','Nuevo Stock'])
-            exportTable.to_excel('incomingItems.xlsx',index=False)
-            doc_excel = openpyxl.load_workbook("incomingItems.xlsx")
-            doc_excel.active.column_dimensions['A'].width = 30
-            doc_excel.active.column_dimensions['B'].width = 30
-            doc_excel.active.column_dimensions['C'].width = 80
-            doc_excel.active.column_dimensions['D'].width = 30
-            doc_excel.active.column_dimensions['E'].width = 30
-            doc_excel.active.column_dimensions['F'].width = 30
-            doc_excel.save("incomingItems.xlsx")
-        else:
-            incomingData.append(['INGRESAR AMBAS FECHAS'])
-            exportTable = pd.DataFrame(incomingData,columns=['INFORMACION'])
-            exportTable.to_excel('incomingItems.xlsx',index=False)
-            doc_excel = openpyxl.load_workbook("incomingItems.xlsx")
-            doc_excel.active.column_dimensions['A'].width = 60
-            doc_excel.save("incomingItems.xlsx")
-        response = HttpResponse(open('incomingItems.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        nombre = 'attachment; ' + 'filename=' + 'incomingItems.xlsx'
-        response['Content-Disposition'] = nombre
-        return response
-
-def exportFilteredBills(request):
-    if request.method == 'POST':
-        startDate = request.POST.get('startDate')
-        endDate = request.POST.get('endDate')
-        incomingData = []
-        if startDate != '' and endDate != '':
-            fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
-            fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
-            incomingItemsFilter = incomingItemsRegisterInfo.objects.filter(
-                Q(dateIncoming__gte=fechaInicio) &
-                Q(dateIncoming__lte=fechaFin)
-            ).order_by('-dateIncoming')
-            for incomingRegister in incomingItemsFilter:
-                incomingData.append([incomingRegister.dateIncoming.strftime('%Y-%m-%d'),
-                    incomingRegister.productCode,
-                    incomingRegister.asociatedProduct.nameProduct,
-                    incomingRegister.quantityProduct,
-                    incomingRegister.lastStock,
-                    incomingRegister.newStock,
-                ])
-            exportTable = pd.DataFrame(incomingData,columns=['Fecha','Codigo de producto','Producto','Cantidad','Stock anterior','Nuevo Stock'])
-            exportTable.to_excel('incomingItems.xlsx',index=False)
-            doc_excel = openpyxl.load_workbook("incomingItems.xlsx")
-            doc_excel.active.column_dimensions['A'].width = 30
-            doc_excel.active.column_dimensions['B'].width = 30
-            doc_excel.active.column_dimensions['C'].width = 80
-            doc_excel.active.column_dimensions['D'].width = 30
-            doc_excel.active.column_dimensions['E'].width = 30
-            doc_excel.active.column_dimensions['F'].width = 30
-            doc_excel.save("incomingItems.xlsx")
-        else:
-            incomingData.append(['INGRESAR AMBAS FECHAS'])
-            exportTable = pd.DataFrame(incomingData,columns=['INFORMACION'])
-            exportTable.to_excel('incomingItems.xlsx',index=False)
-            doc_excel = openpyxl.load_workbook("incomingItems.xlsx")
-            doc_excel.active.column_dimensions['A'].width = 60
-            doc_excel.save("incomingItems.xlsx")
-        response = HttpResponse(open('incomingItems.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        nombre = 'attachment; ' + 'filename=' + 'incomingItems.xlsx'
-        response['Content-Disposition'] = nombre
-        return response
-
-def exportFilteredInvoices(request):
-    if request.method == 'POST':
-        startDate = request.POST.get('startDate')
-        endDate = request.POST.get('endDate')
-        incomingData = []
-        if startDate != '' and endDate != '':
-            fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
-            fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
-            incomingItemsFilter = incomingItemsRegisterInfo.objects.filter(
-                Q(dateIncoming__gte=fechaInicio) &
-                Q(dateIncoming__lte=fechaFin)
-            ).order_by('-dateIncoming')
-            for incomingRegister in incomingItemsFilter:
-                incomingData.append([incomingRegister.dateIncoming.strftime('%Y-%m-%d'),
-                    incomingRegister.productCode,
-                    incomingRegister.asociatedProduct.nameProduct,
-                    incomingRegister.quantityProduct,
-                    incomingRegister.lastStock,
-                    incomingRegister.newStock,
-                ])
-            exportTable = pd.DataFrame(incomingData,columns=['Fecha','Codigo de producto','Producto','Cantidad','Stock anterior','Nuevo Stock'])
-            exportTable.to_excel('incomingItems.xlsx',index=False)
-            doc_excel = openpyxl.load_workbook("incomingItems.xlsx")
-            doc_excel.active.column_dimensions['A'].width = 30
-            doc_excel.active.column_dimensions['B'].width = 30
-            doc_excel.active.column_dimensions['C'].width = 80
-            doc_excel.active.column_dimensions['D'].width = 30
-            doc_excel.active.column_dimensions['E'].width = 30
-            doc_excel.active.column_dimensions['F'].width = 30
-            doc_excel.save("incomingItems.xlsx")
-        else:
-            incomingData.append(['INGRESAR AMBAS FECHAS'])
-            exportTable = pd.DataFrame(incomingData,columns=['INFORMACION'])
-            exportTable.to_excel('incomingItems.xlsx',index=False)
-            doc_excel = openpyxl.load_workbook("incomingItems.xlsx")
-            doc_excel.active.column_dimensions['A'].width = 60
-            doc_excel.save("incomingItems.xlsx")
-        response = HttpResponse(open('incomingItems.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        nombre = 'attachment; ' + 'filename=' + 'incomingItems.xlsx'
-        response['Content-Disposition'] = nombre
-        return response
-"""
