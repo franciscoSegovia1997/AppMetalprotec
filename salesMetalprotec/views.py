@@ -4524,7 +4524,7 @@ def exportFilteredBills(request):
             billsFilter = billSystem.objects.filter(
                 Q(dateBill__gte=fechaInicio) &
                 Q(dateBill__lte=fechaFin)
-            ).order_by('-dateBill')
+            ).exclude(stateTeFacturo=None).exclude(stateTeFacturo='Anulada').exclude(stateTeFacturo='').order_by('-dateBill')
             for billItem in billsFilter:
                 billsData.append([
                     billItem.dateBill.strftime('%Y-%m-%d'),
@@ -4659,7 +4659,7 @@ def getValueQuotation(quotationItem):
             print('El error esta en el bucle')
         else:
             totalServicesQuotation = quotationItem.quotationservicedata_set.all()
-            for serviceInfo in groupQuantity[indicatorGroup]:
+            for serviceInfo in totalServicesQuotation:
                 if quotationItem.currencyQuotation == 'SOLES':
                     if serviceInfo.dataServiceQuotation[3] == 'DOLARES':
                         v_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(quotationItem.erSel)*Decimal(Decimal(1.00) - Decimal(serviceInfo.dataServiceQuotation[5])/100)
