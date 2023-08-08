@@ -4524,7 +4524,7 @@ def exportFilteredBills(request):
             billsFilter = billSystem.objects.filter(
                 Q(dateBill__gte=fechaInicio) &
                 Q(dateBill__lte=fechaFin)
-            ).exclude(stateTeFacturo=None).exclude(stateTeFacturo='Anulada').exclude(stateTeFacturo='').order_by('-dateBill')
+            ).exclude(stateTeFacturo=None).exclude(stateTeFacturo='Anulada').exclude(stateTeFacturo='').exclude(stateTeFacturo='Rechazado').order_by('-dateBill')
             for billItem in billsFilter:
                 billsData.append([
                     billItem.dateBill.strftime('%Y-%m-%d'),
