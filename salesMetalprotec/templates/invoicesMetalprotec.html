@@ -22,31 +22,40 @@
     <div class="container" style="height: 100vh; overflow: scroll;">
         <h1 class="mt-3 mb-3">Boletas</h1>
         <br>
-        <div class="row" style="display: none;">
-            <div class="col-2">
-                <div class="row mx-0">
-                    <label>Fecha inicial</label>
-                    <input type="date" class="form-control" name="startDate">
+        <div class="row">
+            <form class="row" method="post" action="{% url 'salesMetalprotec:exportFilteredInvoices' %}">
+            {% csrf_token %}    
+                <div class="col-2">
+                    <div class="row mx-0">
+                        <label>Fecha inicial</label>
+                        <input type="date" class="form-control" name="startDate">
+                    </div>
                 </div>
-            </div>
-            <div class="col-2">
-                <div class="row mx-0">
-                    <label>Fecha final</label>
-                    <input type="date" class="form-control" name="endDate">
+                <div class="col-2">
+                    <div class="row mx-0">
+                        <label>Fecha final</label>
+                        <input type="date" class="form-control" name="endDate">
+                    </div>
                 </div>
-            </div>
-            <div class="col-2">
-                <br>
-                <div class="row mx-0">
-                    <button class="btn btn-success" name="filterInvoices">Filtrar</button>
+                <div class="col-2" style="display: none;">
+                    <br>
+                    <div class="row mx-0">
+                        <button type="button" class="btn btn-success" name="filterInvoices">Filtrar</button>
+                    </div>
                 </div>
-            </div>
-            <div class="col-2">
-                <br>
-                <div class="row mx-0">
-                    <button class="btn btn-success" name="exportInvoices">Exportar</button>
+                <div class="col-2">
+                    <br>
+                    <div class="row mx-0">
+                        <button type="submit" class="btn btn-success" name="exportInvoices">Exportar</button>
+                    </div>
                 </div>
-            </div>
+                <div class="col-2">
+                    <br>
+                    <div class="row mx-0">
+                        <a class="btn btn-success" href="{% url 'salesMetalprotec:invoicesMetalprotec' %}"> Reestablecer</a>
+                    </div>
+                </div>
+            </form>
         </div>
         <br>
         <div>

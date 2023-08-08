@@ -4513,6 +4513,125 @@ def exportFilteredQuotations(request):
         response['Content-Disposition'] = nombre
         return response
 
+def exportFilteredInvoices(request):
+    if request.method == 'POST':
+        startDate = request.POST.get('startDate')
+        endDate = request.POST.get('endDate')
+        invoicesData = []
+        if startDate != '' and endDate != '':
+            fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+            fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+            invoicesFilter = invoiceSystem.objects.filter(
+                Q(dateInvoice__gte=fechaInicio) &
+                Q(dateInvoice__lte=fechaFin)
+            ).exclude(stateTeFacturo=None).exclude(stateTeFacturo='Anulada').exclude(stateTeFacturo='').exclude(stateTeFacturo='Rechazado').order_by('-dateInvoice')
+            for invoiceItem in invoicesFilter:
+                if len(creditNoteSystem.objects.filter(originCreditNote='INVOICE').filter(asociatedBill=None).exlude(asociatedInvoice=None).filter(asociatedInvoice__codeInvoice=invoiceItem.codeInvoice)) == 0:
+                    invoicesData.append([
+                        invoiceItem.dateInvoice.strftime('%Y-%m-%d'),
+                        invoiceItem.codeInvoice,
+                        getInvoiceClientName(invoiceItem),
+                        invoiceItem.stateTeFacturo,
+                        getInvoiceSellerCode(invoiceItem),
+                        getInvoiceListGuides(invoiceItem),
+                        invoiceItem.currencyBill,
+                        getValueInvoice(invoiceItem),
+                        getSolesInvoice(invoiceItem),
+                    ])
+            finalPrice = Decimal(0.00)
+            for itemInfo in invoicesData:
+                finalPrice = Decimal(finalPrice) + Decimal(itemInfo[8])
+            invoicesData.append(['','','','','','','','MONTO TOTAL',str(finalPrice)])
+            exportTable = pd.DataFrame(invoicesData,columns=['FECHA','COMPROBANTE','CLIENTE','ESTADO','VENDEDOR','GUIAS','MONEDA','MONTO DE LA FACTURA','MONTO (S./)'])
+            exportTable.to_excel('InvoicesInfo.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("InvoicesInfo.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 20
+            doc_excel.active.column_dimensions['B'].width = 20
+            doc_excel.active.column_dimensions['C'].width = 60
+            doc_excel.active.column_dimensions['D'].width = 20
+            doc_excel.active.column_dimensions['E'].width = 20
+            doc_excel.active.column_dimensions['F'].width = 30
+            doc_excel.active.column_dimensions['G'].width = 20
+            doc_excel.active.column_dimensions['H'].width = 30
+            doc_excel.active.column_dimensions['I'].width = 30
+            doc_excel.save("InvoicesInfo.xlsx")
+        else:
+            invoicesData.append(['INGRESAR AMBAS FECHAS'])
+            exportTable = pd.DataFrame(invoicesData,columns=['INFORMACION'])
+            exportTable.to_excel('InvoicesInfo.xlsx',index=False)
+            doc_excel = openpyxl.load_workbook("InvoicesInfo.xlsx")
+            doc_excel.active.column_dimensions['A'].width = 60
+            doc_excel.save("InvoicesInfo.xlsx")
+        response = HttpResponse(open('InvoicesInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'InvoicesInfo.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
+
+def getInvoiceSellerCode(invoiceItem):
+    sellerCode = ''
+    try:
+        quotationItem = None
+        if invoiceItem.originInvoice == 'GUIDE':
+            quotationItem = invoiceItem.guidesystem_set.all()[0].asociatedQuotation
+        else:
+            quotationItem = invoiceItem.asociatedQuotation
+        sellerCode = quotationItem.quotationsellerdata.dataUserQuotation[2]
+    except:
+        sellerCode = 'NO SELLER'
+    return sellerCode
+
+def getInvoiceClientName(invoiceItem):
+    clientName = ''
+    try:
+        quotationItem = None
+        if invoiceItem.originInvoice == 'GUIDE':
+            quotationItem = invoiceItem.guidesystem_set.all()[0].asociatedQuotation
+        else:
+            quotationItem = invoiceItem.asociatedQuotation
+        clientName = quotationItem.quotationclientdata.dataClientQuotation[1]
+    except:
+        clientName = 'NO CLIENT'
+    return clientName
+
+def getInvoiceListGuides(invoiceItem):
+    listGuides = ''
+    try:
+        totalGuides = invoiceItem.guidesystem_set.all()
+        for guideItem in totalGuides:
+            listGuides = listGuides + guideItem.codeGuide + ' '
+    except:
+        listGuides = ''
+    return listGuides
+
+def getValueInvoice(invoiceItem):
+    valueInvoice = '0.00'
+    try:
+        quotationItem = None
+        if invoiceItem.originInvoice == 'GUIDE':
+            quotationItem = invoiceItem.guidesystem_set.all()[0].asociatedQuotation
+        else:
+            quotationItem = invoiceItem.asociatedQuotation
+        valueInvoice = getValueQuotation(quotationItem)
+    except:
+        valueInvoice = '0.00'
+    return valueInvoice
+
+
+def getSolesInvoice(invoiceItem):
+    valueSoles = '0.00'
+    try:
+        quotationItem = None
+        if invoiceItem.originInvoice == 'GUIDE':
+            quotationItem = invoiceItem.guidesystem_set.all()[0].asociatedQuotation
+        else:
+            quotationItem = invoiceItem.asociatedQuotation
+        valueSoles = getSolesValue(quotationItem)
+    except:
+        valueSoles = '0.00'
+    return valueSoles
+
+
+
 def exportFilteredBills(request):
     if request.method == 'POST':
         startDate = request.POST.get('startDate')
@@ -4556,7 +4675,7 @@ def exportFilteredBills(request):
             doc_excel.active.column_dimensions['I'].width = 30
             doc_excel.save("BillsInfo.xlsx")
         else:
-            quotationData.append(['INGRESAR AMBAS FECHAS'])
+            billsData.append(['INGRESAR AMBAS FECHAS'])
             exportTable = pd.DataFrame(billsData,columns=['INFORMACION'])
             exportTable.to_excel('BillsInfo.xlsx',index=False)
             doc_excel = openpyxl.load_workbook("BillsInfo.xlsx")
