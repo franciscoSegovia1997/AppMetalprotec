@@ -45,4 +45,5 @@ urlpatterns = [
     path('exportFilteredQuotations',views.exportFilteredQuotations,name='exportFilteredQuotations'),
     path('exportFilteredGuides',views.exportFilteredGuides,name='exportFilteredGuides'),
     path('exportFilteredBills',views.exportFilteredBills,name='exportFilteredBills'),
+    path('exportFilteredInvoices',views.exportFilteredInvoices,name='exportFilteredInvoices'),
 ]
