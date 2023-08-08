@@ -4534,7 +4534,7 @@ def exportFilteredInvoices(request):
                         invoiceItem.stateTeFacturo,
                         getInvoiceSellerCode(invoiceItem),
                         getInvoiceListGuides(invoiceItem),
-                        invoiceItem.currencyBill,
+                        invoiceItem.currencyInvoice,
                         getValueInvoice(invoiceItem),
                         getSolesInvoice(invoiceItem),
                     ])
