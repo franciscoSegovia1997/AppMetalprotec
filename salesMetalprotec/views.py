@@ -4526,17 +4526,18 @@ def exportFilteredBills(request):
                 Q(dateBill__lte=fechaFin)
             ).exclude(stateTeFacturo=None).exclude(stateTeFacturo='Anulada').exclude(stateTeFacturo='').exclude(stateTeFacturo='Rechazado').order_by('-dateBill')
             for billItem in billsFilter:
-                billsData.append([
-                    billItem.dateBill.strftime('%Y-%m-%d'),
-                    billItem.codeBill,
-                    getBillClientName(billItem),
-                    billItem.stateTeFacturo,
-                    getBillSellerCode(billItem),
-                    getBillListGuides(billItem),
-                    billItem.currencyBill,
-                    getValueBill(billItem),
-                    getSolesBill(billItem),
-                ])
+                if len(creditNoteSystem.objects.filter(originCreditNote='BILL').filter(asociatedInvoice=None).exclude(asociatedBill=None).filter(asociatedBill__codeBill=billItem.codeBill)) == 0:
+                    billsData.append([
+                        billItem.dateBill.strftime('%Y-%m-%d'),
+                        billItem.codeBill,
+                        getBillClientName(billItem),
+                        billItem.stateTeFacturo,
+                        getBillSellerCode(billItem),
+                        getBillListGuides(billItem),
+                        billItem.currencyBill,
+                        getValueBill(billItem),
+                        getSolesBill(billItem),
+                    ])
             finalPrice = Decimal(0.00)
             for itemInfo in billsData:
                 finalPrice = Decimal(finalPrice) + Decimal(itemInfo[8])
