@@ -4524,7 +4524,7 @@ def exportFilteredInvoices(request):
             invoicesFilter = invoiceSystem.objects.filter(
                 Q(dateInvoice__gte=fechaInicio) &
                 Q(dateInvoice__lte=fechaFin)
-            ).exclude(stateTeFacturo=None).exclude(stateTeFacturo='Anulada').exclude(stateTeFacturo='').exclude(stateTeFacturo='Rechazado').order_by('-dateInvoice')
+            ).exclude(stateTeFacturo=None).exclude(stateTeFacturo='Anulada').exclude(stateTeFacturo='').exclude(stateTeFacturo='Rechazado').exclude(stateTeFacturo='Por Anular').order_by('-dateInvoice')
             for invoiceItem in invoicesFilter:
                 if len(creditNoteSystem.objects.filter(originCreditNote='INVOICE').filter(asociatedBill=None).exclude(asociatedInvoice=None).filter(asociatedInvoice__codeInvoice=invoiceItem.codeInvoice)) == 0:
                     invoicesData.append([
