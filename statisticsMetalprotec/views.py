@@ -237,6 +237,7 @@ def getTotalSales(startDate, endDate, currencyInfo):
     finalSales = Decimal(0.0000)
     billsData = []
     invoicesData = []
+    print(f"{startDate} - {endDate} - {currencyInfo}")
     if startDate != '' and endDate != '':
         fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
         fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
@@ -250,10 +251,11 @@ def getTotalSales(startDate, endDate, currencyInfo):
             if len(creditNoteSystem.objects.filter(originCreditNote='BILL').filter(asociatedInvoice=None).exclude(asociatedBill=None).filter(asociatedBill__codeBill=billItem.codeBill)) == 0:
                 billsData.append([
                     getValueBill(billItem),
+                    billItem.codeBill
                 ])
         print('Valores FACTURAS')
         for itemInfo in billsData:
-            print(itemInfo[0])
+            print(f"{itemInfo[1]} - {itemInfo[0]}")
             finalSales = Decimal(finalSales) + Decimal(itemInfo[0])
 
 
@@ -265,10 +267,11 @@ def getTotalSales(startDate, endDate, currencyInfo):
             if len(creditNoteSystem.objects.filter(originCreditNote='INVOICE').filter(asociatedBill=None).exclude(asociatedInvoice=None).filter(asociatedInvoice__codeInvoice=invoiceItem.codeInvoice)) == 0:
                 invoicesData.append([
                     getValueInvoice(invoiceItem),
+                    invoiceItem.codeInvoice
                 ])
-        print('Valores Boletas')
+        print('Valores BOLETAS')
         for itemInfo in invoicesData:
-            print(itemInfo[0])
+            print(f"{itemInfo[1]} - {itemInfo[0]}")
             finalSales = Decimal(finalSales) + Decimal(itemInfo[0])
     else:
         finalSales = Decimal(0.0000)
@@ -295,7 +298,6 @@ def getValueBill(billItem):
             for guideItem in billItem.guidesystem_set.all():
                 quotationItem = guideItem.asociatedQuotation
                 tempValueQuotation = getValueQuotation(quotationItem)
-                print(tempValueQuotation)
                 valueBill = Decimal(valueBill) + Decimal(tempValueQuotation)
         else:
             quotationItem = billItem.asociatedQuotation
@@ -309,9 +311,7 @@ def getValueQuotation(quotationItem):
     valueQuotation = Decimal(0.000)
     try:
         if quotationItem.typeQuotation == 'PRODUCTOS':
-            print('El error esta en la captura de productos')
             totalProductsQuotation = quotationItem.quotationproductdata_set.all()
-            print('Se tienen los productos')
             for productInfo in totalProductsQuotation:
                 if quotationItem.currencyQuotation == 'SOLES':
                     if productInfo.dataProductQuotation[5] == 'DOLARES':
@@ -330,7 +330,6 @@ def getValueQuotation(quotationItem):
                 if productInfo.dataProductQuotation[9] == '1':
                     v_producto = Decimal(0.00)
                 valueQuotation = Decimal(valueQuotation) + Decimal(v_producto)
-            print('El error esta en el bucle')
         else:
             totalServicesQuotation = quotationItem.quotationservicedata_set.all()
             for serviceInfo in totalServicesQuotation:
@@ -346,7 +345,6 @@ def getValueQuotation(quotationItem):
                         v_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(Decimal(1.00) - Decimal(serviceInfo.dataServiceQuotation[5])/100)
                 valueQuotation = Decimal(valueQuotation) + Decimal(v_servicio)
     except:
-        print('Hubo un error')
         valueQuotation = Decimal(0.00)
     valueQuotation = Decimal('%.2f' % valueQuotation)
     valueQuotation = str(valueQuotation)
