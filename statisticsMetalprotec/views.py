@@ -2,6 +2,9 @@ from django.shortcuts import render
 import time
 from decimal import Decimal, DecimalException,getcontext
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from salesMetalprotec.models import invoiceSystem, billSystem, quotationSystem, guideSystem, creditNoteSystem
+import datetime
+from django.db.models import Q
 
 getcontext().prec = 10
 
@@ -182,8 +185,34 @@ def resumeSalesxYear(request):
 
     if yearInfo == '2023':
         monthList = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-        salesSoles = [Decimal('117884.37'), Decimal('106753.65'), Decimal('208551.55'), Decimal('86361.46'), Decimal('136334.64'), Decimal('244306.92'), Decimal('58773.050'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]
-        salesDollars = [Decimal('31976.09'), Decimal('22971.42'), Decimal('32488.74'), Decimal('31802.68'), Decimal('26918.91'), Decimal('6292.70'), Decimal('22042.73'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]
+        salesSoles = [
+            Decimal('117884.37'),
+            Decimal('106753.65'),
+            Decimal('208551.55'),
+            Decimal('86361.46'),
+            Decimal('136334.64'),
+            Decimal('244306.92'),
+            getTotalSales('2023-07-01','2023-07-31','SOLES'),
+            getTotalSales('2023-08-01','2023-08-31','SOLES'),
+            getTotalSales('2023-09-01','2023-09-30','SOLES'),
+            getTotalSales('2023-10-01','2023-10-31','SOLES'),
+            getTotalSales('2023-11-01','2023-11-30','SOLES'),
+            getTotalSales('2023-12-01','2023-12-31','SOLES')
+            ]
+        salesDollars = [
+            Decimal('31976.09'),
+            Decimal('22971.42'),
+            Decimal('32488.74'),
+            Decimal('31802.68'),
+            Decimal('26918.91'),
+            Decimal('6292.70'),
+            getTotalSales('2023-07-01','2023-07-31','DOLARES'),
+            getTotalSales('2023-08-01','2023-08-31','DOLARES'),
+            getTotalSales('2023-09-01','2023-09-30','DOLARES'),
+            getTotalSales('2023-10-01','2023-10-31','DOLARES'),
+            getTotalSales('2023-11-01','2023-11-30','DOLARES'),
+            getTotalSales('2023-12-01','2023-12-31','DOLARES')
+            ]
         tcInfo = 3.653
 
     if yearInfo == '2024':
@@ -199,11 +228,125 @@ def resumeSalesxYear(request):
         tcInfo = 3.653
 
     return JsonResponse({
-        'monthList':monthList,
         'salesSoles':salesSoles,
         'salesDollars':salesDollars,
         'tcInfo':tcInfo,
     })
+
+def getTotalSales(startDate, endDate, currencyInfo):
+    finalSales = Decimal(0.0000)
+    billsData = []
+    invoicesData = []
+    if startDate != '' and endDate != '':
+        fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+        fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+        
+        billsFilter = billSystem.objects.filter(
+            Q(dateBill__gte=fechaInicio) &
+            Q(dateBill__lte=fechaFin)
+        ).exclude(stateTeFacturo=None).exclude(stateTeFacturo='Anulada').exclude(stateTeFacturo='').exclude(stateTeFacturo='Rechazado').filter(currencyBill=currencyInfo).order_by('-dateBill')
+        
+        for billItem in billsFilter:
+            if len(creditNoteSystem.objects.filter(originCreditNote='BILL').filter(asociatedInvoice=None).exclude(asociatedBill=None).filter(asociatedBill__codeBill=billItem.codeBill)) == 0:
+                billsData.append([
+                    getValueBill(billItem),
+                ])
+        for itemInfo in billsData:
+            finalSales = Decimal(finalSales) + Decimal(itemInfo[0])
+
+
+        invoicesFilter = invoiceSystem.objects.filter(
+            Q(dateInvoice__gte=fechaInicio) &
+            Q(dateInvoice__lte=fechaFin)
+        ).exclude(stateTeFacturo=None).exclude(stateTeFacturo='Anulada').exclude(stateTeFacturo='').exclude(stateTeFacturo='Rechazado').exclude(stateTeFacturo='Por Anular').filter(currencyInvoice=currencyInfo).order_by('-dateInvoice')
+        for invoiceItem in invoicesFilter:
+            if len(creditNoteSystem.objects.filter(originCreditNote='INVOICE').filter(asociatedBill=None).exclude(asociatedInvoice=None).filter(asociatedInvoice__codeInvoice=invoiceItem.codeInvoice)) == 0:
+                invoicesData.append([
+                    getValueInvoice(invoiceItem),
+                ])
+        for itemInfo in invoicesData:
+            finalSales = Decimal(finalSales) + Decimal(itemInfo[0])
+    else:
+        finalSales = Decimal(0.0000)
+    return finalSales
+
+def getValueInvoice(invoiceItem):
+    valueInvoice = '0.00'
+    try:
+        quotationItem = None
+        if invoiceItem.originInvoice == 'GUIDE':
+            quotationItem = invoiceItem.guidesystem_set.all()[0].asociatedQuotation
+        else:
+            quotationItem = invoiceItem.asociatedQuotation
+        valueInvoice = getValueQuotation(quotationItem)
+    except:
+        valueInvoice = '0.00'
+    return valueInvoice
+
+def getValueBill(billItem):
+    valueBill = Decimal(0.0000)
+    try:
+        quotationItem = None
+        if billItem.originBill == 'GUIDE':
+            for guideItem in billItem.guidesystem_set.all():
+                quotationItem = guideItem.asociatedQuotation
+                tempValueQuotation = getValueQuotation(quotationItem)
+                print(tempValueQuotation)
+                valueBill = Decimal(valueBill) + Decimal(tempValueQuotation)
+        else:
+            quotationItem = billItem.asociatedQuotation
+            valueBill = getValueQuotation(quotationItem)
+    except:
+        valueBill = '0.00'
+    valueBill = str(valueBill)
+    return valueBill
+
+def getValueQuotation(quotationItem):
+    valueQuotation = Decimal(0.000)
+    try:
+        if quotationItem.typeQuotation == 'PRODUCTOS':
+            print('El error esta en la captura de productos')
+            totalProductsQuotation = quotationItem.quotationproductdata_set.all()
+            print('Se tienen los productos')
+            for productInfo in totalProductsQuotation:
+                if quotationItem.currencyQuotation == 'SOLES':
+                    if productInfo.dataProductQuotation[5] == 'DOLARES':
+                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(quotationItem.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                    if productInfo.dataProductQuotation[5] == 'SOLES':
+                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                if quotationItem.currencyQuotation == 'DOLARES':
+                    if productInfo.dataProductQuotation[5] == 'SOLES':
+                        v_producto = (Decimal(productInfo.dataProductQuotation[6])/Decimal(quotationItem.erSel))*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                    if productInfo.dataProductQuotation[5] == 'DOLARES':
+                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                if productInfo.dataProductQuotation[9] == '1':
+                    v_producto = Decimal(0.00)
+                valueQuotation = Decimal(valueQuotation) + Decimal(v_producto)
+            print('El error esta en el bucle')
+        else:
+            totalServicesQuotation = quotationItem.quotationservicedata_set.all()
+            for serviceInfo in totalServicesQuotation:
+                if quotationItem.currencyQuotation == 'SOLES':
+                    if serviceInfo.dataServiceQuotation[3] == 'DOLARES':
+                        v_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(quotationItem.erSel)*Decimal(Decimal(1.00) - Decimal(serviceInfo.dataServiceQuotation[5])/100)
+                    if serviceInfo.dataServiceQuotation[3] == 'SOLES':
+                        v_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(Decimal(1.00) - (Decimal(serviceInfo.dataServiceQuotation[5])/100))
+                if quotationItem.currencyQuotation == 'DOLARES':
+                    if serviceInfo.dataServiceQuotation[3] == 'SOLES':
+                        v_servicio = (Decimal(serviceInfo.dataServiceQuotation[4])/Decimal(quotationItem.erSel))*Decimal(Decimal(1.00) - (Decimal(serviceInfo.dataServiceQuotation[5])/100))
+                    if serviceInfo.dataServiceQuotation[3] == 'DOLARES':
+                        v_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(Decimal(1.00) - Decimal(serviceInfo.dataServiceQuotation[5])/100)
+                valueQuotation = Decimal(valueQuotation) + Decimal(v_servicio)
+    except:
+        print('Hubo un error')
+        valueQuotation = Decimal(0.00)
+    valueQuotation = Decimal('%.2f' % valueQuotation)
+    valueQuotation = str(valueQuotation)
+    return valueQuotation
 
 def salesxMonths(request):
     monthInfo = request.GET.get('monthInfo')
