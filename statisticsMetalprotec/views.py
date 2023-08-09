@@ -251,7 +251,9 @@ def getTotalSales(startDate, endDate, currencyInfo):
                 billsData.append([
                     getValueBill(billItem),
                 ])
+        print('Valores FACTURAS')
         for itemInfo in billsData:
+            print(itemInfo[0])
             finalSales = Decimal(finalSales) + Decimal(itemInfo[0])
 
 
@@ -264,7 +266,9 @@ def getTotalSales(startDate, endDate, currencyInfo):
                 invoicesData.append([
                     getValueInvoice(invoiceItem),
                 ])
+        print('Valores Boletas')
         for itemInfo in invoicesData:
+            print(itemInfo[0])
             finalSales = Decimal(finalSales) + Decimal(itemInfo[0])
     else:
         finalSales = Decimal(0.0000)
