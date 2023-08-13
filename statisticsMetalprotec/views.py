@@ -233,6 +233,92 @@ def resumeSalesxYear(request):
         'tcInfo':tcInfo,
     })
 
+def salesxMonths(request):
+    monthInfo = request.GET.get('monthInfo')
+    if monthInfo == '10':
+        monthList = [
+            'Noviembre',
+            'Diciembre',
+            'Enero',
+            'Febrero',
+            'Marzo',
+            'Abril',
+            'Mayo',
+            'Junio',
+            'Julio',
+            'Agosto'
+        ]
+        salesSoles = [
+            Decimal('65324.44'),
+            Decimal('44164.63'),
+            Decimal('117884.37'),
+            Decimal('106753.65'),
+            Decimal('208551.55'),
+            Decimal('86361.46'),
+            Decimal('136334.64'),
+            Decimal('244306.92'),
+            getTotalSales('2023-07-01','2023-07-31','SOLES'),
+            getTotalSales('2023-08-01','2023-08-31','SOLES')
+        ]
+        salesDollars = [
+            Decimal('42216.38'),
+            Decimal('13216.01'),
+            Decimal('31976.09'),
+            Decimal('22971.42'),
+            Decimal('32488.74'),
+            Decimal('31802.68'),
+            Decimal('26918.91'),
+            Decimal('6292.70'),
+            getTotalSales('2023-07-01','2023-07-31','DOLARES'),
+            getTotalSales('2023-08-01','2023-08-31','DOLARES')
+        ]
+
+    if monthInfo == '5':
+        monthList = [
+            'Abril',
+            'Mayo',
+            'Junio',
+            'Julio',
+            'Agosto'
+        ]
+        salesSoles = [
+            Decimal('86361.46'),
+            Decimal('136334.64'),
+            Decimal('244306.92'),
+            getTotalSales('2023-07-01','2023-07-31','SOLES'),
+            getTotalSales('2023-08-01','2023-08-31','SOLES')
+        ]
+        salesDollars = [
+            Decimal('31802.68'),
+            Decimal('26918.91'),
+            Decimal('6292.70'),
+            getTotalSales('2023-07-01','2023-07-31','DOLARES'),
+            getTotalSales('2023-08-01','2023-08-31','DOLARES')
+        ]
+
+    if monthInfo == '3':
+        monthList = [
+            'Junio',
+            'Julio',
+            'Agosto'
+        ]
+        salesSoles = [
+            Decimal('244306.92'),
+            getTotalSales('2023-07-01','2023-07-31','SOLES'),
+            getTotalSales('2023-08-01','2023-08-31','SOLES')
+        ]
+        salesDollars = [
+            Decimal('6292.70'),
+            getTotalSales('2023-07-01','2023-07-31','DOLARES'),
+            getTotalSales('2023-08-01','2023-08-31','DOLARES')
+        ]
+
+    return JsonResponse({
+        'monthList':monthList,
+        'salesSoles':salesSoles,
+        'salesDollars':salesDollars
+    })
+
 def getTotalSales(startDate, endDate, currencyInfo):
     finalSales = Decimal(0.0000)
     billsData = []
@@ -350,29 +436,7 @@ def getValueQuotation(quotationItem):
     valueQuotation = str(valueQuotation)
     return valueQuotation
 
-def salesxMonths(request):
-    monthInfo = request.GET.get('monthInfo')
-    time.sleep(2)
-    if monthInfo == '10':
-        monthList = ['Octubre', 'Noviembre', 'Diciembre', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio']
-        salesSoles = [Decimal('65129.74'), Decimal('65324.44'), Decimal('44164.63'), Decimal('117884.37'), Decimal('106753.65'), Decimal('208551.55'), Decimal('86361.46'), Decimal('136334.64'), Decimal('244306.92'), Decimal('58773.050')]
-        salesDollars = [Decimal('32061.43'), Decimal('42216.38'), Decimal('13216.01'), Decimal('31976.09'), Decimal('22971.42'), Decimal('32488.74'), Decimal('31802.68'), Decimal('26918.91'), Decimal('6292.70'), Decimal('22042.73')]
 
-    if monthInfo == '5':
-        monthList = ['Marzo', 'Abril', 'Mayo', 'Junio', 'Julio']
-        salesSoles = [Decimal('208551.55'), Decimal('86361.46'), Decimal('136334.64'), Decimal('244306.92'), Decimal('58773.050')]
-        salesDollars = [Decimal('32488.74'), Decimal('31802.68'), Decimal('26918.91'), Decimal('6292.70'), Decimal('22042.73')]
-
-    if monthInfo == '3':
-        monthList = ['Mayo', 'Junio', 'Julio']
-        salesSoles = [Decimal('136334.64'), Decimal('244306.92'), Decimal('58773.050')]
-        salesDollars = [Decimal('26918.91'), Decimal('6292.70'), Decimal('22042.73')]
-
-    return JsonResponse({
-        'monthList':monthList,
-        'salesSoles':salesSoles,
-        'salesDollars':salesDollars
-    })
 
 def sellerSalesTime(request):
     yearInfo = request.GET.get('yearInfo')
