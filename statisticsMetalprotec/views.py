@@ -366,8 +366,34 @@ def sellerSalesTime(request):
                     getTotalSalesSellerCode('2023-11-01','2023-11-30','SOLES','USR-24'),
                     getTotalSalesSellerCode('2023-12-01','2023-12-31','SOLES','USR-24')
                 ], 
-                [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('33.90'), Decimal('480.81'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')], 
-                [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]
+                [
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('33.90'),
+                    getTotalSalesSellerCode('2023-07-01','2023-07-31','SOLES','USR-25'),
+                    getTotalSalesSellerCode('2023-08-01','2023-08-31','SOLES','USR-25'),
+                    getTotalSalesSellerCode('2023-09-01','2023-09-30','SOLES','USR-25'),
+                    getTotalSalesSellerCode('2023-10-01','2023-10-31','SOLES','USR-25'),
+                    getTotalSalesSellerCode('2023-11-01','2023-11-30','SOLES','USR-25'),
+                    getTotalSalesSellerCode('2023-12-01','2023-12-31','SOLES','USR-25')
+                ], 
+                [
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0')
+                ]
             ]
         else:
             codeSeller = [
@@ -377,10 +403,62 @@ def sellerSalesTime(request):
                 'otros'
             ]
             salesSeller = [
-                [Decimal('31976.09'), Decimal('22971.42'), Decimal('32488.74'), Decimal('31802.68'), Decimal('26918.91'), Decimal('6292.70'), Decimal('21321.90'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')],
-                [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')],
-                [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('720.83'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')],
-                [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]
+                [
+                    Decimal('31976.09'),
+                    Decimal('22971.42'),
+                    Decimal('32488.74'),
+                    Decimal('31802.68'),
+                    Decimal('26918.91'),
+                    Decimal('6292.70'),
+                    getTotalSalesSellerCode('2023-07-01','2023-07-31','DOLARES','USR-16'),
+                    getTotalSalesSellerCode('2023-08-01','2023-08-31','DOLARES','USR-16'),
+                    getTotalSalesSellerCode('2023-09-01','2023-09-30','DOLARES','USR-16'),
+                    getTotalSalesSellerCode('2023-10-01','2023-10-31','DOLARES','USR-16'),
+                    getTotalSalesSellerCode('2023-11-01','2023-11-30','DOLARES','USR-16'),
+                    getTotalSalesSellerCode('2023-12-01','2023-12-31','DOLARES','USR-16')
+                ],
+                [
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    getTotalSalesSellerCode('2023-07-01','2023-07-31','DOLARES','USR-24'),
+                    getTotalSalesSellerCode('2023-08-01','2023-08-31','DOLARES','USR-24'),
+                    getTotalSalesSellerCode('2023-09-01','2023-09-30','DOLARES','USR-24'),
+                    getTotalSalesSellerCode('2023-10-01','2023-10-31','DOLARES','USR-24'),
+                    getTotalSalesSellerCode('2023-11-01','2023-11-30','DOLARES','USR-24'),
+                    getTotalSalesSellerCode('2023-12-01','2023-12-31','DOLARES','USR-24')
+                ],
+                [
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    getTotalSalesSellerCode('2023-07-01','2023-07-31','DOLARES','USR-25'),
+                    getTotalSalesSellerCode('2023-08-01','2023-08-31','DOLARES','USR-25'),
+                    getTotalSalesSellerCode('2023-09-01','2023-09-30','DOLARES','USR-25'),
+                    getTotalSalesSellerCode('2023-10-01','2023-10-31','DOLARES','USR-25'),
+                    getTotalSalesSellerCode('2023-11-01','2023-11-30','DOLARES','USR-25'),
+                    getTotalSalesSellerCode('2023-12-01','2023-12-31','DOLARES','USR-25')
+                ],
+                [
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0'), 
+                    Decimal('0')
+                ]
             ]
     else:
         if currencyInfo == 'SOLES':
