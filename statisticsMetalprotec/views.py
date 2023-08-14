@@ -319,6 +319,123 @@ def salesxMonths(request):
         'salesDollars':salesDollars
     })
 
+def sellerSalesTime(request):
+    yearInfo = request.GET.get('yearInfo')
+    currencyInfo = request.GET.get('currencyInfo')
+    if yearInfo == '2022':
+        if currencyInfo == 'SOLES':
+            codeSeller = ['USR-16', 'USR-24', 'USR-19', 'otros']
+            salesSeller = [[Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('35923.7940'), Decimal('127516.7930'), Decimal('52876.86'), Decimal('53516.53'), Decimal('27508.25')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('3925.03'), Decimal('12252.88'), Decimal('11797.56'), Decimal('16656.38')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('10.35'), Decimal('0')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]]
+        else:
+            codeSeller = ['USR-16', 'USR-24', 'USR-19', 'otros']
+            salesSeller = [[Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('16833.24'), Decimal('34117.826'), Decimal('32061.43'), Decimal('42216.38'), Decimal('13216.01')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]]
+    elif yearInfo == '2023':
+        if currencyInfo == 'SOLES':
+            codeSeller = [
+                'USR-16',
+                'USR-24',
+                'USR-25',
+                'otros'
+            ]
+            salesSeller = [
+                [
+                    Decimal('94391.37'),
+                    Decimal('92530.85'),
+                    Decimal('210142.79'),
+                    Decimal('86361.46'),
+                    Decimal('136334.64'),
+                    Decimal('244273.02'),
+                    getTotalSalesSellerCode('2023-07-01','2023-07-31','SOLES','USR-16'),
+                    getTotalSalesSellerCode('2023-08-01','2023-08-31','SOLES','USR-16'),
+                    getTotalSalesSellerCode('2023-09-01','2023-09-30','SOLES','USR-16'),
+                    getTotalSalesSellerCode('2023-10-01','2023-10-31','SOLES','USR-16'),
+                    getTotalSalesSellerCode('2023-11-01','2023-11-30','SOLES','USR-16'),
+                    getTotalSalesSellerCode('2023-12-01','2023-12-31','SOLES','USR-16')
+                ], 
+                [
+                    Decimal('23493.00'),
+                    Decimal('14222.80'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    Decimal('0'),
+                    getTotalSalesSellerCode('2023-07-01','2023-07-31','SOLES','USR-24'),
+                    getTotalSalesSellerCode('2023-08-01','2023-08-31','SOLES','USR-24'),
+                    getTotalSalesSellerCode('2023-09-01','2023-09-30','SOLES','USR-24'),
+                    getTotalSalesSellerCode('2023-10-01','2023-10-31','SOLES','USR-24'),
+                    getTotalSalesSellerCode('2023-11-01','2023-11-30','SOLES','USR-24'),
+                    getTotalSalesSellerCode('2023-12-01','2023-12-31','SOLES','USR-24')
+                ], 
+                [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('33.90'), Decimal('480.81'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')], 
+                [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]
+            ]
+        else:
+            codeSeller = [
+                'USR-16',
+                'USR-24',
+                'USR-25',
+                'otros'
+            ]
+            salesSeller = [
+                [Decimal('31976.09'), Decimal('22971.42'), Decimal('32488.74'), Decimal('31802.68'), Decimal('26918.91'), Decimal('6292.70'), Decimal('21321.90'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')],
+                [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')],
+                [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('720.83'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')],
+                [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]
+            ]
+    else:
+        if currencyInfo == 'SOLES':
+            codeSeller = []
+            salesSeller = []
+        else:
+            codeSeller = []
+            salesSeller = []
+    return JsonResponse({
+        'codeSeller':codeSeller,
+        'salesSeller':salesSeller,
+    })
+
+def getTotalSalesSellerCode(startDate, endDate, currencyInfo, codeSeller):
+    finalSales = Decimal(0.0000)
+    billsData = []
+    invoicesData = []
+    if startDate != '' and endDate != '':
+        fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
+        fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
+        
+        billsFilter = billSystem.objects.filter(
+            Q(dateBill__gte=fechaInicio) &
+            Q(dateBill__lte=fechaFin)
+        ).exclude(stateTeFacturo=None).exclude(stateTeFacturo='Anulada').exclude(stateTeFacturo='').exclude(stateTeFacturo='Rechazado').filter(currencyBill=currencyInfo).order_by('-dateBill')
+        
+        for billItem in billsFilter:
+            if len(creditNoteSystem.objects.filter(originCreditNote='BILL').filter(asociatedInvoice=None).exclude(asociatedBill=None).filter(asociatedBill__codeBill=billItem.codeBill)) == 0:
+                if float(getValueBillSellerInfo(billItem,codeSeller)) != 0:
+                    billsData.append([
+                        getValueBillSellerInfo(billItem,codeSeller),
+                        billItem.codeBill
+                    ])
+        for itemInfo in billsData:
+            finalSales = Decimal(finalSales) + Decimal(itemInfo[0])
+
+
+        invoicesFilter = invoiceSystem.objects.filter(
+            Q(dateInvoice__gte=fechaInicio) &
+            Q(dateInvoice__lte=fechaFin)
+        ).exclude(stateTeFacturo=None).exclude(stateTeFacturo='Anulada').exclude(stateTeFacturo='').exclude(stateTeFacturo='Rechazado').exclude(stateTeFacturo='Por Anular').filter(currencyInvoice=currencyInfo).order_by('-dateInvoice')
+        for invoiceItem in invoicesFilter:
+            if len(creditNoteSystem.objects.filter(originCreditNote='INVOICE').filter(asociatedBill=None).exclude(asociatedInvoice=None).filter(asociatedInvoice__codeInvoice=invoiceItem.codeInvoice)) == 0:
+                if float(getValueInvoiceSellerInfo(invoiceItem,codeSeller)) != 0:
+                    invoicesData.append([
+                        getValueBillSellerInfo(invoiceItem, codeSeller),
+                        invoiceItem.codeInvoice
+                    ])
+        for itemInfo in invoicesData:
+            finalSales = Decimal(finalSales) + Decimal(itemInfo[0])
+    else:
+        finalSales = Decimal(0.0000)
+    return finalSales
+
+
 def getTotalSales(startDate, endDate, currencyInfo):
     finalSales = Decimal(0.0000)
     billsData = []
@@ -393,6 +510,54 @@ def getValueBill(billItem):
     valueBill = str(valueBill)
     return valueBill
 
+def getValueBillSellerInfo(billItem, sellerCode):
+    valueBill = Decimal(0.0000)
+    try:
+        quotationItem = None
+        if billItem.originBill == 'GUIDE':
+            for guideItem in billItem.guidesystem_set.all():
+                quotationItem = guideItem.asociatedQuotation
+                if quotationItem.quotationsellerdata.dataUserQuotation[2] == sellerCode:
+                    tempValueQuotation = getValueQuotation(quotationItem)
+                    valueBill = Decimal(valueBill) + Decimal(tempValueQuotation)
+                else:
+                    tempValueQuotation = Decimal(0.0000)
+                    valueBill = Decimal(valueBill) + Decimal(tempValueQuotation)
+        else:
+            quotationItem = billItem.asociatedQuotation
+            if quotationItem.quotationsellerdata.dataUserQuotation[2] == sellerCode:
+                valueBill = getValueQuotation(quotationItem)
+            else:
+                valueBill = Decimal(0.0000)
+    except:
+        valueBill = '0.00'
+    valueBill = str(valueBill)
+    return valueBill
+
+def getValueInvoiceSellerInfo(invoiceItem,sellerCode):
+    valueInvoice = Decimal(0.0000)
+    try:
+        quotationItem = None
+        if invoiceItem.originInvoice == 'GUIDE':
+            for guideItem in invoiceItem.guidesystem_set.all():
+                quotationItem = guideItem.asociatedQuotation
+                if quotationItem.quotationsellerdata.dataUserQuotation[2] == sellerCode:
+                    tempValueQuotation = getValueQuotation(quotationItem)
+                    valueInvoice = Decimal(valueInvoice) + Decimal(tempValueQuotation)
+                else:
+                    tempValueQuotation = Decimal(0.0000)
+                    valueInvoice = Decimal(valueInvoice) + Decimal(tempValueQuotation)
+        else:
+            quotationItem = invoiceItem.asociatedQuotation
+            if quotationItem.quotationsellerdata.dataUserQuotation[2] == sellerCode:
+                valueInvoice = getValueQuotation(quotationItem)
+            else:
+                valueInvoice = Decimal(0.0000)
+    except:
+        valueInvoice = '0.00'
+    valueInvoice = str(valueInvoice)
+    return valueInvoice
+
 def getValueQuotation(quotationItem):
     valueQuotation = Decimal(0.000)
     try:
@@ -436,38 +601,6 @@ def getValueQuotation(quotationItem):
     valueQuotation = str(valueQuotation)
     return valueQuotation
 
-
-
-def sellerSalesTime(request):
-    yearInfo = request.GET.get('yearInfo')
-    currencyInfo = request.GET.get('currencyInfo')
-    time.sleep(2)
-    if yearInfo == '2022':
-        if currencyInfo == 'SOLES':
-            codeSeller = ['USR-16', 'USR-24', 'USR-19', 'otros']
-            salesSeller = [[Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('35923.7940'), Decimal('127516.7930'), Decimal('52876.86'), Decimal('53516.53'), Decimal('27508.25')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('3925.03'), Decimal('12252.88'), Decimal('11797.56'), Decimal('16656.38')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('10.35'), Decimal('0')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]]
-        else:
-            codeSeller = ['USR-16', 'USR-24', 'USR-19', 'otros']
-            salesSeller = [[Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('16833.24'), Decimal('34117.826'), Decimal('32061.43'), Decimal('42216.38'), Decimal('13216.01')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]]
-    elif yearInfo == '2023':
-        if currencyInfo == 'SOLES':
-            codeSeller = ['USR-16', 'USR-24', 'USR-25', 'otros']
-            salesSeller = [[Decimal('94391.37'), Decimal('92530.85'), Decimal('210142.79'), Decimal('86361.46'), Decimal('136334.64'), Decimal('244273.02'), Decimal('58292.240'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')], [Decimal('23493.00'), Decimal('14222.80'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('33.90'), Decimal('480.81'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]]
-        else:
-            codeSeller = ['USR-16', 'USR-24', 'USR-25', 'otros']
-            salesSeller = [[Decimal('31976.09'), Decimal('22971.42'), Decimal('32488.74'), Decimal('31802.68'), Decimal('26918.91'), Decimal('6292.70'), Decimal('21321.90'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('720.83'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')], [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]]
-    else:
-        if currencyInfo == 'SOLES':
-            codeSeller = []
-            salesSeller = []
-        else:
-            codeSeller = []
-            salesSeller = []
-
-    return JsonResponse({
-        'codeSeller':codeSeller,
-        'salesSeller':salesSeller,
-    })
 
 def sellerStatistics(request):
     qtInfo = request.GET.get('qtInfo')
