@@ -518,7 +518,6 @@ def getTotalSales(startDate, endDate, currencyInfo):
     finalSales = Decimal(0.0000)
     billsData = []
     invoicesData = []
-    print(f"{startDate} - {endDate} - {currencyInfo}")
     if startDate != '' and endDate != '':
         fechaInicio = datetime.datetime.strptime(startDate,'%Y-%m-%d').date()
         fechaFin = datetime.datetime.strptime(endDate,'%Y-%m-%d').date()
@@ -534,9 +533,7 @@ def getTotalSales(startDate, endDate, currencyInfo):
                     getValueBill(billItem),
                     billItem.codeBill
                 ])
-        print('Valores FACTURAS')
         for itemInfo in billsData:
-            print(f"{itemInfo[1]} - {itemInfo[0]}")
             finalSales = Decimal(finalSales) + Decimal(itemInfo[0])
 
 
@@ -550,9 +547,7 @@ def getTotalSales(startDate, endDate, currencyInfo):
                     getValueInvoice(invoiceItem),
                     invoiceItem.codeInvoice
                 ])
-        print('Valores BOLETAS')
         for itemInfo in invoicesData:
-            print(f"{itemInfo[1]} - {itemInfo[0]}")
             finalSales = Decimal(finalSales) + Decimal(itemInfo[0])
     else:
         finalSales = Decimal(0.0000)

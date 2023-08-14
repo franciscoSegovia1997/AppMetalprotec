@@ -147,6 +147,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     fetch('/statisticsMetalprotecsellerSalesTime?yearInfo=2022&currencyInfo=SOLES')
     .then(response => response.json())
     .then(data => {
+        console.log(datta)
         for(var i = 0; i < data.codeSeller.length; i++)
         {
             tablaVendedoresTiempo.data.datasets[i].label = data.codeSeller[i]
@@ -176,6 +177,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         fetch(`/statisticsMetalprotecsellerSalesTime?yearInfo=${filtroVendedoresTiempo.value}&currencyInfo=${filtroVendedoresMoneda.value}`)
         .then(response => response.json())
         .then(data => {
+            console.log(data)
             for(var i = 0; i < 6; i++)
             {
                 tablaVendedoresTiempo.data.datasets[i].label = ''
