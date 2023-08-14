@@ -504,7 +504,7 @@ def getTotalSalesSellerCode(startDate, endDate, currencyInfo, codeSeller):
             if len(creditNoteSystem.objects.filter(originCreditNote='INVOICE').filter(asociatedBill=None).exclude(asociatedInvoice=None).filter(asociatedInvoice__codeInvoice=invoiceItem.codeInvoice)) == 0:
                 if float(getValueInvoiceSellerInfo(invoiceItem,codeSeller)) != 0:
                     invoicesData.append([
-                        getValueBillSellerInfo(invoiceItem, codeSeller),
+                        getValueInvoiceSellerInfo(invoiceItem, codeSeller),
                         invoiceItem.codeInvoice
                     ])
         for itemInfo in invoicesData:
