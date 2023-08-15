@@ -474,7 +474,7 @@ def sellerSalesTime(request):
 
 def sellerStatistics(request):
     qtInfo = request.GET.get('qtInfo')
-    timeInfo = request.GET.get('monthInfo')
+    timeInfo = request.GET.get('timeInfo')
     time.sleep(2.5)
     if timeInfo == '0':
         if qtInfo == '10':
@@ -647,7 +647,8 @@ def sellerStatistics(request):
                 getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-24'),
                 getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-25'),
             ]
-
+    print(sellerSoles)
+    print(sellerDollars)
     return JsonResponse({
         'sellerCode':sellerCode,
         'sellerSoles':sellerSoles,
