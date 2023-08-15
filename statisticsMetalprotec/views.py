@@ -176,7 +176,6 @@ def clientStatistics(request):
 
 def resumeSalesxYear(request):
     yearInfo = request.GET.get('yearInfo')
-    time.sleep(3)
     if yearInfo == '2022':
         monthList = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
         salesSoles = [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('35923.7940'), Decimal('131441.8230'), Decimal('65129.74'), Decimal('65324.44'), Decimal('44164.63')]
@@ -475,7 +474,6 @@ def sellerSalesTime(request):
 def sellerStatistics(request):
     qtInfo = request.GET.get('qtInfo')
     timeInfo = request.GET.get('timeInfo')
-    time.sleep(2.5)
     if timeInfo == '0':
         if qtInfo == '10':
             sellerCode = ['USR-16', 'USR-25']
@@ -647,8 +645,6 @@ def sellerStatistics(request):
                 getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-24'),
                 getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-25'),
             ]
-    print(sellerSoles)
-    print(sellerDollars)
     return JsonResponse({
         'sellerCode':sellerCode,
         'sellerSoles':sellerSoles,
