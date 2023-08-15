@@ -472,6 +472,188 @@ def sellerSalesTime(request):
         'salesSeller':salesSeller,
     })
 
+def sellerStatistics(request):
+    qtInfo = request.GET.get('qtInfo')
+    timeInfo = request.GET.get('monthInfo')
+    time.sleep(2.5)
+    if timeInfo == '0':
+        if qtInfo == '10':
+            sellerCode = ['USR-16', 'USR-25']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-08-01','2023-08-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-08-01','2023-08-31','SOLES','USR-25')
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-08-01','2023-08-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-08-01','2023-08-31','DOLARES','USR-25')
+            ]
+        elif qtInfo == '5':
+            sellerCode = ['USR-16', 'USR-25']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-08-01','2023-08-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-08-01','2023-08-31','SOLES','USR-25')
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-08-01','2023-08-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-08-01','2023-08-31','DOLARES','USR-25')
+            ]
+        else:
+            sellerCode = ['USR-16', 'USR-25']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-08-01','2023-08-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-08-01','2023-08-31','SOLES','USR-25')
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-08-01','2023-08-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-08-01','2023-08-31','DOLARES','USR-25')
+            ]
+    elif timeInfo == '1':
+        if qtInfo == '10':
+            sellerCode = ['USR-16', 'USR-25']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-07-01','2023-07-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-07-01','2023-07-31','SOLES','USR-25')
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-07-01','2023-07-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-07-01','2023-07-31','DOLARES','USR-25')
+            ]
+        elif qtInfo == '5':
+            sellerCode = ['USR-16', 'USR-25']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-07-01','2023-07-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-07-01','2023-07-31','SOLES','USR-25')
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-07-01','2023-07-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-07-01','2023-07-31','DOLARES','USR-25')
+            ]
+        else:
+            sellerCode = ['USR-16', 'USR-25']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-07-01','2023-07-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-07-01','2023-07-31','SOLES','USR-25')
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-07-01','2023-07-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-07-01','2023-07-31','DOLARES','USR-25')
+            ]
+    elif timeInfo == '3':
+        if qtInfo == '10':
+            sellerCode = ['USR-16', 'USR-25']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-06-01','2023-08-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-06-01','2023-08-31','SOLES','USR-25')
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-06-01','2023-08-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-06-01','2023-08-31','DOLARES','USR-25')
+            ]
+        elif qtInfo == '5':
+            sellerCode = ['USR-16', 'USR-25']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-06-01','2023-08-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-06-01','2023-08-31','SOLES','USR-25')
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-06-01','2023-08-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-06-01','2023-08-31','DOLARES','USR-25')
+            ]
+        else:
+            sellerCode = ['USR-16', 'USR-25']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-06-01','2023-08-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-06-01','2023-08-31','SOLES','USR-25')
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-06-01','2023-08-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-06-01','2023-08-31','DOLARES','USR-25')
+            ]
+    elif timeInfo == '6':
+        if qtInfo == '10':
+            sellerCode = ['USR-16','USR-24','USR-25']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','SOLES','USR-24'),
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','SOLES','USR-25')
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','DOLARES','USR-24'),
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','DOLARES','USR-25')
+            ]
+        elif qtInfo == '5':
+            sellerCode = ['USR-16','USR-24','USR-25']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','SOLES','USR-24'),
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','SOLES','USR-25')
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','DOLARES','USR-24'),
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','DOLARES','USR-25')
+            ]
+        else:
+            sellerCode = ['USR-16','USR-24','USR-25']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','SOLES','USR-24'),
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','SOLES','USR-25')
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','DOLARES','USR-24'),
+                getTotalSalesSellerCode('2023-03-01','2023-08-31','DOLARES','USR-25')
+            ]
+    else:
+        if qtInfo == '10':
+            sellerCode = ['USR-16','USR-24','USR-25','USR-19']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','SOLES','USR-24'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','SOLES','USR-25'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','SOLES','USR-19')
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-24'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-25'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-19')
+            ]
+        elif qtInfo == '5':
+            sellerCode = ['USR-16','USR-24','USR-25','USR-19']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','SOLES','USR-24'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','SOLES','USR-25'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','SOLES','USR-19')
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-24'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-25'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-19')
+            ]
+        else:
+            sellerCode = ['USR-16','USR-24','USR-25']
+            sellerSoles = [
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','SOLES','USR-16'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','SOLES','USR-24'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','SOLES','USR-25'),
+            ]
+            sellerDollars = [
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-16'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-24'),
+                getTotalSalesSellerCode('2023-01-01','2023-08-31','DOLARES','USR-25'),
+            ]
+
+    return JsonResponse({
+        'sellerCode':sellerCode,
+        'sellerSoles':sellerSoles,
+        'sellerDollars':sellerDollars,
+    })
+
 def getTotalSalesSellerCode(startDate, endDate, currencyInfo, codeSeller):
     finalSales = Decimal(0.0000)
     billsData = []
@@ -675,78 +857,3 @@ def getValueQuotation(quotationItem):
     return valueQuotation
 
 
-def sellerStatistics(request):
-    qtInfo = request.GET.get('qtInfo')
-    timeInfo = request.GET.get('monthInfo')
-    time.sleep(2.5)
-    if timeInfo == '0':
-        if qtInfo == '10':
-            sellerCode = ['USR-16', 'USR-25']
-            sellerSoles = [Decimal('58292.240'), Decimal('480.81')]
-            sellerDollars = [Decimal('21321.90'), Decimal('720.83')]
-        elif qtInfo == '5':
-            sellerCode = ['USR-16', 'USR-25']
-            sellerSoles = [Decimal('58292.240'), Decimal('480.81')]
-            sellerDolares = [Decimal('21321.90'), Decimal('720.83')]
-        else:
-            sellerCode = ['USR-16', 'USR-25']
-            sellerSoles = [Decimal('58292.240'), Decimal('480.81')]
-            sellerDollars = [Decimal('21321.90'), Decimal('720.83')]
-    elif timeInfo == '1':
-        if qtInfo == '10':
-            sellerCode = ['USR-16', 'USR-25']
-            sellerSoles = [Decimal('244273.02'), Decimal('33.90')]
-            sellerDollars = [Decimal('6292.70'), Decimal('0')]
-        elif qtInfo == '5':
-            sellerCode = ['USR-16', 'USR-25']
-            sellerSoles = [Decimal('244273.02'), Decimal('33.90')]
-            sellerDollars = [Decimal('6292.70'), Decimal('0')]
-        else:
-            sellerCode = ['USR-16', 'USR-25']
-            sellerSoles = [Decimal('244273.02'), Decimal('33.90')]
-            sellerDollars = [Decimal('6292.70'), Decimal('0')]
-    elif timeInfo == '3':
-        if qtInfo == '10':
-            sellerCode = ['USR-16', 'USR-25']
-            sellerSoles = [Decimal('525261.360'), Decimal('514.71')]
-            sellerDollars = [Decimal('86336.19'), Decimal('720.83')]
-        elif qtInfo == '5':
-            sellerCode = ['USR-16', 'USR-25']
-            sellerSoles = [Decimal('525261.360'), Decimal('514.71')]
-            sellerDollars = [Decimal('86336.19'), Decimal('720.83')]
-        else:
-            sellerCode = ['USR-16', 'USR-25']
-            sellerSoles = [Decimal('525261.360'), Decimal('514.71')]
-            sellerDollars = [Decimal('86336.19'), Decimal('720.83')]
-    elif timeInfo == '6':
-        if qtInfo == '10':
-            sellerCode = ['USR-16', 'USR-24', 'USR-25']
-            sellerSoles = [Decimal('920735.130'), Decimal('37715.80'), Decimal('514.71')]
-            sellerDollars = [Decimal('173772.44'), Decimal('0'), Decimal('720.83')]
-        elif qtInfo == '5':
-            sellerCode = ['USR-16', 'USR-24', 'USR-25']
-            sellerSoles = [Decimal('920735.130'), Decimal('37715.80'), Decimal('514.71')]
-            sellerDollars = [Decimal('173772.44'), Decimal('0'), Decimal('720.83')]
-        else:
-            sellerCode = ['USR-16', 'USR-24', 'USR-25']
-            sellerSoles = [Decimal('920735.130'), Decimal('37715.80'), Decimal('514.71')]
-            sellerDollars = [Decimal('173772.44'), Decimal('0'), Decimal('720.83')]
-    else:
-        if qtInfo == '10':
-            sellerCode = ['USR-16', 'USR-24', 'USR-25', 'USR-19']
-            sellerSoles = [Decimal('1218077.3570'), Decimal('82347.65'), Decimal('514.71'), Decimal('10.35')]
-            sellerDollars = [Decimal('312217.326'), Decimal('0'), Decimal('720.83'), Decimal('0')]
-        elif qtInfo == '5':
-            sellerCode = ['USR-16', 'USR-24', 'USR-25', 'USR-19']
-            sellerSoles = [Decimal('1218077.3570'), Decimal('82347.65'), Decimal('514.71'), Decimal('10.35')]
-            sellerDollars = [Decimal('312217.326'), Decimal('0'), Decimal('720.83'), Decimal('0')]
-        else:
-            sellerCode = ['USR-16', 'USR-24', 'USR-25']
-            sellerSoles = [Decimal('1218077.3570'), Decimal('82347.65'), Decimal('514.71')]
-            sellerDollars = [Decimal('312217.326'), Decimal('0'), Decimal('720.83')]
-
-    return JsonResponse({
-        'sellerCode':sellerCode,
-        'sellerSoles':sellerSoles,
-        'sellerDollars':sellerDollars,
-    })
