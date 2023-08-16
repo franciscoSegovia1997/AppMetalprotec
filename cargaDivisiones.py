@@ -27,7 +27,7 @@ with open(filename, 'r') as csv_file:
             behavior=row[2],
             operativeCost=row[3],
             asociatedCategory=asociatedCategory,
-            endpointCategory=endpointCategory
+            endpointDivision=endpointDivision
         )
 
 print(f"Archivo CSV '{filename}' cargado exitosamente.")
