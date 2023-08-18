@@ -26,22 +26,23 @@ with open(filename, 'r') as csv_file:
     reader = csv.reader(csv_file)
     for row in reader:
 
-        asociatedDivision = divisionCost.objects.filter(nameDivision=row[0])[0]
-        asociatedBox = boxRegister.objects.filter(descriptionBox=row[1])[0]
+        totalDivisiones = divisionCost.objects.filter(nameDivision=row[0]).filter(asociatedCategory__nameCategory=row[1]).filter(asociatedCategory__asociatedDeparment__nameDeparment=row[2])
+        asociatedDivision = totalDivisiones[0]
+        asociatedBox = boxRegister.objects.get(descriptionBox=row[3])
 
         costRegister.objects.create(
             asociatedDivision=asociatedDivision,
             asociatedBox=asociatedBox,
             dateRegistered=datetime.datetime.strptime(row[2],'%d-%m-%Y'),
-            rucCost=row[3],
-            identificationCost=row[4],
-            descriptionCost=row[5],
-            quantityCost=[6],
-            currencyCost=row[7],
+            rucCost=row[4],
+            identificationCost=row[5],
+            descriptionCost=row[6],
+            quantityCost=[7],
+            currencyCost=row[8],
             endpointCost=endpointCost
         )
 
-        print(f"Se esta cargando el costo {i} en el sistema")
+        print(f"Se esta cargando el costo {i} en el sistema - Concepto = {row[6]} - TotalDivisiones = {len(totalDivisiones)} - Division={asociatedDivision.nameDivision}, Categoria={asociatedDivision.asociatedCategory.nameCategory}, Departamento={asociatedDivision.asociatedCategory.asociatedDeparment.nameDeparment}")
         i = i + 1
 
 print(f"Archivo CSV '{filename}' cargado exitosamente.")
