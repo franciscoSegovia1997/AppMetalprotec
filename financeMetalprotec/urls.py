@@ -16,5 +16,6 @@ urlpatterns = [
     path('settingsComissions',views.settingsComissions,name='settingsComissions'),
     path('deleteSettingComssion/<str:idComission>',views.deleteSettingComssion,name='deleteSettingComssion'),
     path('getConfigComission',views.getConfigComission,name='getConfigComission'),
-    path('getComissionData',views.getComissionData,name='getComissionData')
+    path('getComissionData',views.getComissionData,name='getComissionData'),
+    path('exportComissions',views.exportComissions,name='exportComissions')
 ]
