@@ -623,7 +623,6 @@ def exportComissions(request):
                     billInfo.codeQuotation,
                     billInfo.operationNumber,
                     billInfo.operationNumber2,
-                    billInfo.currencyBill
                 ])
             for invoiceInfo in invoicesPayments:
                 comissionData.append([
@@ -634,7 +633,6 @@ def exportComissions(request):
                     invoiceInfo.codeQuotation,
                     invoiceInfo.operationNumber,
                     invoiceInfo.operationNumber2,
-                    invoiceInfo.currencyInvoice
                 ])
 
             billsCodes = []
@@ -726,7 +724,6 @@ def exportComissions(request):
                         billInfo.codeQuotation,
                         billInfo.operationNumber,
                         billInfo.operationNumber2,
-                        billInfo.currencyBill
                     ])
                 for invoiceInfo in invoicesPayments:
                     comissionData.append([
@@ -737,7 +734,6 @@ def exportComissions(request):
                         invoiceInfo.codeQuotation,
                         invoiceInfo.operationNumber,
                         invoiceInfo.operationNumber2,
-                        invoiceInfo.currencyInvoice
                     ])
                 
                 billsCodes = []
@@ -819,10 +815,10 @@ def exportComissions(request):
         finalComission = str(finalComission)
         finalValue = str(finalValue)
 
-        comissionData.append(['','','','','','','MONTO TOTAL: ',f"{finalValue}"])
-        comissionData.append(['','','','','','','MONTO COMISION: ',f"{finalComission}"])
+        comissionData.append(['','','','','','MONTO TOTAL: ',f"{finalValue}"])
+        comissionData.append(['','','','','','MONTO COMISION: ',f"{finalComission}"])
 
-        tabla_excel = pd.DataFrame(comissionData,columns=['Fecha','Banco','Cliente','Comprobante','Cotizacion','Nro Operarion','Nro Operacion 2','Moneda'])
+        tabla_excel = pd.DataFrame(comissionData,columns=['Fecha','Banco','Cliente','Comprobante','Cotizacion','Nro Operarion','Nro Operacion 2'])
         tabla_excel.to_excel('comissionsInfo.xlsx',index=False)
         doc_excel = openpyxl.load_workbook("comissionsInfo.xlsx")
         doc_excel.active.column_dimensions['A'].width = 20
@@ -832,7 +828,6 @@ def exportComissions(request):
         doc_excel.active.column_dimensions['E'].width = 20
         doc_excel.active.column_dimensions['F'].width = 30
         doc_excel.active.column_dimensions['G'].width = 30
-        doc_excel.active.column_dimensions['H'].width = 25
         doc_excel.save("comissionsInfo.xlsx")
 
 
