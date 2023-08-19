@@ -1,12 +1,14 @@
 from django.shortcuts import render
 from . models import bankSystem, paymentSystem, bankOperation, settingsComission
 from django.urls import reverse
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from salesMetalprotec.models import billSystem, quotationClientData, quotationSystem, invoiceSystem, guideSystem
 from clientsMetalprotec.models import clientSystem
 import datetime
 from django.contrib.auth.models import User
 from decimal import Decimal, DecimalException,getcontext
+import pandas as pd
+import openpyxl
 
 getcontext().prec = 10
 
@@ -589,3 +591,252 @@ def getComissionData(request):
         'codeUserInfo':codeUserInfo,
         'finalComission':finalComission
     })
+
+def exportComissions(request):
+    if request.method == 'POST':
+        idUserComission = request.POST.get('idUserComission')
+        configComission = request.POST.get('configComission')
+        monthComission = request.POST.get('monthComission')
+        yearComission = request.POST.get('yearComission')
+
+        print(idUserComission)
+        print(configComission)
+        print(monthComission)
+        print(yearComission)
+
+        configObject = settingsComission.objects.get(id=configComission)
+        userObject = User.objects.get(id=idUserComission)
+        finalValue = Decimal(0.000)
+        finalComission = Decimal(0.000)
+        comissionData = []
+        codeUserInfo = userObject.extendeduser.codeUser
+        if configObject.typeComission == 'PARCIAL':
+            allPayments = paymentSystem.objects.filter(enabledComission='ON').filter(datePayment__year=int(yearComission)).filter(datePayment__month=int(monthComission)).filter(statePayment='CANCELADO').filter(codeSeller=userObject.extendeduser.codeUser)
+            billsPayments = allPayments.filter(asociatedInvoice=None).exclude(asociatedBill=None).order_by('-datePayment')
+            invoicesPayments = allPayments.filter(asociatedBill=None).exclude(asociatedInvoice=None).order_by('-datePayment')
+            for billInfo in billsPayments:
+                comissionData.append([
+                    billInfo.datePayment.strftime('%d-%m-%Y'),
+                    billInfo.nameBankPayment,
+                    billInfo.nameClient,
+                    billInfo.codeDocument,
+                    billInfo.codeQuotation,
+                    billInfo.operationNumber,
+                    billInfo.operationNumber2,
+                    billInfo.currencyBill
+                ])
+            for invoiceInfo in invoicesPayments:
+                comissionData.append([
+                    invoiceInfo.datePayment.strftime('%d-%m-%Y'),
+                    invoiceInfo.nameBankPayment,
+                    invoiceInfo.nameClient,
+                    invoiceInfo.codeDocument,
+                    invoiceInfo.codeQuotation,
+                    invoiceInfo.operationNumber,
+                    invoiceInfo.operationNumber2,
+                    invoiceInfo.currencyInvoice
+                ])
+
+            billsCodes = []
+            invoicesCodes = []
+            for billInfo in billsPayments:
+                if billInfo.codeDocument not in billsCodes:
+                    billsCodes.append(billInfo.codeDocument)
+            for invoiceInfo in invoicesPayments:
+                if invoiceInfo.codeDocument not in invoicesCodes:
+                    invoicesCodes.append(invoiceInfo.codeDocument)
+            #Calculo de las comisiones y venta total
+            totalValue = Decimal(0.000)
+            comissionValue = Decimal(0.000)
+            for codeInfo in billsCodes:
+                billObject = billSystem.objects.get(codeBill=codeInfo)
+                if billObject.asociatedQuotation is not None:
+                    quotationObject = billObject.asociatedQuotation
+                    totalProductsQuotation = quotationObject.quotationproductdata_set.all()
+                    for productInfo in totalProductsQuotation:
+                        if productInfo.dataProductQuotation[5] == 'DOLARES':
+                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(quotationObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                        if productInfo.dataProductQuotation[5] == 'SOLES':
+                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                        if productInfo.dataProductQuotation[9] == '1':
+                            v_producto = Decimal(0.00)
+                        totalValue = Decimal(totalValue) + Decimal(v_producto)
+                else:
+                    quotationObject = billObject.guidesystem_set.all()[0].asociatedQuotation
+                    totalProductsQuotation = quotationObject.quotationproductdata_set.all()
+                    for productInfo in totalProductsQuotation:
+                        if productInfo.dataProductQuotation[5] == 'DOLARES':
+                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(quotationObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                        if productInfo.dataProductQuotation[5] == 'SOLES':
+                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                        if productInfo.dataProductQuotation[9] == '1':
+                            v_producto = Decimal(0.00)
+                        totalValue = Decimal(totalValue) + Decimal(v_producto)
+
+            for codeInfo in invoicesCodes:
+                invoiceObject = invoiceSystem.objects.get(codeInvoice=codeInfo)
+                if invoiceObject.asociatedQuotation is not None:
+                    quotationObject = invoiceObject.asociatedQuotation
+                    totalProductsQuotation = quotationObject.quotationproductdata_set.all()
+                    for productInfo in totalProductsQuotation:
+                        if productInfo.dataProductQuotation[5] == 'DOLARES':
+                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(invoiceObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                        if productInfo.dataProductQuotation[5] == 'SOLES':
+                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                        if productInfo.dataProductQuotation[9] == '1':
+                            v_producto = Decimal(0.00)
+                        totalValue = Decimal(totalValue) + Decimal(v_producto)
+                else:
+                    quotationObject = invoiceObject.guidesystem_set.all()[0].asociatedQuotation
+                    totalProductsQuotation = quotationObject.quotationproductdata_set.all()
+                    for productInfo in totalProductsQuotation:
+                        if productInfo.dataProductQuotation[5] == 'DOLARES':
+                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(invoiceObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                        if productInfo.dataProductQuotation[5] == 'SOLES':
+                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                        if productInfo.dataProductQuotation[9] == '1':
+                            v_producto = Decimal(0.00)
+                        totalValue = Decimal(totalValue) + Decimal(v_producto)
+            if configObject.igvIncluded == 'ON':
+                totalValue = Decimal('%.2f' % totalValue)*Decimal(1.18)
+            comisionValue = (totalValue*Decimal(float(configObject.percentageComision)))/Decimal(100)
+            comisionValue =  Decimal('%.2f' % comisionValue)
+            finalComission = comisionValue
+            finalValue = totalValue
+        else:
+            for configInfo in configObject.asociatedUsers:
+                userObject1 = User.objects.get(id=configInfo[0])
+                allPayments = paymentSystem.objects.filter(enabledComission='ON').filter(datePayment__year=int(yearComission)).filter(datePayment__month=int(monthComission)).filter(statePayment='CANCELADO').filter(codeSeller=userObject1.extendeduser.codeUser)
+                billsPayments = allPayments.filter(asociatedInvoice=None).exclude(asociatedBill=None).order_by('-datePayment')
+                invoicesPayments = allPayments.filter(asociatedBill=None).exclude(asociatedInvoice=None).order_by('-datePayment')
+                for billInfo in billsPayments:
+                    comissionData.append([
+                        billInfo.datePayment.strftime('%d-%m-%Y'),
+                        billInfo.nameBankPayment,
+                        billInfo.nameClient,
+                        billInfo.codeDocument,
+                        billInfo.codeQuotation,
+                        billInfo.operationNumber,
+                        billInfo.operationNumber2,
+                        billInfo.currencyBill
+                    ])
+                for invoiceInfo in invoicesPayments:
+                    comissionData.append([
+                        invoiceInfo.datePayment.strftime('%d-%m-%Y'),
+                        invoiceInfo.nameBankPayment,
+                        invoiceInfo.nameClient,
+                        invoiceInfo.codeDocument,
+                        invoiceInfo.codeQuotation,
+                        invoiceInfo.operationNumber,
+                        invoiceInfo.operationNumber2,
+                        invoiceInfo.currencyInvoice
+                    ])
+                
+                billsCodes = []
+                invoicesCodes = []
+                for billInfo in billsPayments:
+                    if billInfo.codeDocument not in billsCodes:
+                        billsCodes.append(billInfo.codeDocument)
+                for invoiceInfo in invoicesPayments:
+                    if invoiceInfo.codeDocument not in invoicesCodes:
+                        invoicesCodes.append(invoiceInfo.codeDocument)
+                #Calculo de las comisiones y venta total
+                totalValue = Decimal(0.000)
+                comissionValue = Decimal(0.000)
+                for codeInfo in billsCodes:
+                    billObject = billSystem.objects.get(codeBill=codeInfo)
+                    if billObject.asociatedQuotation is not None:
+                        quotationObject = billObject.asociatedQuotation
+                        totalProductsQuotation = quotationObject.quotationproductdata_set.all()
+                        for productInfo in totalProductsQuotation:
+                            if productInfo.dataProductQuotation[5] == 'DOLARES':
+                                v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(quotationObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                                v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                            if productInfo.dataProductQuotation[5] == 'SOLES':
+                                v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                                v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                            if productInfo.dataProductQuotation[9] == '1':
+                                v_producto = Decimal(0.00)
+                            totalValue = Decimal(totalValue) + Decimal(v_producto)
+                    else:
+                        quotationObject = billObject.guidesystem_set.all()[0].asociatedQuotation
+                        totalProductsQuotation = quotationObject.quotationproductdata_set.all()
+                        for productInfo in totalProductsQuotation:
+                            if productInfo.dataProductQuotation[5] == 'DOLARES':
+                                v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(quotationObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                                v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                            if productInfo.dataProductQuotation[5] == 'SOLES':
+                                v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                                v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                            if productInfo.dataProductQuotation[9] == '1':
+                                v_producto = Decimal(0.00)
+                            totalValue = Decimal(totalValue) + Decimal(v_producto)
+
+                for codeInfo in invoicesCodes:
+                    invoiceObject = invoiceSystem.objects.get(codeInvoice=codeInfo)
+                    if invoiceObject.asociatedQuotation is not None:
+                        quotationObject = invoiceObject.asociatedQuotation
+                        totalProductsQuotation = quotationObject.quotationproductdata_set.all()
+                        for productInfo in totalProductsQuotation:
+                            if productInfo.dataProductQuotation[5] == 'DOLARES':
+                                v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(invoiceObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                                v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                            if productInfo.dataProductQuotation[5] == 'SOLES':
+                                v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                                v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                            if productInfo.dataProductQuotation[9] == '1':
+                                v_producto = Decimal(0.00)
+                            totalValue = Decimal(totalValue) + Decimal(v_producto)
+                    else:
+                        quotationObject = invoiceObject.guidesystem_set.all()[0].asociatedQuotation
+                        totalProductsQuotation = quotationObject.quotationproductdata_set.all()
+                        for productInfo in totalProductsQuotation:
+                            if productInfo.dataProductQuotation[5] == 'DOLARES':
+                                v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(invoiceObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                                v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                            if productInfo.dataProductQuotation[5] == 'SOLES':
+                                v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                                v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                            if productInfo.dataProductQuotation[9] == '1':
+                                v_producto = Decimal(0.00)
+                            totalValue = Decimal(totalValue) + Decimal(v_producto)
+
+                if configInfo[2] == 'ON':
+                    totalValue = Decimal('%.2f' % totalValue)*Decimal(1.18)
+                comisionValue = (totalValue*Decimal(float(configInfo[1])))/Decimal(100)
+                comisionValue =  Decimal('%.2f' % comisionValue)
+                finalComission = Decimal(finalComission) + Decimal(comisionValue)
+                finalValue = Decimal(finalValue) + Decimal(totalValue)
+
+        finalComission = str(finalComission)
+        finalValue = str(finalValue)
+
+        comissionData.append(['','','','','','','MONTO TOTAL: ',f"{finalValue}"])
+        comissionData.append(['','','','','','','MONTO COMISION: ',f"{finalComission}"])
+
+        tabla_excel = pd.DataFrame(comissionData,columns=['Fecha','Banco','Cliente','Comprobante','Cotizacion','Nro Operarion','Nro Operacion 2','Moneda'])
+        tabla_excel.to_excel('comissionsInfo.xlsx',index=False)
+        doc_excel = openpyxl.load_workbook("comissionsInfo.xlsx")
+        doc_excel.active.column_dimensions['A'].width = 20
+        doc_excel.active.column_dimensions['B'].width = 20
+        doc_excel.active.column_dimensions['C'].width = 60
+        doc_excel.active.column_dimensions['D'].width = 20
+        doc_excel.active.column_dimensions['E'].width = 20
+        doc_excel.active.column_dimensions['F'].width = 30
+        doc_excel.active.column_dimensions['G'].width = 30
+        doc_excel.active.column_dimensions['H'].width = 25
+        doc_excel.save("comissionsInfo.xlsx")
+
+
+        response = HttpResponse(open('comissionsInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'comissionsInfo.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
