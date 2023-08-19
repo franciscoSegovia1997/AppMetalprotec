@@ -33,16 +33,16 @@ with open(filename, 'r') as csv_file:
         costRegister.objects.create(
             asociatedDivision=asociatedDivision,
             asociatedBox=asociatedBox,
-            dateRegistered=datetime.datetime.strptime(row[2],'%d-%m-%Y'),
-            rucCost=row[4],
-            identificationCost=row[5],
-            descriptionCost=row[6],
-            quantityCost=[7],
-            currencyCost=row[8],
+            dateRegistered=datetime.datetime.strptime(row[4],'%d-%m-%Y'),
+            rucCost=row[5],
+            identificationCost=row[6],
+            descriptionCost=row[7],
+            quantityCost=row[8],
+            currencyCost=row[9],
             endpointCost=endpointCost
         )
 
-        print(f"Se esta cargando el costo {i} en el sistema - Concepto = {row[6]} - TotalDivisiones = {len(totalDivisiones)} - Division={asociatedDivision.nameDivision}, Categoria={asociatedDivision.asociatedCategory.nameCategory}, Departamento={asociatedDivision.asociatedCategory.asociatedDeparment.nameDeparment}")
+        print(f"Se esta cargando el costo {i} en el sistema - Concepto = {row[7]} - TotalDivisiones = {len(totalDivisiones)} - Division={asociatedDivision.nameDivision}, Categoria={asociatedDivision.asociatedCategory.nameCategory}, Departamento={asociatedDivision.asociatedCategory.asociatedDeparment.nameDeparment}")
         i = i + 1
 
 print(f"Archivo CSV '{filename}' cargado exitosamente.")
