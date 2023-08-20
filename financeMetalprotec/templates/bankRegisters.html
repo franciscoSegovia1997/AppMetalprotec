@@ -114,7 +114,7 @@
                         <td>{{ bankRegisterData.currencyBank }}</td>
                         <td>{{ bankRegisterData.accountNumber }}</td>
                         <td>{{ bankRegisterData.moneyBank }}</td>
-                        <td class="text-center"><a class="btn btn-info" href="#"><i class="fa-solid fa-eye"></i></a></td>
+                        <td class="text-center"><a class="btn btn-info" href="{% url 'financeMetalprotec:showBankRegister' bankRegisterData.id %}"><i class="fa-solid fa-eye"></i></a></td>
                         <td class="text-center"><a class="btn btn-warning" href="#"><i class="fa-solid fa-edit"></i></a></td>
                         <td class="text-center"><a class="btn btn-danger" href="{% url 'financeMetalprotec:deleteBankRegister' bankRegisterData.id %}"><i class="fa-solid fa-trash-can"></i></a></td>
                     </tr>

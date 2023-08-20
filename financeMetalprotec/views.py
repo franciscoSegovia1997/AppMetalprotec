@@ -835,3 +835,11 @@ def exportComissions(request):
         nombre = 'attachment; ' + 'filename=' + 'comissionsInfo.xlsx'
         response['Content-Disposition'] = nombre
         return response
+
+def showBankRegister(request,idBankRegister):
+    bankInfo = bankSystem.objects.get(id=idBankRegister)
+    totalRegistersInfo = bankInfo.bankoperation_set.all().order_by('-dateOperation')
+    return render(request,'registerInfoTable.html',{
+        'totalRegistersInfo':totalRegistersInfo,
+        'bankInfo':bankInfo
+    })
