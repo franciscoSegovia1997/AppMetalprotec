@@ -1,5 +1,6 @@
 from django.db import models
 from settingsMetalprotec.models import endpointSystem
+from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 class departmentCost(models.Model):
@@ -63,3 +64,21 @@ class cashIncome(models.Model):
 
     def __str__(self):
         return self.descriptionIncome
+
+class ordenCompraMetalprotec(models.Model):
+    rucProveedor=models.CharField(max_length=32, null=True, blank=True)
+    fechaEmision=models.DateField(null=True, blank=True)
+    condicionOrden=models.CharField(max_length=32, null=True, blank=True)
+    codigoOrden=models.CharField(max_length=32, null=True, blank=True)
+    direccionProveedor=models.CharField(max_length=128, null=True, blank=True)
+    nombreProveedor=models.CharField(max_length=64, null=True, blank=True)
+    ciudadCliente=models.CharField(max_length=32, null=True, blank=True)
+    destinoCliente=models.CharField(max_length=128, null=True, blank=True)
+    atencionCliente=models.CharField(max_length=64, null=True, blank=True)
+    monedaOrden=models.CharField(max_length=12, null=True, blank=True)
+    productosOrden=ArrayField(ArrayField(models.CharField(max_length=64),null=True, blank=True),null=True,blank=True)
+    tcCompraOrden=models.CharField(max_length=8, null=True, blank=True)
+    tcVentaOrden=models.CharField(max_length=8, null=True, blank=True)
+    mostrarDescuento=models.CharField(max_length=8, null=True, blank=True)
+    mostrarVU=models.CharField(max_length=8, null=True, blank=True)
+    endpointOrden=models.ForeignKey(endpointSystem, on_delete=models.CASCADE, null=True, blank=True)

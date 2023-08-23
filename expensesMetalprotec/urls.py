@@ -21,5 +21,10 @@ urlpatterns = [
     path('deleteBoxRegister/<str:idBoxRegister>',views.deleteBoxRegister,name='deleteBoxRegister'),
     path('showBoxInfo/<str:idBoxRegister>',views.showBoxInfo,name='showBoxInfo'),
     path('deleteCashIncome/<str:idCashIncome>&<str:idBoxRegister>',views.deleteCashIncome,name='deleteCashIncome'),
-    path('createIncomeBox/<str:idBoxInfo>',views.createIncomeBox,name='createIncomeBox')
+    path('createIncomeBox/<str:idBoxInfo>',views.createIncomeBox,name='createIncomeBox'),
+    path('newPurchaseOrder',views.newPurchaseOrder,name='newPurchaseOrder'),
+    path('getProductInfoExpenses/<str:ind>',views.getProductInfoExpenses,name='getProductInfoExpenses'),
+    path('createOrden', views.createOrden, name='createOrden'),
+    path('deleteOrden/<str:ind>',views.deleteOrden,name='deleteOrden'),
+    path('downloadOrden/<str:ind>',views.downloadOrden,name='downloadOrden')
 ]
