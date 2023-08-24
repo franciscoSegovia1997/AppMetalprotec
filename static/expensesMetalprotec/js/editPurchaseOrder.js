@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded",()=>{
+    let idOrden = document.getElementById('idOrden')
+
     let btnAgregar = document.getElementById('agregarProducto')
     let btnCancelarProducto = document.getElementById('cancelarProducto')
     let btnCrear = document.getElementById('crearProforma')
@@ -28,7 +30,6 @@ document.addEventListener("DOMContentLoaded",()=>{
     let tcCompraOrden = document.getElementById('tcCompraOrden')
     let tcVentaOrden = document.getElementById('tcVentaOrden')
 
-
     btnCancelarProducto.addEventListener('click',()=>{
         productoNombre.value = ''
         productoCodigo.value = ''
@@ -52,7 +53,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 
             productoNombre.value = producto_info.nombre
             productoCodigo.value = producto_info.codigo
-            productoPCsinigv.value = producto_info.pc_sinIGV
+            productoPCsinigv.value = producto_info.pv_sinIGV
 
             if(producto_info.moneda === 'DOLARES')
             {
@@ -93,7 +94,6 @@ document.addEventListener("DOMContentLoaded",()=>{
     btnCrear.addEventListener('click',()=>{
 
         let mostrarDescuento = '0'
-        let mostrarVU = '0'
 
         if($('#mostrarDescuento').prop('checked')){
             mostrarDescuento = '1'
@@ -101,6 +101,8 @@ document.addEventListener("DOMContentLoaded",()=>{
         else{
             mostrarDescuento = '0'
         }
+
+        let mostrarVU = '0'
 
         if($('#mostrarVU').prop('checked')){
             mostrarVU = '1'
@@ -119,7 +121,9 @@ document.addEventListener("DOMContentLoaded",()=>{
             arregloProductos.push(productoArreglo)
         }
 
-        url = '/expensesMetalproteccreateOrden'
+        console.log(tcCompraOrden.value)
+        console.log(tcVentaOrden.value)
+        url = '/expensesMetalprotecupdateOrder/' + idOrden.value
         ejemplo = {
             'productos':arregloProductos,
             'rucProveedor':rucProveedor.value,
@@ -147,7 +151,7 @@ document.addEventListener("DOMContentLoaded",()=>{
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+        console.log(data);
         });
         window.location.assign('/expensesMetalprotecpurchaseOrder')
     })
@@ -175,7 +179,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     }
 
     btnCancelar.addEventListener('click',()=>{
-        window.location.assign('/expensesMetalprotecpurchaseOrder')
+        window.location = '/expensesMetalprotecpurchaseOrder'
     })
 
     $('table').on('click', 'input[type="button"]', function(e){
