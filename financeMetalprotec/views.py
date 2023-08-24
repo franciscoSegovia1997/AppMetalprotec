@@ -592,17 +592,73 @@ def getComissionData(request):
         'finalComission':finalComission
     })
 
+def getSolesValue(quotationItem):
+    valueSoles = Decimal(0.000)
+    try:
+        if quotationItem.currencyQuotation == 'SOLES':
+            valueSoles = Decimal(getValueQuotation(quotationItem))
+        else:
+            valueSoles = Decimal(round(float(Decimal(getValueQuotation(quotationItem))*Decimal(quotationItem.erSel)),2))
+    except:
+        valueSoles = Decimal(0.000)
+    valueSoles = Decimal('%.2f' % valueSoles)
+    valueSoles = str(valueSoles)
+    return valueSoles
+
+def getValueQuotation(quotationItem):
+    valueQuotation = Decimal(0.000)
+    try:
+        if quotationItem.typeQuotation == 'PRODUCTOS':
+            print('El error esta en la captura de productos')
+            totalProductsQuotation = quotationItem.quotationproductdata_set.all()
+            print('Se tienen los productos')
+            for productInfo in totalProductsQuotation:
+                if quotationItem.currencyQuotation == 'SOLES':
+                    if productInfo.dataProductQuotation[5] == 'DOLARES':
+                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(quotationItem.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                    if productInfo.dataProductQuotation[5] == 'SOLES':
+                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                if quotationItem.currencyQuotation == 'DOLARES':
+                    if productInfo.dataProductQuotation[5] == 'SOLES':
+                        v_producto = (Decimal(productInfo.dataProductQuotation[6])/Decimal(quotationItem.erSel))*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
+                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                    if productInfo.dataProductQuotation[5] == 'DOLARES':
+                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
+                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
+                if productInfo.dataProductQuotation[9] == '1':
+                    v_producto = Decimal(0.00)
+                valueQuotation = Decimal(valueQuotation) + Decimal(v_producto)
+            print('El error esta en el bucle')
+        else:
+            totalServicesQuotation = quotationItem.quotationservicedata_set.all()
+            for serviceInfo in totalServicesQuotation:
+                if quotationItem.currencyQuotation == 'SOLES':
+                    if serviceInfo.dataServiceQuotation[3] == 'DOLARES':
+                        v_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(quotationItem.erSel)*Decimal(Decimal(1.00) - Decimal(serviceInfo.dataServiceQuotation[5])/100)
+                    if serviceInfo.dataServiceQuotation[3] == 'SOLES':
+                        v_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(Decimal(1.00) - (Decimal(serviceInfo.dataServiceQuotation[5])/100))
+                if quotationItem.currencyQuotation == 'DOLARES':
+                    if serviceInfo.dataServiceQuotation[3] == 'SOLES':
+                        v_servicio = (Decimal(serviceInfo.dataServiceQuotation[4])/Decimal(quotationItem.erSel))*Decimal(Decimal(1.00) - (Decimal(serviceInfo.dataServiceQuotation[5])/100))
+                    if serviceInfo.dataServiceQuotation[3] == 'DOLARES':
+                        v_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(Decimal(1.00) - Decimal(serviceInfo.dataServiceQuotation[5])/100)
+                valueQuotation = Decimal(valueQuotation) + Decimal(v_servicio)
+    except:
+        print('Hubo un error')
+        valueQuotation = Decimal(0.00)
+    valueQuotation = Decimal('%.2f' % valueQuotation)
+    valueQuotation = str(valueQuotation)
+    return valueQuotation
+
+
 def exportComissions(request):
     if request.method == 'POST':
         idUserComission = request.POST.get('idUserComission')
         configComission = request.POST.get('configComission')
         monthComission = request.POST.get('monthComission')
         yearComission = request.POST.get('yearComission')
-
-        print(idUserComission)
-        print(configComission)
-        print(monthComission)
-        print(yearComission)
 
         configObject = settingsComission.objects.get(id=configComission)
         userObject = User.objects.get(id=idUserComission)
@@ -815,10 +871,19 @@ def exportComissions(request):
         finalComission = str(finalComission)
         finalValue = str(finalValue)
 
-        comissionData.append(['','','','','','MONTO TOTAL: ',f"{finalValue}"])
-        comissionData.append(['','','','','','MONTO COMISION: ',f"{finalComission}"])
+        for comisionInfo in comissionData:
+            quotationObject=quotationSystem.objects.get(codeQuotation=comisionInfo[4])
+            currencyQuotation=quotationObject.currencyQuotation
+            montoQuotation=getValueQuotation(quotationObject)
+            solesQuotation=getSolesValue(quotationObject)
+            comissionInfo.insert(5,solesQuotation)
+            comissionInfo.insert(5,montoQuotation)
+            comissionInfo.insert(5,currencyQuotation)
 
-        tabla_excel = pd.DataFrame(comissionData,columns=['Fecha','Banco','Cliente','Comprobante','Cotizacion','Nro Operarion','Nro Operacion 2'])
+        comissionData.append(['','','','','','','MONTO TOTAL: ',f"{finalValue}",'',''])
+        comissionData.append(['','','','','','','MONTO COMISION: ',f"{finalComission}",'',''])
+
+        tabla_excel = pd.DataFrame(comissionData,columns=['Fecha','Banco','Cliente','Comprobante','Cotizacion','Moneda','Monto','Monto convertido','Nro Operarion','Nro Operacion 2'])
         tabla_excel.to_excel('comissionsInfo.xlsx',index=False)
         doc_excel = openpyxl.load_workbook("comissionsInfo.xlsx")
         doc_excel.active.column_dimensions['A'].width = 20
@@ -826,8 +891,10 @@ def exportComissions(request):
         doc_excel.active.column_dimensions['C'].width = 60
         doc_excel.active.column_dimensions['D'].width = 20
         doc_excel.active.column_dimensions['E'].width = 20
-        doc_excel.active.column_dimensions['F'].width = 30
-        doc_excel.active.column_dimensions['G'].width = 30
+        doc_excel.active.column_dimensions['F'].width = 20
+        doc_excel.active.column_dimensions['G'].width = 20
+        doc_excel.active.column_dimensions['H'].width = 25
+        doc_excel.active.column_dimensions['I'].width = 25
         doc_excel.save("comissionsInfo.xlsx")
 
 
@@ -843,3 +910,4 @@ def showBankRegister(request,idBankRegister):
         'totalRegistersInfo':totalRegistersInfo,
         'bankInfo':bankInfo
     })
+
