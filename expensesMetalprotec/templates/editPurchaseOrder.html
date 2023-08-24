@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extraFiles %}
+
+    <!-- Datatables importation -->
+    <link href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- Datatables configuration -->
+    <script src="{% static 'expensesMetalprotec/js/editPurchaseOrder.js' %}"></script>
+
+    <!-- Select form importation -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">
+{% endblock %}
+
+
+{% block pageContent %}
+
+    <div class="container" style="height: 100vh;overflow: scroll;">
+        <h6>Campos obligatorios (*)</h6>
+        <div>
+            <h2 class="mt-3 mb-3">Editar Orden de compra</h2>
+        </div>
+        <hr class="hr">
+        <div>
+            <h4>Datos del proveedor</h4>
+            <div class="col-md-3">
+                <input class="form-control" style="display: none;" name="tipo" id="idOrden" value="{{ orden.id }}">
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label>Ruc</label>
+                    <input type="text" class="form-control" placeholder="Ruc ..." id="rucProveedor" value="{{ orden.rucProveedor }}">
+                </div>
+                <div class="col-md-3">
+                    <label>Fecha de emision</label>
+                    <input type="date" class="form-control" placeholder="Fecha de emision ..." id="fechaOrden" value="{{ orden.fechaEmision|date:'Y-m-d' }}">
+                </div>
+                <div class="col-md-3">
+                    <label>Condicion</label>
+                    <input type="text" class="form-control" placeholder="Condicion de orden ..." id="condicionOrden" value="{{ orden.condicionOrden }}">
+                </div>
+                <div class="col-md-3">
+                    <label>Codigo de orden</label>
+                    <input type="text" class="form-control" placeholder="Codigo de orden ..." id="codigoOrden" value="{{ orden.codigoOrden }}">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label>Direccion</label>
+                    <input type="text" class="form-control" placeholder="Direccoin ..." id="direccionProveedor" value="{{ orden.direccionProveedor }}">
+                </div>
+                <div class="col-md-6">
+                    <label>Proveedor</label>
+                    <input type="text" class="form-control" placeholder="Razon social ..." id="nombreProveedor" value="{{ orden.nombreProveedor }}">
+                </div>
+            </div>
+            <hr class="hr">
+            <h4>Datos del cliente</h4>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label>Ciudad</label>
+                    <input type="text" class="form-control" placeholder="Ciudad ..." id="ciudadCliente" value="{{ orden.ciudadCliente }}">
+                </div>
+                <div class="col-md-4">
+                    <label>Atencion</label>
+                    <input type="text" class="form-control" placeholder="Atencion ..." id="atencionCliente" value="{{ orden.atencionCliente }}">
+                </div>
+                <div class="col-md-4">
+                    <label>Moneda</label>
+                    <select class="selectpicker form-control" id="monedaOrden">
+                        {% if orden.monedaOrden == 'SOLES' %}
+                            <option value="SOLES" selected>SOLES</option>
+                            <option value="DOLARES">DOLARES</option>
+                        {% else %}
+                            <option value="SOLES">SOLES</option>
+                            <option value="DOLARES" selected>DOLARES</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+            <div class="row-mb-3">
+                <div class="col-md-6">
+                    <label>Direccion de destino</label>
+                    <input type="text" class="form-control" placeholder="Destino ..." id="destinoCliente" value="{{ orden.destinoCliente }}">
+                </div>
+            </div>
+            <hr class="hr">
+            <h4>Tipo de cambio</h4>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label>TC (compra)</label>
+                    <input class="form-control" type="number" step="0.001" value="{{ orden.tcCompraOrden }}" id="tcCompraOrden">
+                </div>
+                <div class="col-md-3">
+                    <label>TC (venta)</label>
+                    <input class="form-control" type="number" step="0.001" value="{{ orden.tcVentaOrden }}" id="tcVentaOrden">
+                </div>
+                <div class="col-md-4">
+                    <label>Modificacion del documento</label>
+                    <br>
+                    {% if orden.mostrarDescuento == '0' %}
+                        <input class="form-check-input" type="checkbox" id="mostrarDescuento">
+                    {% else %}
+                        <input class="form-check-input" type="checkbox" id="mostrarDescuento" checked>
+                    {% endif %}
+                    <label class="form-check-label">Mostrar descuento</label>
+                    <br>
+                    {% if orden.mostrarVU == '0' %}
+                        <input class="form-check-input" type="checkbox" id="mostrarVU">
+                    {% else %}
+                        <input class="form-check-input" type="checkbox" id="mostrarVU" checked>
+                    {% endif %}
+                    <label class="form-check-label">Mostrar VU</label>
+                </div>
+            </div>
+        </div>
+        <hr class="hr">
+        <div>
+            <h4>Productos de la orden</h4>
+            <div>
+                <div>
+                    <a class="btn btn-success" style="color: white;" data-bs-toggle="modal" data-bs-target="#seleccionarProducto">Agregar Producto <i class="fas fa-plus"></i></a>
+                </div>
+                <br>
+                <div>
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                            <th style="display: none;">Id</th>
+                            <th>Nombre</th>
+                            <th>Codigo</th>
+                            <th>Moneda</th>
+                            <th>PV sin IGV</th>
+                            <th>Cantidad</th>
+                            <th>Descuento</th>
+                            <th>Eliminar</th>
+                        </thead>
+                        <tbody id="proCuerpo">
+                            {% for producto in orden.productosOrden %}
+                            <tr>
+                                <td style="display: none;">{{ producto.0 }}</td>
+                                <td>{{ producto.1 }}</td>
+                                <td>{{ producto.2 }}</td>
+                                <td>{{ producto.3 }}</td>
+                                <td><input class="form-control" style="width:80px;" value="{{ producto.4 }}"></td>
+                                <td><input class="form-control" style="width:80px;" value="{{ producto.5 }}"></td>
+                                <td><input class="form-control" style="width:80px;" value="{{ producto.6 }}"></td>
+                                <td><input type="button" class="btn btn-secondary" value="Eliminar"></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary" id="crearProforma">Agregar</button>
+            <button type="button" class="btn btn-secondary" id="cancelarProforma">Close</button>
+        </div>
+    </div>
+
+
+    <div class="modal" tabindex="-1" role="dialog" id="seleccionarProducto" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title">Agregar Productos</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label>Nombre de producto</label>
+                <select class="selectpicker form-control" id="productSelect" data-live-search="true">
+                    <option value=""></option>
+                    {% for productInfo in productsSystem %}
+                    <option value="{{ productInfo.id }}">{{ productInfo.nameProduct }} {{ productInfo.codeProduct }}</option>>
+                    {% endfor %}
+                </select>
+                <div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label>Nombre</label>
+                            <input type="text" class="form-control" placeholder="Nombre" id="nombrePro">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Codigo</label>
+                            <input type="text" class="form-control" placeholder="Codigo" id="codigoPro">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label>Moneda</label>
+                            <select class="selectpicker form-control" id="monedaProducto">
+                                <option value="SOLES" selected>SOLES</option>
+                                <option value="DOLARES">DOLARES</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Precio de compra sin IGV</label>
+                            <input type="number" step="0.01" value="0.00" class="form-control" placeholder="Precio de compra sin IGV" id="pcsinIGV">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label>Cantidad</label>
+                            <input type="number" step="0.01" value="0.00" class="form-control" placeholder="Cantidad" id="cantidadPro">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Descuento</label>
+                            <input type="number" step="0.01" value="0.00" class="form-control" placeholder="Descuento" id="descuentoPro">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="agregarProducto" data-bs-dismiss="modal">Agregar</button>
+                    <button type="button" class="btn btn-secondary" id="cancelarProducto" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+{% endblock %}

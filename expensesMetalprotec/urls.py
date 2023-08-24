@@ -26,5 +26,7 @@ urlpatterns = [
     path('getProductInfoExpenses/<str:ind>',views.getProductInfoExpenses,name='getProductInfoExpenses'),
     path('createOrden', views.createOrden, name='createOrden'),
     path('deleteOrden/<str:ind>',views.deleteOrden,name='deleteOrden'),
-    path('downloadOrden/<str:ind>',views.downloadOrden,name='downloadOrden')
+    path('downloadOrden/<str:ind>',views.downloadOrden,name='downloadOrden'),
+    path('updateOrder/<str:ind>',views.updateOrder,name='updateOrder'),
+    path('editOrder/<str:ind>',views.editOrder,name='editOrder'),
 ]

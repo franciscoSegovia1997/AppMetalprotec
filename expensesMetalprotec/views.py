@@ -630,3 +630,56 @@ def downloadOrden(request,ind):
     nombre = 'attachment; ' + 'filename=' + nombre_doc
     response['Content-Disposition'] = nombre
     return response
+
+
+def editOrder(request,ind):
+    orden_editar = ordenCompraMetalprotec.objects.get(id=ind)
+    return render(request,'editPurchaseOrder.html',{
+        'orden':orden_editar,
+        'productsSystem': productSystem.objects.all().order_by('id')
+    })
+
+def updateOrder(request,ind):
+    orden_editar = ordenCompraMetalprotec.objects.get(id=ind)
+    if request.method == 'POST':
+        data = json.load(request)
+        rucProveedor = data.get('rucProveedor')
+        fechaOrden = data.get('fechaOrden')
+        condicionOrden = data.get('condicionOrden')
+        codigoOrden = data.get('codigoOrden')
+        direccionProveedor = data.get('direccionProveedor')
+        nombreProveedor = data.get('nombreProveedor')
+        ciudadCliente = data.get('ciudadCliente')
+        destinoCliente = data.get('destinoCliente')
+        atencionCliente = data.get('atencionCliente')
+        monedaOrden = data.get('monedaOrden')
+        productosOrden = data.get('productos')
+        tcCompraOrden = data.get('tcCompraOrden')
+        tcVentaOrden = data.get('tcVentaOrden')
+        mostrarDescuento = data.get('mostrarDescuento')
+        mostrarVU = data.get('mostrarVU')
+        if fechaOrden == '':
+            fechaEmision = datetime.datetime.today()
+        else:
+            fechaEmision = datetime.datetime.strptime(fechaOrden,'%Y-%m-%d')
+        
+        orden_editar.rucProveedor = rucProveedor
+        orden_editar.fechaEmision = fechaEmision
+        orden_editar.condicionOrden = condicionOrden
+        orden_editar.codigoOrden = codigoOrden
+        orden_editar.direccionProveedor = direccionProveedor
+        orden_editar.nombreProveedor = nombreProveedor
+        orden_editar.ciudadCliente = ciudadCliente
+        orden_editar.destinoCliente = destinoCliente
+        orden_editar.atencionCliente = atencionCliente
+        orden_editar.monedaOrden = monedaOrden
+        orden_editar.productosOrden = productosOrden
+        orden_editar.tcCompraOrden = str(tcCompraOrden)
+        orden_editar.tcVentaOrden = str(tcVentaOrden)
+        orden_editar.mostrarDescuento = mostrarDescuento
+        orden_editar.mostrarVU = mostrarVU
+        orden_editar.save()
+        time.sleep(0.5)
+        return JsonResponse({
+            'resp':'ok'
+        })
