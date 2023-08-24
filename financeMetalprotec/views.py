@@ -609,9 +609,7 @@ def getValueQuotation(quotationItem):
     valueQuotation = Decimal(0.000)
     try:
         if quotationItem.typeQuotation == 'PRODUCTOS':
-            print('El error esta en la captura de productos')
             totalProductsQuotation = quotationItem.quotationproductdata_set.all()
-            print('Se tienen los productos')
             for productInfo in totalProductsQuotation:
                 if quotationItem.currencyQuotation == 'SOLES':
                     if productInfo.dataProductQuotation[5] == 'DOLARES':
@@ -630,7 +628,6 @@ def getValueQuotation(quotationItem):
                 if productInfo.dataProductQuotation[9] == '1':
                     v_producto = Decimal(0.00)
                 valueQuotation = Decimal(valueQuotation) + Decimal(v_producto)
-            print('El error esta en el bucle')
         else:
             totalServicesQuotation = quotationItem.quotationservicedata_set.all()
             for serviceInfo in totalServicesQuotation:
@@ -646,7 +643,6 @@ def getValueQuotation(quotationItem):
                         v_servicio = Decimal(serviceInfo.dataServiceQuotation[4])*Decimal(Decimal(1.00) - Decimal(serviceInfo.dataServiceQuotation[5])/100)
                 valueQuotation = Decimal(valueQuotation) + Decimal(v_servicio)
     except:
-        print('Hubo un error')
         valueQuotation = Decimal(0.00)
     valueQuotation = Decimal('%.2f' % valueQuotation)
     valueQuotation = str(valueQuotation)
@@ -876,9 +872,9 @@ def exportComissions(request):
             currencyQuotation=quotationObject.currencyQuotation
             montoQuotation=getValueQuotation(quotationObject)
             solesQuotation=getSolesValue(quotationObject)
-            comissionInfo.insert(5,solesQuotation)
-            comissionInfo.insert(5,montoQuotation)
-            comissionInfo.insert(5,currencyQuotation)
+            comisionInfo.insert(5,solesQuotation)
+            comisionInfo.insert(5,montoQuotation)
+            comisionInfo.insert(5,currencyQuotation)
 
         comissionData.append(['','','','','','','MONTO TOTAL: ',f"{finalValue}",'',''])
         comissionData.append(['','','','','','','MONTO COMISION: ',f"{finalComission}",'',''])
