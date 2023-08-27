@@ -45,7 +45,7 @@
             </div>
             <div class="col-2">
                 <div class="row mx-0">
-                    <a class="btn btn-success text-white">Cambiar almacen</a>
+                    <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#changeStore">Cambiar almacen</a>
                 </div>
             </div>
             <div class="col-2">
@@ -129,6 +129,58 @@
 {% endblock %}
 
 {% block modalContent %}
+
+    <!-- Change store for product -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="changeStore">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post" action="{% url 'productsMetalprotec:changeStore' %}">
+                {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Cambiar almacen</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteDataStore()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 mx-0">
+                                <label>Seleccionar producto</label>
+                                <select class="selectpicker form-control" data-live-search="true" name="changeStoreProduct" id="changeStoreProduct" required>
+                                    <option value=""></option>
+                                    {% for productInfo in productsSystem %}
+                                    <option value="{{ productInfo.id }}">{{ productInfo.nameProduct }} - {{ productInfo.codeProduct }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-12 mx-0">
+                                <label>Seleccionar punto de venta de destino</label>
+                                <select class="selectpicker form-control" data-live-search="true" name="endpointStoreProduct" id="endpointStoreProduct" required>
+                                    <option value=""></option>
+                                    {% for endpointInfo in totalEndpoint %}
+                                    <option value="{{ endpointInfo.id }}">{{ endpointInfo.codeEndpoint }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-12 mx-0">
+                                <label>Stock a mover</label>
+                                <input class="form-control" type="number" step="0.01" name="stockMove" id="stockMove" value="0.00" required>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteDataStore()">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Kit of the products -->
     <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="kitInfo">
@@ -455,7 +507,7 @@
                         <br>
                         <div class="row">
                             <div class="col-12 mx-0">
-                                <label>Seleccionar almacer</label>
+                                <label>Seleccionar almacen</label>
                                 <select class="selectpicker form-control" data-live-search="true" name="addStockIdStore" id="addStockIdStore" required>
                                     <option value=""></option>
                                     {% for storeInfo in storesSystem %}

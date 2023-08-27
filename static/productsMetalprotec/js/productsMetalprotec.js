@@ -256,3 +256,18 @@ function deleteKitInfoProduct()
     newProductKit.selectedIndex = '0'
     $('#newProductKit').selectpicker('refresh')
 }
+
+function deleteDataStore()
+{
+    changeStoreProduct = document.getElementById('changeStoreProduct')
+    endpointStoreProduct = document.getElementById('endpointStoreProduct')
+    stockMove = document.getElementById('stockMove')
+
+    changeStoreProduct.selectedIndex = '0'
+    $('#changeStoreProduct').selectpicker('refresh')
+
+    endpointStoreProduct.selectedIndex = '0'
+    $('#endpointStoreProduct').selectpicker('refresh')
+
+    stockMove.value = '0.00'
+}
