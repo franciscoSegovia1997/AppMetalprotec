@@ -255,7 +255,7 @@ def changeStore(request):
         productoActual = productSystem.objects.get(id=idProductInfo)
         endpointDestino = endpointSystem.objects.get(id=idEndpoint)
         productoDestino = productSystem.objects.filter(endpointProduct=endpointDestino).filter(codeProduct=productoActual.codeProduct)
-        if len(productoDestino == 1):
+        if len(productoDestino) == 1:
             productoFinal = productoDestino[0]
             stockFinal = productoFinal.storexproductsystem_set.all()[0]
             stockInicial = productoActual.storexproductsystem_set.all()[0]
