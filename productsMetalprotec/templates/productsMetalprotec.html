@@ -135,6 +135,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form method="post" action="{% url 'productsMetalprotec:changeStore' %}">
+                {% csrf_token %}
                     <div class="modal-header">
                         <h5 class="modal-title">Cambiar almacen</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteDataStore()"></button>
