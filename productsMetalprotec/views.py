@@ -63,6 +63,7 @@ def productsMetalprotec(request):
     return render(request,'productsMetalprotec.html',{
         'productsSystem':productSystem.objects.filter(endpointProduct=request.user.extendeduser.endpointUser).order_by('id'),
         'storesSystem':storeSystem.objects.filter(endpointStore=request.user.extendeduser.endpointUser).order_by('id'),
+        'totalEndpoint':endpointSystem.objects.all().order_by('-id')
     })
 
 @login_required(login_url='/')
