@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from stockManagment.models import incomingItemsRegisterInfo
 import datetime
+from settingsMetalprotec.models import endpointSystem
 
 getcontext().prec = 10
 
@@ -243,4 +244,25 @@ def addProductKit(request):
                 productObject.kitInfo.append(['NOCODE',qtNewProduct])
                 productObject.save()
         
+        return HttpResponseRedirect(reverse('productsMetalprotec:productsMetalprotec'))
+
+def changeStore(request):
+    if request.method == 'POST':
+        idProductInfo = request.POST.get('changeStoreProduct')
+        idEndpoint = request.POST.get('endpointStoreProduct')
+        qtStock = request.POST.get('stockMove')
+        productoActual = productSystem.objects.get(id=idProductInfo)
+        endpointDestino = endpointSystem.objects.get(id=idEndpoint)
+        productoDestino = productSystem.objects.filter(endpointProduct=endpointDestino).filter(codeProduct=productoActual.codeProduct)
+        if len(productoDestino == 1):
+            productoFinal = productoDestino[0]
+            stockFinal = productoFinal.storexproductsystem_set.all()[0]
+            stockInicial = productoActual.storexproductsystem_set.all()[0]
+            stockMove = str(Decimal('%.2f' % Decimal(qtStock)))
+            stockInicial.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockInicial.quantityProduct) - Decimal(stockMove))))
+            stockInicial.save()
+            stockFinal.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockFinal.quantityProduct) + Decimal(stockMove))))
+            stockFinal.save()
+        else:
+            pass
         return HttpResponseRedirect(reverse('productsMetalprotec:productsMetalprotec'))
