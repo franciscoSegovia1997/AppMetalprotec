@@ -404,74 +404,21 @@ def getComissionData(request):
                 invoiceInfo.operationNumber2
             ])
 
-        billsCodes = []
-        invoicesCodes = []
-        for billInfo in billsPayments:
-            if billInfo.codeDocument not in billsCodes:
-                billsCodes.append(billInfo.codeDocument)
-        for invoiceInfo in invoicesPayments:
-            if invoiceInfo.codeDocument not in invoicesCodes:
-                invoicesCodes.append(invoiceInfo.codeDocument)
+
+        quotationsCodes = []
+        for quotationInfo in comissionData:
+            if quotationInfo[4] not in quotationsCodes:
+                quotationsCodes.append(quotationInfo[4])
+        
         #Calculo de las comisiones y venta total
         totalValue = Decimal(0.000)
         comissionValue = Decimal(0.000)
-        for codeInfo in billsCodes:
-            billObject = billSystem.objects.get(codeBill=codeInfo)
-            if billObject.asociatedQuotation is not None:
-                quotationObject = billObject.asociatedQuotation
-                totalProductsQuotation = quotationObject.quotationproductdata_set.all()
-                for productInfo in totalProductsQuotation:
-                    if productInfo.dataProductQuotation[5] == 'DOLARES':
-                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(quotationObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
-                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                    if productInfo.dataProductQuotation[5] == 'SOLES':
-                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
-                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                    if productInfo.dataProductQuotation[9] == '1':
-                        v_producto = Decimal(0.00)
-                    totalValue = Decimal(totalValue) + Decimal(v_producto)
-            else:
-                quotationObject = billObject.guidesystem_set.all()[0].asociatedQuotation
-                totalProductsQuotation = quotationObject.quotationproductdata_set.all()
-                for productInfo in totalProductsQuotation:
-                    if productInfo.dataProductQuotation[5] == 'DOLARES':
-                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(quotationObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
-                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                    if productInfo.dataProductQuotation[5] == 'SOLES':
-                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
-                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                    if productInfo.dataProductQuotation[9] == '1':
-                        v_producto = Decimal(0.00)
-                    totalValue = Decimal(totalValue) + Decimal(v_producto)
 
-        for codeInfo in invoicesCodes:
-            invoiceObject = invoiceSystem.objects.get(codeInvoice=codeInfo)
-            if invoiceObject.asociatedQuotation is not None:
-                quotationObject = invoiceObject.asociatedQuotation
-                totalProductsQuotation = quotationObject.quotationproductdata_set.all()
-                for productInfo in totalProductsQuotation:
-                    if productInfo.dataProductQuotation[5] == 'DOLARES':
-                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(invoiceObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
-                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                    if productInfo.dataProductQuotation[5] == 'SOLES':
-                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
-                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                    if productInfo.dataProductQuotation[9] == '1':
-                        v_producto = Decimal(0.00)
-                    totalValue = Decimal(totalValue) + Decimal(v_producto)
-            else:
-                quotationObject = invoiceObject.guidesystem_set.all()[0].asociatedQuotation
-                totalProductsQuotation = quotationObject.quotationproductdata_set.all()
-                for productInfo in totalProductsQuotation:
-                    if productInfo.dataProductQuotation[5] == 'DOLARES':
-                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(invoiceObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
-                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                    if productInfo.dataProductQuotation[5] == 'SOLES':
-                        v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
-                        v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                    if productInfo.dataProductQuotation[9] == '1':
-                        v_producto = Decimal(0.00)
-                    totalValue = Decimal(totalValue) + Decimal(v_producto)
+        for codeInfo in quotationsCodes:
+            quotationObject = quotationSystem.objects.get(codeQuotation=codeInfo)
+            solesQuotation=getSolesValue(quotationObject)
+            totalValue = Decimal(totalValue) + Decimal(solesQuotation)
+        
         if configObject.igvIncluded == 'ON':
             totalValue = Decimal('%.2f' % totalValue)*Decimal(1.18)
         comisionValue = (totalValue*Decimal(float(configObject.percentageComision)))/Decimal(100)
@@ -504,75 +451,22 @@ def getComissionData(request):
                     invoiceInfo.operationNumber,
                     invoiceInfo.operationNumber2
                 ])
-            
-            billsCodes = []
-            invoicesCodes = []
-            for billInfo in billsPayments:
-                if billInfo.codeDocument not in billsCodes:
-                    billsCodes.append(billInfo.codeDocument)
-            for invoiceInfo in invoicesPayments:
-                if invoiceInfo.codeDocument not in invoicesCodes:
-                    invoicesCodes.append(invoiceInfo.codeDocument)
+
+            quotationsCodes = []
+            for quotationInfo in comissionData:
+                if quotationInfo[4] not in quotationsCodes:
+                    quotationsCodes.append(quotationInfo[4])
+
             #Calculo de las comisiones y venta total
             totalValue = Decimal(0.000)
             comissionValue = Decimal(0.000)
-            for codeInfo in billsCodes:
-                billObject = billSystem.objects.get(codeBill=codeInfo)
-                if billObject.asociatedQuotation is not None:
-                    quotationObject = billObject.asociatedQuotation
-                    totalProductsQuotation = quotationObject.quotationproductdata_set.all()
-                    for productInfo in totalProductsQuotation:
-                        if productInfo.dataProductQuotation[5] == 'DOLARES':
-                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(quotationObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
-                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                        if productInfo.dataProductQuotation[5] == 'SOLES':
-                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
-                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                        if productInfo.dataProductQuotation[9] == '1':
-                            v_producto = Decimal(0.00)
-                        totalValue = Decimal(totalValue) + Decimal(v_producto)
-                else:
-                    quotationObject = billObject.guidesystem_set.all()[0].asociatedQuotation
-                    totalProductsQuotation = quotationObject.quotationproductdata_set.all()
-                    for productInfo in totalProductsQuotation:
-                        if productInfo.dataProductQuotation[5] == 'DOLARES':
-                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(quotationObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
-                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                        if productInfo.dataProductQuotation[5] == 'SOLES':
-                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
-                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                        if productInfo.dataProductQuotation[9] == '1':
-                            v_producto = Decimal(0.00)
-                        totalValue = Decimal(totalValue) + Decimal(v_producto)
 
-            for codeInfo in invoicesCodes:
-                invoiceObject = invoiceSystem.objects.get(codeInvoice=codeInfo)
-                if invoiceObject.asociatedQuotation is not None:
-                    quotationObject = invoiceObject.asociatedQuotation
-                    totalProductsQuotation = quotationObject.quotationproductdata_set.all()
-                    for productInfo in totalProductsQuotation:
-                        if productInfo.dataProductQuotation[5] == 'DOLARES':
-                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(invoiceObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
-                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                        if productInfo.dataProductQuotation[5] == 'SOLES':
-                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
-                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                        if productInfo.dataProductQuotation[9] == '1':
-                            v_producto = Decimal(0.00)
-                        totalValue = Decimal(totalValue) + Decimal(v_producto)
-                else:
-                    quotationObject = invoiceObject.guidesystem_set.all()[0].asociatedQuotation
-                    totalProductsQuotation = quotationObject.quotationproductdata_set.all()
-                    for productInfo in totalProductsQuotation:
-                        if productInfo.dataProductQuotation[5] == 'DOLARES':
-                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(invoiceObject.erSel)*Decimal(Decimal(1.00) - Decimal(productInfo.dataProductQuotation[7])/100)
-                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                        if productInfo.dataProductQuotation[5] == 'SOLES':
-                            v_producto = Decimal(productInfo.dataProductQuotation[6])*Decimal(Decimal(1.00) - (Decimal(productInfo.dataProductQuotation[7])/100))
-                            v_producto = Decimal('%.2f' % v_producto)*Decimal(productInfo.dataProductQuotation[8])
-                        if productInfo.dataProductQuotation[9] == '1':
-                            v_producto = Decimal(0.00)
-                        totalValue = Decimal(totalValue) + Decimal(v_producto)
+            for codeInfo in quotationsCodes:
+                quotationObject = quotationSystem.objects.get(codeQuotation=codeInfo)
+                solesQuotation=getSolesValue(quotationObject)
+                totalValue = Decimal(totalValue) + Decimal(solesQuotation)
+            
+            
 
             if configInfo[2] == 'ON':
                 totalValue = Decimal('%.2f' % totalValue)*Decimal(1.18)
@@ -583,6 +477,15 @@ def getComissionData(request):
 
     finalComission = str(finalComission)
     finalValue = str(finalValue)
+
+    for comisionInfo in comissionData:
+        quotationObject=quotationSystem.objects.get(codeQuotation=comisionInfo[4])
+        currencyQuotation=quotationObject.currencyQuotation
+        montoQuotation=getValueQuotation(quotationObject)
+        solesQuotation=getSolesValue(quotationObject)
+        comisionInfo.insert(5,solesQuotation)
+        comisionInfo.insert(5,montoQuotation)
+        comisionInfo.insert(5,currencyQuotation)
 
                     
     return JsonResponse({
