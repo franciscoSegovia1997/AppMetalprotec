@@ -355,7 +355,7 @@ def downloadOrden(request,ind):
     can.drawString(460,745,str(orden_info.codigoOrden))
 
     #Generacion del logo
-    can.drawImage('./static/images/logoMetalprotecBase.png',10,705,width=120,height=120)
+    can.drawImage('./static/images/newMetalprotecLogo.png',25,740,width=90,height=75,mask='auto')
     
     #Informacion del remitente
     can.setFont('Helvetica-Bold',10)
