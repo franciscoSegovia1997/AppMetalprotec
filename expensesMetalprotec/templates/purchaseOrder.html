@@ -45,16 +45,18 @@
                 </thead>
                 <tbody>
                     {% for orderInfo in totalPurchaseOrder %}
-                    <td>{{ orderInfo.codigoOrden }}</td>
-                    <td>{{ orderInfo.atencionCliente }}</td>
-                    <td>{{ orderInfo.fechaEmision|date:'d-m-Y' }}</td>
-                    <td>{{ orderInfo.rucProveedor }}</td>
-                    <td>{{ orderInfo.nombreProveedor }}</td>
-                    <td style="text-align: center;"><a class="btn btn-info" href="{% url 'expensesMetalprotec:downloadOrden' orderInfo.id %}"><i class="fas fa-download"></i></a></td>
-                    <td style="text-align: center;">
-                        <a class="btn btn-warning" href="{% url 'expensesMetalprotec:editOrder' orderInfo.id %}"><i class="fa fa-edit"></i></a>
-                    </td>
-                    <td style="text-align: center;"><a class="btn btn-danger" href="{% url 'expensesMetalprotec:deleteOrden' orderInfo.id %}"><i class="fas fa-trash"></i></a></td>
+                    <tr>
+                        <td>{{ orderInfo.codigoOrden }}</td>
+                        <td>{{ orderInfo.atencionCliente }}</td>
+                        <td>{{ orderInfo.fechaEmision|date:'d-m-Y' }}</td>
+                        <td>{{ orderInfo.rucProveedor }}</td>
+                        <td>{{ orderInfo.nombreProveedor }}</td>
+                        <td style="text-align: center;"><a class="btn btn-info" href="{% url 'expensesMetalprotec:downloadOrden' orderInfo.id %}"><i class="fas fa-download"></i></a></td>
+                        <td style="text-align: center;">
+                            <a class="btn btn-warning" href="{% url 'expensesMetalprotec:editOrder' orderInfo.id %}"><i class="fa fa-edit"></i></a>
+                        </td>
+                        <td style="text-align: center;"><a class="btn btn-danger" href="{% url 'expensesMetalprotec:deleteOrden' orderInfo.id %}"><i class="fas fa-trash"></i></a></td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
