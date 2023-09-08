@@ -129,5 +129,8 @@ class creditNoteSystem(models.Model):
     nroCreditNote = models.CharField(max_length=12,null=True,blank=True)
     originCreditNote = models.CharField(max_length=12,null=True,blank=True)
     endpointCreditNote = models.ForeignKey(endpointSystem, on_delete=models.CASCADE, null=True, blank=True)
+    creditNotePurpose = models.CharField(max_length=36,null=True,blank=True)
+    codigosProductos = ArrayField(models.CharField(max_length=128),null=True, blank=True)
+    cantidadesProductos = ArrayField(models.CharField(max_length=12),null=True, blank=True)
 
 
