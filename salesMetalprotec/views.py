@@ -4007,9 +4007,31 @@ def getInfoCreditNote(creditNoteObject):
         itemsBill = []
         if billObject.typeItemsBill == 'PRODUCTOS':
             totalProductsItems = []
-            if billObject.originBill == 'GUIDE':
-                for guideInfo in billObject.guidesystem_set.all():
-                    for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all():
+            if creditNoteObject.creditNotePurpose == 'ANULACION_OPERACION':
+                if billObject.originBill == 'GUIDE':
+                    for guideInfo in billObject.guidesystem_set.all():
+                        for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all():
+                            if productInfo.asociatedProduct is not None:
+                                if productInfo.asociatedProduct.kitProduct == 'ON':
+                                    productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                                    totalProductsItems.append([
+                                        productoDatos.id,
+                                        productoDatos.nameProduct,
+                                        productoDatos.codeProduct,
+                                        productoDatos.measureUnit,
+                                        productInfo.dataProductQuotation[4],
+                                        productInfo.dataProductQuotation[5],
+                                        productInfo.dataProductQuotation[6],
+                                        productInfo.dataProductQuotation[7],
+                                        productInfo.dataProductQuotation[8],
+                                        productInfo.dataProductQuotation[9],
+                                    ])
+                                else:
+                                    totalProductsItems.append(productInfo.dataProductQuotation)
+                            else:
+                                totalProductsItems.append(productInfo.dataProductQuotation)
+                else:
+                    for productInfo in billObject.asociatedQuotation.quotationproductdata_set.all():
                         if productInfo.asociatedProduct is not None:
                             if productInfo.asociatedProduct.kitProduct == 'ON':
                                 productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
@@ -4030,26 +4052,55 @@ def getInfoCreditNote(creditNoteObject):
                         else:
                             totalProductsItems.append(productInfo.dataProductQuotation)
             else:
-                for productInfo in billObject.asociatedQuotation.quotationproductdata_set.all():
-                    if productInfo.asociatedProduct is not None:
-                        if productInfo.asociatedProduct.kitProduct == 'ON':
-                            productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
-                            totalProductsItems.append([
-                                productoDatos.id,
-                                productoDatos.nameProduct,
-                                productoDatos.codeProduct,
-                                productoDatos.measureUnit,
-                                productInfo.dataProductQuotation[4],
-                                productInfo.dataProductQuotation[5],
-                                productInfo.dataProductQuotation[6],
-                                productInfo.dataProductQuotation[7],
-                                productInfo.dataProductQuotation[8],
-                                productInfo.dataProductQuotation[9],
-                            ])
-                        else:
-                            totalProductsItems.append(productInfo.dataProductQuotation)
-                    else:
-                        totalProductsItems.append(productInfo.dataProductQuotation)
+                if billObject.originBill == 'GUIDE':
+                    for guideInfo in billObject.guidesystem_set.all():
+                        for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all():
+                            if productInfo.dataProductQuotation[2] in creditNoteObject.codigosProductos:
+                                indexCodeQuantity = creditNoteObject.codigosProductos.index(productInfo.dataProductQuotation[2])
+                                productInfo.dataProductQuotation[8] = creditNoteObject.cantidadesProductos[indexCodeQuantity]
+                                if productInfo.asociatedProduct is not None:
+                                    if productInfo.asociatedProduct.kitProduct == 'ON':
+                                        productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                                        totalProductsItems.append([
+                                            productoDatos.id,
+                                            productoDatos.nameProduct,
+                                            productoDatos.codeProduct,
+                                            productoDatos.measureUnit,
+                                            productInfo.dataProductQuotation[4],
+                                            productInfo.dataProductQuotation[5],
+                                            productInfo.dataProductQuotation[6],
+                                            productInfo.dataProductQuotation[7],
+                                            productInfo.dataProductQuotation[8],
+                                            productInfo.dataProductQuotation[9],
+                                        ])
+                                    else:
+                                        totalProductsItems.append(productInfo.dataProductQuotation)
+                                else:
+                                    totalProductsItems.append(productInfo.dataProductQuotation)
+                else:
+                    for productInfo in billObject.asociatedQuotation.quotationproductdata_set.all():
+                        if productInfo.dataProductQuotation[2] in creditNoteObject.codigosProductos:
+                            indexCodeQuantity = creditNoteObject.codigosProductos.index(productInfo.dataProductQuotation[2])
+                            productInfo.dataProductQuotation[8] = creditNoteObject.cantidadesProductos[indexCodeQuantity]
+                            if productInfo.asociatedProduct is not None:
+                                if productInfo.asociatedProduct.kitProduct == 'ON':
+                                    productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                                    totalProductsItems.append([
+                                        productoDatos.id,
+                                        productoDatos.nameProduct,
+                                        productoDatos.codeProduct,
+                                        productoDatos.measureUnit,
+                                        productInfo.dataProductQuotation[4],
+                                        productInfo.dataProductQuotation[5],
+                                        productInfo.dataProductQuotation[6],
+                                        productInfo.dataProductQuotation[7],
+                                        productInfo.dataProductQuotation[8],
+                                        productInfo.dataProductQuotation[9],
+                                    ])
+                                else:
+                                    totalProductsItems.append(productInfo.dataProductQuotation)
+                            else:
+                                totalProductsItems.append(productInfo.dataProductQuotation)
             
             finalPrice = 0
             if currencyBill == 'PEN':
@@ -4250,7 +4301,7 @@ def getInfoCreditNote(creditNoteObject):
             "condicionPago": None,
             "ordencompra":None,
             "puntoEmisor":None,
-            "glosa":"Anulacion",
+            "glosa":creditNoteObject.creditNotePurpose,
         },
         "detalleDocumento":itemsNote,
         "emisor":
@@ -4275,7 +4326,7 @@ def getInfoCreditNote(creditNoteObject):
             "tipoOperacion":"VENTA_INTERNA",
             "coVendedor":None,
         },
-        "motivo":"ANULACION_OPERACION",
+        "motivo":creditNoteObject.creditNotePurpose,
         "receptor":
         {
             "correo":emailClient,
@@ -4295,29 +4346,62 @@ def getInfoCreditNote(creditNoteObject):
     return param_data
 
 
-def createCreditNoteFromBill(request,idBill):
-    asociatedBill = billSystem.objects.get(id=idBill)
-    endpointCreditNote = request.user.extendeduser.endpointUser
-    serieCreditNote = endpointCreditNote.serieNotaFactura
-    nroCreditNote = endpointCreditNote.nroNotaFactura
-    endpointCreditNote.nroNotaFactura = str(int(nroCreditNote) + 1)
-    endpointCreditNote.save()
-    codeCreditNote = nroCreditNote
-    while len(codeCreditNote) < 4:
-        codeCreditNote = '0' + codeCreditNote
-    codeCreditNote = f"{serieCreditNote}-{codeCreditNote}"
-    creditNoteSystem.objects.create(
-        asociatedBill=asociatedBill,
-        typeCreditNote='BILL',
-        stateCreditNote='GENERADA',
-        codeCreditNote=codeCreditNote,
-        stateTeFacturo='',
-        dateCreditNote=datetime.datetime.today(),
-        nroCreditNote=nroCreditNote,
-        originCreditNote='BILL',
-        endpointCreditNote=endpointCreditNote
-    )
-    return HttpResponseRedirect(reverse('salesMetalprotec:creditNotesMetalprotec'))
+def createCreditNoteFromBill(request):
+    if request.method == 'POST':
+        idBill = request.POST.get('idBill')
+        creditNotePurpose = request.POST.get('creditNotePurpose')
+        if creditNotePurpose == 'ANULACION_OPERACION':
+            asociatedBill = billSystem.objects.get(id=idBill)
+            endpointCreditNote = request.user.extendeduser.endpointUser
+            serieCreditNote = endpointCreditNote.serieNotaFactura
+            nroCreditNote = endpointCreditNote.nroNotaFactura
+            endpointCreditNote.nroNotaFactura = str(int(nroCreditNote) + 1)
+            endpointCreditNote.save()
+            codeCreditNote = nroCreditNote
+            while len(codeCreditNote) < 4:
+                codeCreditNote = '0' + codeCreditNote
+            codeCreditNote = f"{serieCreditNote}-{codeCreditNote}"
+            creditNoteSystem.objects.create(
+                asociatedBill=asociatedBill,
+                typeCreditNote='BILL',
+                stateCreditNote='GENERADA',
+                codeCreditNote=codeCreditNote,
+                stateTeFacturo='',
+                dateCreditNote=datetime.datetime.today(),
+                nroCreditNote=nroCreditNote,
+                originCreditNote='BILL',
+                creditNotePurpose=creditNotePurpose,
+                endpointCreditNote=endpointCreditNote
+            )
+            return HttpResponseRedirect(reverse('salesMetalprotec:creditNotesMetalprotec'))
+        else:
+            codigosProductos = request.POST.getlist('codigoProducto')
+            cantidadesProductos = request.POST.getlist('cantidadProducto')
+            asociatedBill = billSystem.objects.get(id=idBill)
+            endpointCreditNote = request.user.extendeduser.endpointUser
+            serieCreditNote = endpointCreditNote.serieNotaFactura
+            nroCreditNote = endpointCreditNote.nroNotaFactura
+            endpointCreditNote.nroNotaFactura = str(int(nroCreditNote) + 1)
+            endpointCreditNote.save()
+            codeCreditNote = nroCreditNote
+            while len(codeCreditNote) < 4:
+                codeCreditNote = '0' + codeCreditNote
+            codeCreditNote = f"{serieCreditNote}-{codeCreditNote}"
+            creditNoteSystem.objects.create(
+                asociatedBill=asociatedBill,
+                typeCreditNote='BILL',
+                stateCreditNote='GENERADA',
+                codeCreditNote=codeCreditNote,
+                stateTeFacturo='',
+                dateCreditNote=datetime.datetime.today(),
+                nroCreditNote=nroCreditNote,
+                originCreditNote='BILL',
+                creditNotePurpose=creditNotePurpose,
+                codigosProductos=codigosProductos,
+                cantidadesProductos=cantidadesProductos,
+                endpointCreditNote=endpointCreditNote
+            )
+            return HttpResponseRedirect(reverse('salesMetalprotec:creditNotesMetalprotec'))
 
 
 def createCreditNoteFromInvoice(request,idInvoice):
@@ -4863,3 +4947,26 @@ def exportFilteredGuides(request):
         nombre = 'attachment; ' + 'filename=' + 'GuiasInfo.xlsx'
         response['Content-Disposition'] = nombre
         return response
+
+def getBillProducts(request):
+    idBill = request.GET.get('idBill')
+    billObject = billSystem.objects.get(id=idBill)
+    totalProducts = []
+    if billObject.originBill == 'GUIDE':
+        for guideInfo in billObject.guidesystem_set.all():
+            for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all():
+                totalProducts.append([
+                    productInfo.dataProductQuotation[1],
+                    productInfo.dataProductQuotation[2],
+                    productInfo.dataProductQuotation[8],
+                ])
+    else:
+        for productInfo in billObject.asociatedQuotation.quotationproductdata_set.all():
+            totalProducts.append([
+                productInfo.dataProductQuotation[1],
+                productInfo.dataProductQuotation[2],
+                productInfo.dataProductQuotation[8],
+            ])
+    return JsonResponse({
+        'totalProducts':totalProducts
+    })

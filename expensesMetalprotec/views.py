@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import departmentCost, categoryCost, divisionCost,costRegister, boxRegister, cashIncome, ordenCompraMetalprotec
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.urls import reverse
 import datetime
 from productsMetalprotec.models import productSystem
@@ -8,6 +8,7 @@ import json
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from decimal import Decimal, DecimalException,getcontext
+import time
 
 getcontext().prec = 10
 

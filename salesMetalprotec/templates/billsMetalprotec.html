@@ -109,7 +109,9 @@
                                 {% endif %}
                                 <td>{{ billInfo.stateTeFacturo }}</td>
                                 {% if billInfo.stateBill == 'ENVIADA' %}
-                                    <td class="text-center"><a class="btn btn-danger" href="{% url 'salesMetalprotec:createCreditNoteFromBill' billInfo.id %}"><i class="fa-solid fa-trash"></i></a></td>
+                                    <td class="text-center">
+                                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#createCreditNote" id="bill{{ billInfo.id }}" onclick="chargeProductsCreditNote(this.id)"><i class="fa-solid fa-trash"></i></button>
+                                    </td>
                                 {% else %}
                                     <td></td>
                                 {% endif %}
@@ -148,7 +150,9 @@
                                 {% endif %}
                                 <td>{{ billInfo.stateTeFacturo }}</td>
                                 {% if billInfo.stateBill == 'ENVIADA' %}
-                                    <td class="text-center"><a class="btn btn-danger" href="{% url 'salesMetalprotec:createCreditNoteFromBill' billInfo.id %}"><i class="fa-solid fa-trash"></i></a></td>
+                                    <td class="text-center">
+                                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#createCreditNote" id="bill{{ billInfo.id }}" onclick="chargeProductsCreditNote(this.id)"><i class="fa-solid fa-trash"></i></button>
+                                    </td>
                                 {% else %}
                                     <td></td>
                                 {% endif %}
@@ -188,7 +192,9 @@
                             {% endif %}
                             <td>{{ billInfo.stateTeFacturo }}</td>
                             {% if billInfo.stateBill == 'ENVIADA' %}
-                                <td class="text-center"><a class="btn btn-danger" href="{% url 'salesMetalprotec:createCreditNoteFromBill' billInfo.id %}"><i class="fa-solid fa-trash"></i></a></td>
+                                <td class="text-center">
+                                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#createCreditNote" id="bill{{ billInfo.id }}" onclick="chargeProductsCreditNote(this.id)"><i class="fa-solid fa-trash"></i></button>
+                                </td>
                             {% else %}
                                 <td></td>
                             {% endif %}
@@ -199,4 +205,57 @@
             </table>
         </div>
     </div>
+{% endblock %}
+
+{% block modalContent %}
+
+    <!-- Select type of credit note -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="createCreditNote">
+        <div class="modal-dialog modal-lg" role="document">
+            <form method="post" action="{% url 'salesMetalprotec:createCreditNoteFromBill' %}">
+            {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div style="display: none;">
+                            <input id="idBill" type="text" name="idBill">
+                        </div>
+                        <h5 class="modal-title">Crear nota de credito</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="cleanModalCreditNote()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label>Seleccionar tipo</label>
+                                <select class="selectpicker form-control" data-live-search="true" id="creditNotePurpose" name="creditNotePurpose" required>
+                                    <option value="" selected></option>
+                                    <option value="ANULACION_OPERACION">ANULACION</option>
+                                    <option value="DEVOLUCION_POR_ITEM">DEVOLUCION PARCIAL</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-dark">
+                                        <th>Codigo</th>
+                                        <th>Descripcion</th>
+                                        <th>Cantidad</th>
+                                        <th>Eliminar</th>
+                                    </thead>
+                                    <tbody id="productsCreditNote">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="cleanModalCreditNote()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Crear Nota</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 {% endblock %}
