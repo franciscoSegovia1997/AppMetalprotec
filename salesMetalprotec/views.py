@@ -23,6 +23,7 @@ from stockManagment.models import outcomingItemsRegisterInfo
 from django.db.models import Q
 import pandas as pd
 import openpyxl
+import time
 
 env = environ.Env()
 env.read_env()
@@ -192,6 +193,7 @@ def newQuotation(request):
                 asociatedService=serviceSystem.objects.get(id=serviceInfo[0]),
                 dataServiceQuotation=serviceInfo,
             )
+        time.sleep(0.5)
         return JsonResponse({
             'metalprotec':'200',
         })

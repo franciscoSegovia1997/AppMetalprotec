@@ -38,11 +38,13 @@
                     <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#addStock">Agregar stock <i class="fa-solid fa-plus"></i></a>
                 </div>
             </div>
+            <!--
             <div class="col-2">
                 <div class="row mx-0">
                     <a class="btn btn-success text-white">Actualizar precios</a>
                 </div>
             </div>
+            -->
             <div class="col-2">
                 <div class="row mx-0">
                     <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#changeStore">Cambiar almacen</a>
@@ -50,36 +52,40 @@
             </div>
             <div class="col-2">
                 <div class="row mx-0">
+                    <a class="btn btn-success text-white" href="{% url 'productsMetalprotec:productsMetalprotec' %}">Reestablecer</a>
+                </div>
+            </div>
+            <div class="col-2" style="display: none;">
+                <div class="row mx-0">
                     <a class="btn btn-danger text-white">Eliminar todo<i class="fa-solid fa-trash"></i></a>
                 </div>
             </div>
         </div>
         <br>
         <div class="row mx-0">
-            <div class="col-2">
-                <div class="row mx-0">
-                    <label>Seleccionar usuario :</label>
-                    <input class="form-control" placeholder="Categoria ...">
+            <form class="row" action="{% url 'productsMetalprotec:productsXCategory' %}" method="post">
+            {% csrf_token %}
+                <div class="col-4">
+                    <div class="row mx-0">
+                        <label>Seleccionar categoria :</label>
+                        <input class="form-control" placeholder="Categoria ..." name="categoriaProducto">
+                    </div>
                 </div>
-            </div>
-            <div class="col-2">
-                <br>
-                <div class="row mx-0">
-                    <a class="btn btn-success text-white">Filtrar</a>
+                <div class="col-2">
+                    <br>
+                    <div class="row mx-0">
+                        <button type="submit" class="btn btn-success text-white">Filtrar</button>
+                    </div>
                 </div>
-            </div>
-            <div class="col-2">
-                <br>
-                <div class="row mx-0">
-                    <a class="btn btn-danger text-white">Reestablecer</a>
-                </div>
-            </div>
+            </form>
+            <!--
             <div class="col-2">
                 <br>
                 <div class="row mx-0">
                     <a class="btn btn-info text-white">Descargar manual <i class="fa-solid fa-download"></i></a>
                 </div>
             </div>
+            -->
         </div>
         <br>
         <div>

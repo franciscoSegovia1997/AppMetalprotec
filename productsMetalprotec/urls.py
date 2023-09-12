@@ -13,5 +13,6 @@ urlpatterns = [
     path('importProductsData',views.importProductsData,name='importProductsData'),
     path('getProductKit',views.getProductKit,name='getProductKit'),
     path('addProductKit',views.addProductKit,name='addProductKit'),
-    path('changeStore',views.changeStore,name='changeStore')
+    path('changeStore',views.changeStore,name='changeStore'),
+    path('productsXCategory',views.productsXCategory,name='productsXCategory')
 ]

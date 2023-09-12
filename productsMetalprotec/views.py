@@ -11,6 +11,15 @@ from settingsMetalprotec.models import endpointSystem
 getcontext().prec = 10
 
 # Create your views here.
+def productsXCategory(request):
+    categoryProduct = request.POST.get('categoriaProducto')
+    return render(request,'productsMetalprotec.html',{
+        'productsSystem':productSystem.objects.filter(endpointProduct=request.user.extendeduser.endpointUser).filter(categoryProduct=categoryProduct).order_by('id'),
+        'storesSystem':storeSystem.objects.filter(endpointStore=request.user.extendeduser.endpointUser).order_by('id'),
+        'totalEndpoint':endpointSystem.objects.all().order_by('-id')
+    })
+
+
 def productsMetalprotec(request):
     if request.method == 'POST':
         if 'newProduct' in request.POST:
