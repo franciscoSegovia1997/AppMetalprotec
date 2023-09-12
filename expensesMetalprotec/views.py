@@ -8,6 +8,7 @@ import json
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from decimal import Decimal, DecimalException,getcontext
+import time
 
 getcontext().prec = 10
 

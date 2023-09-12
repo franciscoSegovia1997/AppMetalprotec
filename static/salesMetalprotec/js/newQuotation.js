@@ -608,8 +608,8 @@ function createQuotation()
     .then(response => response.json())
     .then(data => {
         console.log(data)
+        window.location.assign('/salesMetalprotecquotationsMetalprotec')
     })
-    window.location.href = '/salesMetalprotecquotationsMetalprotec'
 }
 
 function getCookie(name) 
