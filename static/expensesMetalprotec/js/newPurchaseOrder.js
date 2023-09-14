@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 
             productoNombre.value = producto_info.nombre
             productoCodigo.value = producto_info.codigo
-            productoPCsinigv.value = producto_info.pc_sinIGV
+            productoPCsinigv.value = producto_info.pv_sinIGV
 
             if(producto_info.moneda === 'DOLARES')
             {
