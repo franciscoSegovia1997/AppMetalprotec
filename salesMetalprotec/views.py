@@ -3111,7 +3111,7 @@ def getInfoBill(billObject):
                 for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all():
                     if productInfo.asociatedProduct is not None:
                         if productInfo.asociatedProduct.kitProduct == 'ON':
-                            productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                            productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
                             totalProductsItems.append([
                                 productoDatos.id,
                                 productoDatos.nameProduct,
@@ -3132,7 +3132,7 @@ def getInfoBill(billObject):
             for productInfo in billObject.asociatedQuotation.quotationproductdata_set.all():
                 if productInfo.asociatedProduct is not None:
                     if productInfo.asociatedProduct.kitProduct == 'ON':
-                        productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                        productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
                         totalProductsItems.append([
                             productoDatos.id,
                             productoDatos.nameProduct,
@@ -3426,7 +3426,7 @@ def getInfoInvoice(invoiceObject):
                 for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all():
                     if productInfo.asociatedProduct is not None:
                         if productInfo.asociatedProduct.kitProduct == 'ON':
-                            productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                            productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
                             totalProductsItems.append([
                                 productoDatos.id,
                                 productoDatos.nameProduct,
@@ -3447,7 +3447,7 @@ def getInfoInvoice(invoiceObject):
             for productInfo in invoiceObject.asociatedQuotation.quotationproductdata_set.all():
                 if productInfo.asociatedProduct is not None:
                     if productInfo.asociatedProduct.kitProduct == 'ON':
-                        productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                        productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
                         totalProductsItems.append([
                             productoDatos.id,
                             productoDatos.nameProduct,
@@ -3751,7 +3751,7 @@ def getInfoCreditNote(creditNoteObject):
                     for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all():
                         if productInfo.asociatedProduct is not None:
                             if productInfo.asociatedProduct.kitProduct == 'ON':
-                                productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                                productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
                                 totalProductsItems.append([
                                     productoDatos.id,
                                     productoDatos.nameProduct,
@@ -3772,7 +3772,7 @@ def getInfoCreditNote(creditNoteObject):
                 for productInfo in invoiceObject.asociatedQuotation.quotationproductdata_set.all():
                     if productInfo.asociatedProduct is not None:
                         if productInfo.asociatedProduct.kitProduct == 'ON':
-                            productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                            productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
                             totalProductsItems.append([
                                 productoDatos.id,
                                 productoDatos.nameProduct,
@@ -4015,7 +4015,7 @@ def getInfoCreditNote(creditNoteObject):
                         for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all():
                             if productInfo.asociatedProduct is not None:
                                 if productInfo.asociatedProduct.kitProduct == 'ON':
-                                    productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                                    productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
                                     totalProductsItems.append([
                                         productoDatos.id,
                                         productoDatos.nameProduct,
@@ -4036,7 +4036,7 @@ def getInfoCreditNote(creditNoteObject):
                     for productInfo in billObject.asociatedQuotation.quotationproductdata_set.all():
                         if productInfo.asociatedProduct is not None:
                             if productInfo.asociatedProduct.kitProduct == 'ON':
-                                productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                                productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
                                 totalProductsItems.append([
                                     productoDatos.id,
                                     productoDatos.nameProduct,
@@ -4062,7 +4062,7 @@ def getInfoCreditNote(creditNoteObject):
                                 productInfo.dataProductQuotation[8] = creditNoteObject.cantidadesProductos[indexCodeQuantity]
                                 if productInfo.asociatedProduct is not None:
                                     if productInfo.asociatedProduct.kitProduct == 'ON':
-                                        productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                                        productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
                                         totalProductsItems.append([
                                             productoDatos.id,
                                             productoDatos.nameProduct,
@@ -4086,7 +4086,7 @@ def getInfoCreditNote(creditNoteObject):
                             productInfo.dataProductQuotation[8] = creditNoteObject.cantidadesProductos[indexCodeQuantity]
                             if productInfo.asociatedProduct is not None:
                                 if productInfo.asociatedProduct.kitProduct == 'ON':
-                                    productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0])
+                                    productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
                                     totalProductsItems.append([
                                         productoDatos.id,
                                         productoDatos.nameProduct,
