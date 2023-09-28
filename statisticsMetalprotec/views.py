@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from salesMetalprotec.models import invoiceSystem, billSystem, quotationSystem, guideSystem, creditNoteSystem
 import datetime
 from django.db.models import Q
+from calendar import month_name
 
 getcontext().prec = 10
 
@@ -174,6 +175,56 @@ def clientStatistics(request):
         'infoClientes':infoClientes
     })
 
+def getListDates(yearInfo):
+    fechas_meses = []
+    year = int(yearInfo)
+    for mes in range(1, 13):
+        primer_dia_mes = datetime.datetime(year, mes, 1)
+        if mes == 12:
+            siguiente_mes = datetime.datetime(year + 1, 1, 1)
+        else:
+            siguiente_mes = datetime.datetime(year, mes + 1, 1)
+        ultimo_dia_mes_anterior = siguiente_mes - datetime.timedelta(days=1)
+        fechas_meses.append([primer_dia_mes.strftime('%Y-%m-%d'), ultimo_dia_mes_anterior.strftime('%Y-%m-%d')])
+    
+    return fechas_meses
+
+def getListMonthInfo(numberMonths):
+    numberMonths = int(numberMonths)
+    fecha_actual = datetime.datetime.now()
+    meses = []
+    while numberMonths > 0:
+        nombre_mes = month_name[fecha_actual.month]
+        if nombre_mes not in meses:
+            meses.insert(0, nombre_mes)
+            numberMonths -= 1
+        fecha_actual = fecha_actual.replace(day=1) - datetime.timedelta(days=1)
+    return meses
+
+def getListDatesMonths(numberMonths):
+    numberMonths = int(numberMonths)
+    fecha_actual = datetime.datetime.now()
+    ultimos_meses = []
+
+    for _ in range(numberMonths):
+        anho = fecha_actual.year
+        mes = fecha_actual.month
+        if mes == 12:
+            siguiente_anho = anho + 1
+            siguiente_mes = 1
+        else:
+            siguiente_anho = anho
+            siguiente_mes = mes + 1
+
+        fecha_mes_siguiente = fecha_actual.replace(year=siguiente_anho, month=siguiente_mes)
+        fin_mes_actual = fecha_mes_siguiente.replace(day=1) - datetime.timedelta(days=1)
+        inicio_mes_actual = fin_mes_actual.replace(day=1)
+    
+        ultimos_meses.append([inicio_mes_actual.strftime('%Y-%m-%d'), fin_mes_actual.strftime('%Y-%m-%d')])
+        fecha_actual = inicio_mes_actual - datetime.timedelta(days=10)
+    return ultimos_meses
+
+
 def resumeSalesxYear(request):
     yearInfo = request.GET.get('yearInfo')
     if yearInfo == '2022':
@@ -181,49 +232,15 @@ def resumeSalesxYear(request):
         salesSoles = [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('35923.7940'), Decimal('131441.8230'), Decimal('65129.74'), Decimal('65324.44'), Decimal('44164.63')]
         salesDollars = [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('16833.24'), Decimal('34117.826'), Decimal('32061.43'), Decimal('42216.38'), Decimal('13216.01')]
         tcInfo = 3.653
-
-    if yearInfo == '2023':
+    else:
+        salesSoles = []
+        salesDollars = []
         monthList = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-        salesSoles = [
-            Decimal('117884.37'),
-            Decimal('106753.65'),
-            Decimal('208551.55'),
-            Decimal('86361.46'),
-            Decimal('136334.64'),
-            Decimal('244306.92'),
-            getTotalSales('2023-07-01','2023-07-31','SOLES'),
-            getTotalSales('2023-08-01','2023-08-31','SOLES'),
-            getTotalSales('2023-09-01','2023-09-30','SOLES'),
-            getTotalSales('2023-10-01','2023-10-31','SOLES'),
-            getTotalSales('2023-11-01','2023-11-30','SOLES'),
-            getTotalSales('2023-12-01','2023-12-31','SOLES')
-            ]
-        salesDollars = [
-            Decimal('31976.09'),
-            Decimal('22971.42'),
-            Decimal('32488.74'),
-            Decimal('31802.68'),
-            Decimal('26918.91'),
-            Decimal('6292.70'),
-            getTotalSales('2023-07-01','2023-07-31','DOLARES'),
-            getTotalSales('2023-08-01','2023-08-31','DOLARES'),
-            getTotalSales('2023-09-01','2023-09-30','DOLARES'),
-            getTotalSales('2023-10-01','2023-10-31','DOLARES'),
-            getTotalSales('2023-11-01','2023-11-30','DOLARES'),
-            getTotalSales('2023-12-01','2023-12-31','DOLARES')
-            ]
-        tcInfo = 3.653
-
-    if yearInfo == '2024':
-        monthList = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-        salesSoles = [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]
-        salesDollars = [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]
-        tcInfo = 3.653
-
-    if yearInfo == '2025':
-        monthList = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-        salesSoles = [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]
-        salesDollars = [Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0'), Decimal('0')]
+        monthListInfo = getListDates(yearInfo)
+        for mesInfo in monthListInfo:
+            salesSoles.append(getTotalSales(mesInfo[0],mesInfo[1],'SOLES'))
+        for mesInfo in monthListInfo:
+            salesDollars.append(getTotalSales(mesInfo[0],mesInfo[1],'DOLARES'))
         tcInfo = 3.653
 
     return JsonResponse({
@@ -234,84 +251,14 @@ def resumeSalesxYear(request):
 
 def salesxMonths(request):
     monthInfo = request.GET.get('monthInfo')
-    if monthInfo == '10':
-        monthList = [
-            'Noviembre',
-            'Diciembre',
-            'Enero',
-            'Febrero',
-            'Marzo',
-            'Abril',
-            'Mayo',
-            'Junio',
-            'Julio',
-            'Agosto'
-        ]
-        salesSoles = [
-            Decimal('65324.44'),
-            Decimal('44164.63'),
-            Decimal('117884.37'),
-            Decimal('106753.65'),
-            Decimal('208551.55'),
-            Decimal('86361.46'),
-            Decimal('136334.64'),
-            Decimal('244306.92'),
-            getTotalSales('2023-07-01','2023-07-31','SOLES'),
-            getTotalSales('2023-08-01','2023-08-31','SOLES')
-        ]
-        salesDollars = [
-            Decimal('42216.38'),
-            Decimal('13216.01'),
-            Decimal('31976.09'),
-            Decimal('22971.42'),
-            Decimal('32488.74'),
-            Decimal('31802.68'),
-            Decimal('26918.91'),
-            Decimal('6292.70'),
-            getTotalSales('2023-07-01','2023-07-31','DOLARES'),
-            getTotalSales('2023-08-01','2023-08-31','DOLARES')
-        ]
-
-    if monthInfo == '5':
-        monthList = [
-            'Abril',
-            'Mayo',
-            'Junio',
-            'Julio',
-            'Agosto'
-        ]
-        salesSoles = [
-            Decimal('86361.46'),
-            Decimal('136334.64'),
-            Decimal('244306.92'),
-            getTotalSales('2023-07-01','2023-07-31','SOLES'),
-            getTotalSales('2023-08-01','2023-08-31','SOLES')
-        ]
-        salesDollars = [
-            Decimal('31802.68'),
-            Decimal('26918.91'),
-            Decimal('6292.70'),
-            getTotalSales('2023-07-01','2023-07-31','DOLARES'),
-            getTotalSales('2023-08-01','2023-08-31','DOLARES')
-        ]
-
-    if monthInfo == '3':
-        monthList = [
-            'Junio',
-            'Julio',
-            'Agosto'
-        ]
-        salesSoles = [
-            Decimal('244306.92'),
-            getTotalSales('2023-07-01','2023-07-31','SOLES'),
-            getTotalSales('2023-08-01','2023-08-31','SOLES')
-        ]
-        salesDollars = [
-            Decimal('6292.70'),
-            getTotalSales('2023-07-01','2023-07-31','DOLARES'),
-            getTotalSales('2023-08-01','2023-08-31','DOLARES')
-        ]
-
+    monthList = getListMonthInfo(monthInfo)
+    datesInfoMonth = getListDatesMonths(monthInfo)
+    salesSoles = []
+    salesDollars = []
+    for mesInfo in datesInfoMonth:
+        salesSoles.insert(0,getTotalSales(mesInfo[0],mesInfo[1],'SOLES'))
+    for mesInfo in datesInfoMonth:
+        salesDollars.insert(0,getTotalSales(mesInfo[0],mesInfo[1],'DOLARES'))
     return JsonResponse({
         'monthList':monthList,
         'salesSoles':salesSoles,
