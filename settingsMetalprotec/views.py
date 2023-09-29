@@ -97,6 +97,31 @@ def getEndpointData(request):
         'editNroNotaBoleta':editEndpoint.nroNotaBoleta,
     })
 
+def getDataOne(request):
+    idEndpoint = request.GET.get('idEndpoint')
+    editEndpoint = endpointSystem.objects.get(id=idEndpoint)
+    return JsonResponse({
+        'editSerieCoti':editEndpoint.serieCoti,
+        'editNroCoti':editEndpoint.nroCoti,
+        'editSerieGuia':editEndpoint.serieGuia,
+        'editNroGuia':editEndpoint.nroGuia,
+        'editSerieFactura':editEndpoint.serieFactura,
+        'editNroFactura':editEndpoint.nroFactura,
+        'editSerieBoleta':editEndpoint.serieBoleta,
+        'editNroBoleta':editEndpoint.nroBoleta,
+        'editSerieNotaFactura':editEndpoint.serieNotaFactura,
+        'editNroNotaFactura':editEndpoint.nroNotaFactura,
+        'editSerieNotaBoleta':editEndpoint.serieNotaBoleta,
+        'editNroNotaBoleta':editEndpoint.nroNotaBoleta,
+    })
+
+def getDataAll(request):
+    if request.method != 'GET':
+        return JsonResponse({'message': 'Método no permitido'}, status=405)
+    data = endpointSystem.objects.all().order_by('id')
+    data_list = list(data.values())
+    return JsonResponse(data_list, safe=False)
+
 @login_required(login_url='/')
 def updateEndpoint(request):
     if request.method == 'POST':
