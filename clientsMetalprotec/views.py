@@ -85,6 +85,27 @@ def getClientData(request):
         'editEnabledCommission':editClient.enabledCommission,
     })
 
+def getDataOne(request):
+    idClient=request.GET.get('idClient')
+    editClient=clientSystem.objects.get(id=idClient)
+    return JsonResponse({
+        'editDocumentClient':editClient.documentClient,
+        'editIdentificationClient':editClient.identificationClient,
+        'editTypeClient':editClient.typeClient,
+        'editEmailClient':editClient.emailClient,
+        'editContactClient':editClient.contactClient,
+        'editPhoneClient':editClient.phoneClient,
+        'editLegalAddressClient':editClient.legalAddressClient,
+        'editEnabledCommission':editClient.enabledCommission,
+    })
+
+def getDataAll(request):
+    if request.method != 'GET':
+        return JsonResponse({'message': 'Método no permitido'}, status=405)
+    clients = clientSystem.objects.all().order_by('id')
+    data_list = list(clients.values())
+    return JsonResponse(data_list, safe=False)
+
 @login_required(login_url='/')
 def updateClient(request):
     if request.method == 'POST':
