@@ -139,6 +139,38 @@ def getUserData(request):
         'editCode':editUser.extendeduser.codeUser,
     })
 
+def getDataOne(request):
+    idUser = request.GET.get('idUser')
+    editUser = User.objects.get(id=idUser)
+    return JsonResponse({
+        'editUsername':editUser.username,
+        'editName':editUser.first_name,
+        'editLastName':editUser.last_name,
+        'editEmail':editUser.email,
+        'editPhone':editUser.extendeduser.phoneUser,
+        'editCode':editUser.extendeduser.codeUser,
+    })
+
+def getDataAll(request):
+    if request.method != 'GET':
+        return JsonResponse({'message': 'Método no permitido'}, status=405)
+
+    users = User.objects.all().order_by('id')
+    data_list = []
+
+    for user in users:
+        data = {
+            'codeUser': user.extendeduser.codeUser,
+            'username': user.username,
+            'full_name': user.first_name + ' ' + user.last_name,
+            'phoneUser': user.extendeduser.phoneUser,
+            'nameRole': user.extendeduser.roleUser.nameRole,
+            'codeEndpoint': user.extendeduser.endpointUser.codeEndpoint
+        }
+        data_list.append(data)
+
+    return JsonResponse(data_list, safe=False)
+
 @login_required(login_url='/')
 def logoutSystem(request):
     logout(request)

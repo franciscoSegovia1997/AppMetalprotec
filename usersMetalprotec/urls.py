@@ -11,6 +11,8 @@ urlpatterns = [
     path('deleteUser',views.deleteUser,name='deleteUser'),
     path('updateUser',views.updateUser,name='updateUser'),
     path('getUserData',views.getUserData,name='getUserData'),
+    path('usersMetalprotec/getDataOne',views.getDataOne,name='getDataOne'),
+    path('usersMetalprotec/getDataAll',views.getDataAll,name='getDataAll'),
     path('assignRoleUser',views.assignRoleUser,name='assignRoleUser'),
     path('assignEndpointUser',views.assignEndpointUser,name='assignEndpointUser'),
 ]
