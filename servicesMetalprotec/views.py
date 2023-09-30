@@ -57,6 +57,25 @@ def getServiceData(request):
         'editCurrencyService':editService.currencyService,
     })
 
+def getDataOne(request):
+    idService = request.GET.get('idService')
+    editService = serviceSystem.objects.get(id=idService)
+    return JsonResponse({
+        'editNameService':editService.nameService,
+        'editCategoryService':editService.categoryService,
+        'editSubCategoryService':editService.subCategoryService,
+        'editMeasureUnit':editService.measureUnit,
+        'editPvnIGV':editService.pvnIGV,
+        'editCurrencyService':editService.currencyService,
+    })
+
+def getDataAll(request):
+    if request.method != 'GET':
+        return JsonResponse({'message': 'Método no permitido'}, status=405)
+    data = serviceSystem.objects.all().order_by('id')
+    data_list = list(data.values())
+    return JsonResponse(data_list, safe=False)
+
 @login_required(login_url='/')
 def updateService(request):
     if request.method == 'POST':
