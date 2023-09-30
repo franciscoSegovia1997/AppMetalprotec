@@ -72,6 +72,7 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:4200',
     'http://localhost:5173',
     'http://localhost:8000',
+    'http://prod.metalprotec.pe',
 )
 
 ROOT_URLCONF = 'AppMetalprotec.urls'
