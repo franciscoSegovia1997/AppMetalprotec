@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['*']
 
 
 # Application definition
+# Commit de prueba
 
 INSTALLED_APPS = [
     'django.contrib.admin',
