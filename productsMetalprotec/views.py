@@ -149,10 +149,12 @@ def updateProduct(request):
 def getProductStock(request):
     idProduct=request.GET.get('idProduct')
     stockProduct = productSystem.objects.get(id=idProduct)
+    codeProduct = stockProduct.codeProduct
+    totalProducts = productSystem.objects.filter(codeProduct=codeProduct)
     stockStoreProduct = []
-    for stock in stockProduct.storexproductsystem_set.all():
-        stockStoreProduct.append([stock.asociatedStore.nameStore,stock.quantityProduct])
-    print(stockStoreProduct)
+    for productItem in totalProducts:
+        for stock in productItem.storexproductsystem_set.all():
+            stockStoreProduct.append([stock.asociatedStore.nameStore,stock.quantityProduct])
     return JsonResponse({
         'stockStoreProduct':stockStoreProduct,
     })
