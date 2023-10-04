@@ -40,34 +40,34 @@ def productsMetalprotec(request):
                 kitProduct = 'ON'
             else:
                 kitProduct = 'OFF'
-            endpointProduct=request.user.extendeduser.endpointUser
 
-            productObjectCreated = productSystem.objects.create(
-                nameProduct=nameProduct,
-                codeProduct=codeProduct,
-                codeSunatProduct=codeSunatProduct,
-                categoryProduct=categoryProduct,
-                subCategoryProduct=subCategoryProduct,
-                measureUnit=measureUnit,
-                weightProduct=weightProduct,
-                currencyProduct=currencyProduct,
-                pvnIGV=pvnIGV,
-                pvcIGV=pvcIGV,
-                pcnIGV=pcnIGV,
-                pccIGV=pccIGV,
-                kitProduct=kitProduct,
-                endpointProduct=endpointProduct,
-            )
-
-            allStoreSystem = storeSystem.objects.filter(endpointStore=request.user.extendeduser.endpointUser)
-            for storeInfo in allStoreSystem:
-                storexproductSystem.objects.create(
-                    quantityProduct='0',
-                    asociatedProduct=productObjectCreated,
-                    asociatedStore=storeInfo,
+            allEndpoints = endpointSystem.objects.all()
+            for endpointInfo in allEndpoints:
+                productObjectCreated = productSystem.objects.create(
+                    nameProduct=nameProduct,
+                    codeProduct=codeProduct,
+                    codeSunatProduct=codeSunatProduct,
+                    categoryProduct=categoryProduct,
+                    subCategoryProduct=subCategoryProduct,
+                    measureUnit=measureUnit,
+                    weightProduct=weightProduct,
+                    currencyProduct=currencyProduct,
+                    pvnIGV=pvnIGV,
+                    pvcIGV=pvcIGV,
+                    pcnIGV=pcnIGV,
+                    pccIGV=pccIGV,
+                    kitProduct=kitProduct,
+                    endpointProduct=endpointInfo,
                 )
-            return HttpResponseRedirect(reverse('productsMetalprotec:productsMetalprotec'))
 
+                allStoreSystem = storeSystem.objects.filter(endpointStore=endpointInfo)
+                for storeInfo in allStoreSystem:
+                    storexproductSystem.objects.create(
+                        quantityProduct='0',
+                        asociatedProduct=productObjectCreated,
+                        asociatedStore=storeInfo,
+                    )
+            return HttpResponseRedirect(reverse('productsMetalprotec:productsMetalprotec'))
 
     return render(request,'productsMetalprotec.html',{
         'productsSystem':productSystem.objects.filter(endpointProduct=request.user.extendeduser.endpointUser).order_by('id'),
