@@ -110,9 +110,9 @@
                                 {% endif %}
                                 <td>{{ billInfo.stateTeFacturo }}</td>
                                 {% if billInfo.paidBill == '1' %}
-                                <td><button class="btn btn-danger">C</button></td>
+                                <td class="text-center"><button class="btn btn-danger">C</button></td>
                                 {% else %}
-                                <td><button class="btn btn-success">C</button></td>
+                                <td class="text-center"><button class="btn btn-success">C</button></td>
                                 {% endif %}
                                 {% if billInfo.stateBill == 'ENVIADA' %}
                                     <td class="text-center">
@@ -156,9 +156,9 @@
                                 {% endif %}
                                 <td>{{ billInfo.stateTeFacturo }}</td>
                                 {% if billInfo.paidBill == '1' %}
-                                <td><button class="btn btn-danger">C</button></td>
+                                <td class="text-center"><button class="btn btn-danger">C</button></td>
                                 {% else %}
-                                <td><button class="btn btn-success">C</button></td>
+                                <td class="text-center"><button class="btn btn-success">C</button></td>
                                 {% endif %}
                                 {% if billInfo.stateBill == 'ENVIADA' %}
                                     <td class="text-center">
@@ -203,10 +203,10 @@
                             {% endif %}
                             <td>{{ billInfo.stateTeFacturo }}</td>
                             {% if billInfo.paidBill == '1' %}
-                                <td><button class="btn btn-danger">C</button></td>
-                                {% else %}
-                                <td><button class="btn btn-success">C</button></td>
-                                {% endif %}
+                                <td class="text-center"><button class="btn btn-danger">C</button></td>
+                            {% else %}
+                                <td class="text-center"><button class="btn btn-success">C</button></td>
+                            {% endif %}
                             {% if billInfo.stateBill == 'ENVIADA' %}
                                 <td class="text-center">
                                     <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#createCreditNote" id="bill{{ billInfo.id }}" onclick="chargeProductsCreditNote(this.id)"><i class="fa-solid fa-trash"></i></button>
