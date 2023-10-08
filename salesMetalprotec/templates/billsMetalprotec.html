@@ -70,6 +70,7 @@
                     <th scope="col">Enviar a TeFacturo</th>
                     <th scope="col">Verificar Estado</th>
                     <th scope="col">Estado TeFacturo</th>
+                    <th scope="col">Stock descontado</th>
                     <th scope="col">Emitir Nota de Credito</th>
                 </thead>
                 <tbody>
@@ -108,6 +109,11 @@
                                     <td></td>
                                 {% endif %}
                                 <td>{{ billInfo.stateTeFacturo }}</td>
+                                {% if billInfo.paidBill == '1' %}
+                                <td><button class="btn btn-danger">C</button></td>
+                                {% else %}
+                                <td><button class="btn btn-success">C</button></td>
+                                {% endif %}
                                 {% if billInfo.stateBill == 'ENVIADA' %}
                                     <td class="text-center">
                                         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#createCreditNote" id="bill{{ billInfo.id }}" onclick="chargeProductsCreditNote(this.id)"><i class="fa-solid fa-trash"></i></button>
@@ -149,6 +155,11 @@
                                     <td></td>
                                 {% endif %}
                                 <td>{{ billInfo.stateTeFacturo }}</td>
+                                {% if billInfo.paidBill == '1' %}
+                                <td><button class="btn btn-danger">C</button></td>
+                                {% else %}
+                                <td><button class="btn btn-success">C</button></td>
+                                {% endif %}
                                 {% if billInfo.stateBill == 'ENVIADA' %}
                                     <td class="text-center">
                                         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#createCreditNote" id="bill{{ billInfo.id }}" onclick="chargeProductsCreditNote(this.id)"><i class="fa-solid fa-trash"></i></button>
@@ -191,6 +202,11 @@
                                 <td></td>
                             {% endif %}
                             <td>{{ billInfo.stateTeFacturo }}</td>
+                            {% if billInfo.paidBill == '1' %}
+                                <td><button class="btn btn-danger">C</button></td>
+                                {% else %}
+                                <td><button class="btn btn-success">C</button></td>
+                                {% endif %}
                             {% if billInfo.stateBill == 'ENVIADA' %}
                                 <td class="text-center">
                                     <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#createCreditNote" id="bill{{ billInfo.id }}" onclick="chargeProductsCreditNote(this.id)"><i class="fa-solid fa-trash"></i></button>
