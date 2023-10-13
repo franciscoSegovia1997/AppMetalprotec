@@ -3018,6 +3018,19 @@ def sendBillTeFacturo(request,idBill):
         print(r.content)
         if((r.status_code==200) or (r.status_code==201)):
             billObject.stateBill = 'ENVIADA'
+            try:
+                quotationItem = None
+                if billObject.originBill == 'GUIDE':
+                    for guideItem in billObject.guidesystem_set.all():
+                        quotationItem = guideItem.asociatedQuotation
+                        quotationItem.currencyQuotation = billObject.currencyBill
+                        quotationItem.save()
+                else:
+                    quotationItem = billObject.asociatedQuotation
+                    quotationItem.currencyQuotation = billObject.currencyBill
+                    quotationItem.save()
+            except:
+                pass
         billObject.save()
     else:
         billObject.stateBill = 'ENVIADA'
@@ -3054,6 +3067,19 @@ def sendInvoiceTeFacturo(request,idInvoice):
         print(r.content)
         if((r.status_code==200) or (r.status_code==201)):
             invoiceObject.stateInvoice = 'ENVIADA'
+            try:
+                quotationItem = None
+                if invoiceObject.originInvoice == 'GUIDE':
+                    for guideItem in invoiceObject.guidesystem_set.all():
+                        quotationItem = guideItem.asociatedQuotation
+                        quotationItem.currencyQuotation = invoiceObject.currencyInvoice
+                        quotationItem.save()
+                else:
+                    quotationItem = invoiceObject.asociatedQuotation
+                    quotationItem.currencyQuotation = invoiceObject.currencyInvoice
+                    quotationItem.save()
+            except:
+                pass
         invoiceObject.save()
     else:
         invoiceObject.stateInvoice = 'ENVIADA'
