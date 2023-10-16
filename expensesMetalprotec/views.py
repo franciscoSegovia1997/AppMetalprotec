@@ -266,7 +266,7 @@ def deleteCashIncome(request,idCashIncome, idBoxRegister):
 
 def newPurchaseOrder(request):
     return render(request,'newPurchaseOrder.html',{
-        'productsSystem': productSystem.objects.all().order_by('id')
+        'productsSystem': productSystem.objects.filter(endpointProduct=request.user.extendeduser.endpointUser).order_by('id')
     })
 
 def getProductInfoExpenses(request,ind):
