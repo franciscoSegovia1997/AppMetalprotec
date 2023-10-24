@@ -4998,3 +4998,6 @@ def getBillProducts(request):
     return JsonResponse({
         'totalProducts':totalProducts
     })
+
+def discountGuideProducts(request,idGuide):
+    return HttpResponseRedirect(reverse('salesMetalprotec:guidesMetalprotec'))

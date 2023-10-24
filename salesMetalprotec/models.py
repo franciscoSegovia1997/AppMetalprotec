@@ -117,6 +117,7 @@ class guideSystem(models.Model):
     stateTeFacturo = models.CharField(max_length=24,null=True,blank=True)
     nroGuide = models.CharField(max_length=12,null=True,blank=True)
     endpointGuide = models.ForeignKey(endpointSystem, on_delete=models.CASCADE, null=True, blank=True)
+    stateDiscount = models.CharField(max_length=4,null=True,blank=True)
 
 class creditNoteSystem(models.Model):
     asociatedBill = models.OneToOneField(billSystem,on_delete=models.CASCADE, blank=True, null=True)

@@ -87,6 +87,7 @@
                     <th scope="col">Verificar Estado</th>
                     <th scope="col">Estado TeFacturo</th>
                     <th scope="col">Enviar a TeFacturo</th>
+                    <th scope="col">Descontar guia</th>
                 </thead>
                 <tbody>
                     {% for guideInfo in guidesSystem %}
@@ -143,6 +144,17 @@
                             <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:sendGuideTeFacturo' guideInfo.id %}"><i class="fa-solid fa-arrow-right"></i></a></td>
                         {% else %}
                             <td></td>
+                        {% endif %}
+                        {% if guideInfo.stateTeFacturo == 'Aceptado' %}
+                            {% if guideInfo.stateDiscount == '1' %}
+                                <td class="text-center"><a class="btn btn-success" href="#"><i class="fa-solid fa-arrow-down"></i></a></td>
+                            {% elif guideInfo.stateDiscount == '2' %}
+                                <td class="text-center"><a class="btn btn-danger" href="#"><i class="fa-solid fa-arrow-down"></i></a></td>
+                            {% else %}
+                                <td class="text-center"><a class="btn btn-secondary" href="{% url 'salesMetalprotec:discountGuideProducts' guideInfo.id %}"><i class="fa-solid fa-arrow-down"></i></a></td>
+                            {% endif %}
+                        {% else %}
+                            <td class="text-center"></td>
                         {% endif %}
                     </tr>
                     {% endfor %}

@@ -46,5 +46,6 @@ urlpatterns = [
     path('exportFilteredGuides',views.exportFilteredGuides,name='exportFilteredGuides'),
     path('exportFilteredBills',views.exportFilteredBills,name='exportFilteredBills'),
     path('exportFilteredInvoices',views.exportFilteredInvoices,name='exportFilteredInvoices'),
-    path('getBillProducts',views.getBillProducts,name='getBillProducts')
+    path('getBillProducts',views.getBillProducts,name='getBillProducts'),
+    path('discountGuideProducts/<str:idGuide>',views.discountGuideProducts,name='discountGuideProducts'),
 ]
