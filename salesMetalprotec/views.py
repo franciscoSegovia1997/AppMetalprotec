@@ -2511,7 +2511,7 @@ def verifyBillTeFacturo(request,idBill):
                 for productInfo in allProductsInfo:
                     asociatedProduct = productInfo.asociatedProduct
                     storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
-                    stockEdit = storexproductSystem.objects.filter(asociatedProduct=asociatedProduct).get(asociatedStore=storeObject)
+                    stockEdit = storexproductSystem.objects.filter(asociatedProduct__codeProduct=asociatedProduct.codeProduct).get(asociatedStore=storeObject)
                     lastStock = stockEdit.quantityProduct
                     addStockQt = productInfo.dataProductQuotation[8]
                     stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) - Decimal(addStockQt))))
@@ -2624,7 +2624,7 @@ def verifyInvoiceTeFacturo(request,idInvoice):
                 for productInfo in allProductsInfo:
                     asociatedProduct = productInfo.asociatedProduct
                     storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
-                    stockEdit = storexproductSystem.objects.filter(asociatedProduct=asociatedProduct).get(asociatedStore=storeObject)
+                    stockEdit = storexproductSystem.objects.filter(asociatedProduct__codeProduct=asociatedProduct.codeProduct).get(asociatedStore=storeObject)
                     lastStock = stockEdit.quantityProduct
                     addStockQt = productInfo.dataProductQuotation[8]
                     stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) - Decimal(addStockQt))))
@@ -5000,4 +5000,49 @@ def getBillProducts(request):
     })
 
 def discountGuideProducts(request,idGuide):
+    guideObject = guideSystem.objects.get(id=idGuide)
+    if (guideObject.stateDiscount != '2' and guideObject.stateDiscount != '1'):
+        guideObject.stateDiscount = '2'
+        guideObject.save()
+        asociatedQuotation = guideObject.asociatedQuotation
+        allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+        try:
+            for productInfo in allProductsInfo:
+                asociatedProduct = productInfo.asociatedProduct
+                storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
+                stockEdit = storexproductSystem.objects.filter(asociatedProduct__codeProduct=asociatedProduct.codeProduct).get(asociatedStore=storeObject)
+                lastStock = stockEdit.quantityProduct
+                addStockQt = productInfo.dataProductQuotation[8]
+                stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) - Decimal(addStockQt))))
+                stockEdit.save()
+                newStock = stockEdit.quantityProduct
+                typeOutcoming = 'EGRESO-GUIA'
+                dateOutcoming = datetime.datetime.today()
+                productCode = asociatedProduct.codeProduct
+                nameStore = storeObject.nameStore
+                quantityProduct = addStockQt
+                referenceOutcome = guideObject.codeGuide
+                asociatedUserData = request.user
+                asociatedProduct = asociatedProduct
+                asociatedStoreData = storeObject
+                endpointOutcoming = request.user.extendeduser.endpointUser
+                outcomingItemsRegisterInfo.objects.create(
+                    typeOutcoming=typeOutcoming,
+                    dateOutcoming=dateOutcoming,
+                    productCode=productCode,
+                    nameStore=nameStore,
+                    quantityProduct=quantityProduct,
+                    lastStock=lastStock,
+                    newStock=newStock,
+                    referenceOutcome=referenceOutcome,
+                    asociatedUserData=asociatedUserData,
+                    asociatedProduct=asociatedProduct,
+                    asociatedStoreData=asociatedStoreData,
+                    endpointOutcoming=endpointOutcoming
+                )
+            guideObject.stateDiscount = '1'
+            guideObject.save()
+        except:
+            guideObject.stateDiscount = '2'
+            guideObject.save()
     return HttpResponseRedirect(reverse('salesMetalprotec:guidesMetalprotec'))
