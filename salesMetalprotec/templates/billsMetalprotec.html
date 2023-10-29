@@ -109,11 +109,21 @@
                                     <td></td>
                                 {% endif %}
                                 <td>{{ billInfo.stateTeFacturo }}</td>
-                                {% if billInfo.stockBill == '2' %}
-                                <td class="text-center"><button class="btn btn-success">C</button></td>
-                                {% else %}
-                                <td class="text-center"><button class="btn btn-danger">C</button></td>
-                                {% endif %}
+                                <td class="text-center">
+                                    {% if billInfo.stockBill is None and billInfo.stateTeFacturo == 'Aceptado' %}
+                                    <button class="btn btn-warning">D</button>
+                                    {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Aceptado' %}
+                                    <button class="btn btn-success">D</button>
+                                    {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Aceptado' %}
+                                    <button class="btn btn-danger">D</button>
+                                    {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Anulado' %}
+                                    <button class="btn btn-danger">R</button>
+                                    {% elif billInfo.stockBill is None and billInfo.stateTeFacturo == 'Anulado' %}
+                                    <button class="btn btn-success">R</button>
+                                    {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Anulado' %}
+                                    <button class="btn btn-danger">D</button>
+                                    {% endif %}
+                                </td>
                                 {% if billInfo.stateBill == 'ENVIADA' %}
                                     <td class="text-center">
                                         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#createCreditNote" id="bill{{ billInfo.id }}" onclick="chargeProductsCreditNote(this.id)"><i class="fa-solid fa-trash"></i></button>
@@ -155,11 +165,22 @@
                                     <td></td>
                                 {% endif %}
                                 <td>{{ billInfo.stateTeFacturo }}</td>
-                                {% if billInfo.stockBill == '2' %}
-                                <td class="text-center"><button class="btn btn-success">C</button></td>
-                                {% else %}
-                                <td class="text-center"><button class="btn btn-danger">C</button></td>
-                                {% endif %}
+                                <td class="text-center">
+                                    {% if billInfo.stockBill is None and billInfo.stateTeFacturo == 'Aceptado' %}
+                                    <button class="btn btn-warning">D</button>
+                                    {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Aceptado' %}
+                                    <button class="btn btn-success">D</button>
+                                    {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Aceptado' %}
+                                    <button class="btn btn-danger">D</button>
+                                    {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Anulado' %}
+                                    <button class="btn btn-warning">R</button>
+                                    {% elif billInfo.stockBill is None and billInfo.stateTeFacturo == 'Anulado' %}
+                                    <button class="btn btn-success">R</button>
+                                    {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Anulado' %}
+                                    <button class="btn btn-danger">R</button>
+                                    {% else %}
+                                    {% endif %}
+                                </td>
                                 {% if billInfo.stateBill == 'ENVIADA' %}
                                     <td class="text-center">
                                         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#createCreditNote" id="bill{{ billInfo.id }}" onclick="chargeProductsCreditNote(this.id)"><i class="fa-solid fa-trash"></i></button>
@@ -202,11 +223,22 @@
                                 <td></td>
                             {% endif %}
                             <td>{{ billInfo.stateTeFacturo }}</td>
-                            {% if billInfo.stockBill == '2' %}
-                                <td class="text-center"><button class="btn btn-success">C</button></td>
-                            {% else %}
-                                <td class="text-center"><button class="btn btn-danger">C</button></td>
-                            {% endif %}
+                            <td class="text-center">
+                                {% if billInfo.stockBill is None and billInfo.stateTeFacturo == 'Aceptado' %}
+                                <button class="btn btn-warning">D</button>
+                                {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Aceptado' %}
+                                <button class="btn btn-success">D</button>
+                                {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Aceptado' %}
+                                <button class="btn btn-danger">D</button>
+                                {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Anulado' %}
+                                <button class="btn btn-warning">R</button>
+                                {% elif billInfo.stockBill is None and billInfo.stateTeFacturo == 'Anulado' %}
+                                <button class="btn btn-success">R</button>
+                                {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Anulado' %}
+                                <button class="btn btn-danger">R</button>
+                                {% else %}
+                                {% endif %}
+                            </td>
                             {% if billInfo.stateBill == 'ENVIADA' %}
                                 <td class="text-center">
                                     <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#createCreditNote" id="bill{{ billInfo.id }}" onclick="chargeProductsCreditNote(this.id)"><i class="fa-solid fa-trash"></i></button>
