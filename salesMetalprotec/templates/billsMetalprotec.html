@@ -111,17 +111,18 @@
                                 <td>{{ billInfo.stateTeFacturo }}</td>
                                 <td class="text-center">
                                     {% if billInfo.stockBill is None and billInfo.stateTeFacturo == 'Aceptado' %}
-                                    <button class="btn btn-warning">D</button>
+                                    <a class="btn btn-warning" href="{% url 'salesMetalprotec:discountStockBill' billInfo.id %}">D</a>
                                     {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Aceptado' %}
                                     <button class="btn btn-success">D</button>
                                     {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Aceptado' %}
                                     <button class="btn btn-danger">D</button>
                                     {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Anulado' %}
-                                    <button class="btn btn-danger">R</button>
+                                    <a class="btn btn-warning" href="{% url 'salesMetalprotec:rollbackDiscountStockBill' billInfo.id %}">R</a>
                                     {% elif billInfo.stockBill is None and billInfo.stateTeFacturo == 'Anulado' %}
                                     <button class="btn btn-success">R</button>
                                     {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Anulado' %}
                                     <button class="btn btn-danger">D</button>
+                                    {% else %}
                                     {% endif %}
                                 </td>
                                 {% if billInfo.stateBill == 'ENVIADA' %}
@@ -167,17 +168,17 @@
                                 <td>{{ billInfo.stateTeFacturo }}</td>
                                 <td class="text-center">
                                     {% if billInfo.stockBill is None and billInfo.stateTeFacturo == 'Aceptado' %}
-                                    <button class="btn btn-warning">D</button>
+                                    <a class="btn btn-warning" href="{% url 'salesMetalprotec:discountStockBill' billInfo.id %}">D</a>
                                     {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Aceptado' %}
                                     <button class="btn btn-success">D</button>
                                     {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Aceptado' %}
                                     <button class="btn btn-danger">D</button>
                                     {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Anulado' %}
-                                    <button class="btn btn-warning">R</button>
+                                    <a class="btn btn-warning" href="{% url 'salesMetalprotec:rollbackDiscountStockBill' billInfo.id %}">R</a>
                                     {% elif billInfo.stockBill is None and billInfo.stateTeFacturo == 'Anulado' %}
                                     <button class="btn btn-success">R</button>
                                     {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Anulado' %}
-                                    <button class="btn btn-danger">R</button>
+                                    <button class="btn btn-danger">D</button>
                                     {% else %}
                                     {% endif %}
                                 </td>
@@ -225,17 +226,17 @@
                             <td>{{ billInfo.stateTeFacturo }}</td>
                             <td class="text-center">
                                 {% if billInfo.stockBill is None and billInfo.stateTeFacturo == 'Aceptado' %}
-                                <button class="btn btn-warning">D</button>
+                                <a class="btn btn-warning" href="{% url 'salesMetalprotec:discountStockBill' billInfo.id %}">D</a>
                                 {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Aceptado' %}
                                 <button class="btn btn-success">D</button>
                                 {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Aceptado' %}
                                 <button class="btn btn-danger">D</button>
                                 {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Anulado' %}
-                                <button class="btn btn-warning">R</button>
+                                <a class="btn btn-warning" href="{% url 'salesMetalprotec:rollbackDiscountStockBill' billInfo.id %}">R</a>
                                 {% elif billInfo.stockBill is None and billInfo.stateTeFacturo == 'Anulado' %}
                                 <button class="btn btn-success">R</button>
                                 {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Anulado' %}
-                                <button class="btn btn-danger">R</button>
+                                <button class="btn btn-danger">D</button>
                                 {% else %}
                                 {% endif %}
                             </td>
