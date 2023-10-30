@@ -4,7 +4,7 @@ from decimal import Decimal, DecimalException,getcontext
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from stockManagment.models import incomingItemsRegisterInfo
+from stockManagment.models import incomingItemsRegisterInfo, outcomingItemsRegisterInfo
 import datetime
 from settingsMetalprotec.models import endpointSystem
 
@@ -72,7 +72,7 @@ def productsMetalprotec(request):
     return render(request,'productsMetalprotec.html',{
         'productsSystem':productSystem.objects.filter(endpointProduct=request.user.extendeduser.endpointUser).order_by('id'),
         'storesSystem':storeSystem.objects.filter(endpointStore=request.user.extendeduser.endpointUser).order_by('id'),
-        'totalEndpoint':endpointSystem.objects.all().order_by('-id')
+        'totalEndpoint':endpointSystem.objects.all().exclude(id=request.user.extendeduser.endpointUser.id).order_by('-id')
     })
 
 @login_required(login_url='/')
@@ -263,18 +263,73 @@ def changeStore(request):
         idProductInfo = request.POST.get('changeStoreProduct')
         idEndpoint = request.POST.get('endpointStoreProduct')
         qtStock = request.POST.get('stockMove')
-        productoActual = productSystem.objects.get(id=idProductInfo)
-        endpointDestino = endpointSystem.objects.get(id=idEndpoint)
-        productoDestino = productSystem.objects.filter(endpointProduct=endpointDestino).filter(codeProduct=productoActual.codeProduct)
-        if len(productoDestino) == 1:
-            productoFinal = productoDestino[0]
-            stockFinal = productoFinal.storexproductsystem_set.all()[0]
-            stockInicial = productoActual.storexproductsystem_set.all()[0]
-            stockMove = str(Decimal('%.2f' % Decimal(qtStock)))
-            stockInicial.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockInicial.quantityProduct) - Decimal(stockMove))))
-            stockInicial.save()
-            stockFinal.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockFinal.quantityProduct) + Decimal(stockMove))))
-            stockFinal.save()
-        else:
-            pass
+        if idProductInfo != '' and idEndpoint != '' and qtStock != '':
+            productoActual = productSystem.objects.get(id=idProductInfo)
+            endpointDestino = endpointSystem.objects.get(id=idEndpoint)
+            productoDestino = productSystem.objects.filter(endpointProduct=endpointDestino).filter(codeProduct=productoActual.codeProduct)
+            if len(productoDestino) == 1:
+                
+
+
+                productoFinal = productoDestino[0]
+                stockFinal = productoFinal.storexproductsystem_set.all()[0]
+                stockInicial = productoActual.storexproductsystem_set.all()[0]
+                stockMove = str(Decimal('%.2f' % Decimal(qtStock)))
+                lastStockOrigen = stockInicial.quantityProduct
+                stockInicial.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockInicial.quantityProduct) - Decimal(stockMove))))
+                stockInicial.save()
+                newStockOrigen = stockInicial.quantityProduct
+                lastStockDestino = stockFinal.quantityProduct
+                stockFinal.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockFinal.quantityProduct) + Decimal(stockMove))))
+                stockFinal.save()
+                newStockDestino = stockFinal.quantityProduct
+
+                endpointOutcoming = request.user.extendeduser.endpointUser
+                typeOutcoming = 'TRASLADO-EGRESO'
+                typeIncoming = 'TRASLADO-INGRESO'
+                dateOutcoming = datetime.datetime.today()
+                dateIncoming = datetime.datetime.today()
+                productCode = productoActual.codeProduct
+                nameStoreOrigen = stockInicial.asociatedStore.nameStore
+                nameStoreDestino = stockFinal.asociatedStore.nameStore
+                quantityProduct = qtStock
+                asociatedUserData = request.user
+
+                referenceOutcome = 'TRASLADO'
+                referenceIncome = 'TRASLADO'
+
+
+                outcomingItemsRegisterInfo.objects.create(
+                    typeOutcoming=typeOutcoming,
+                    dateOutcoming=dateOutcoming,
+                    productCode=productCode,
+                    nameStore=nameStoreOrigen,
+                    quantityProduct=quantityProduct,
+                    lastStock=lastStockOrigen,
+                    newStock=newStockOrigen,
+                    referenceOutcome=referenceOutcome,
+                    asociatedUserData=asociatedUserData,
+                    asociatedProduct=productoActual,
+                    asociatedStoreData=stockInicial.asociatedStore,
+                    endpointOutcoming=endpointOutcoming
+                )
+
+
+
+                incomingItemsRegisterInfo.objects.create(
+                    typeIncoming=typeIncoming,
+                    dateIncoming=dateIncoming,
+                    productCode=productCode,
+                    nameStore=nameStoreDestino,
+                    quantityProduct=quantityProduct,
+                    lastStock=lastStockDestino,
+                    newStock=newStockDestino,
+                    referenceIncome=referenceIncome,
+                    asociatedUserData=asociatedUserData,
+                    asociatedProduct=productoFinal,
+                    asociatedStoreData=stockFinal.asociatedStore,
+                    endpointIncoming=endpointDestino
+                )
+            else:
+                pass
         return HttpResponseRedirect(reverse('productsMetalprotec:productsMetalprotec'))
