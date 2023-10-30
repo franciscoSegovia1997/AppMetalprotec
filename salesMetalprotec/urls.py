@@ -48,6 +48,8 @@ urlpatterns = [
     path('exportFilteredInvoices',views.exportFilteredInvoices,name='exportFilteredInvoices'),
     path('getBillProducts',views.getBillProducts,name='getBillProducts'),
     path('discountGuideProducts/<str:idGuide>',views.discountGuideProducts,name='discountGuideProducts'),
-    path('discountStock/<str:idBill>',views.discountStockBill,name='discountStockBill'),
-    path('rollbackDiscountStockBill/<str:idBill>',views.rollbackDiscountStockBill,name='rollbackDiscountStockBill')
+    path('discountStockBill/<str:idBill>',views.discountStockBill,name='discountStockBill'),
+    path('rollbackDiscountStockBill/<str:idBill>',views.rollbackDiscountStockBill,name='rollbackDiscountStockBill'),
+    path('discountStockInvoice/<str:idInvoice>',views.discountStockInvoice,name='discountStockInvoice'),
+    path('rollbackDiscountStockInvoice/<str:idInvoice>',views.rollbackDiscountStockInvoice,name='rollbackDiscountStockInvoice'),
 ]

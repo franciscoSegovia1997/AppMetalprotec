@@ -2706,7 +2706,11 @@ def verifyInvoiceTeFacturo(request,idInvoice):
     else:
         invoiceObject.stateTeFacturo = 'Aceptado con Obs.'
         invoiceObject.save()
-    if (invoiceObject.stockInvoice != '2' and invoiceObject.stockInvoice != '1') and invoiceObject.typeItemsInvoice=='PRODUCTOS':
+    return HttpResponseRedirect(reverse('salesMetalprotec:invoicesMetalprotec'))
+
+def discountStockInvoice(request,idInvoice):
+    invoiceObject = invoiceSystem.objects.get(id=idInvoice)
+    if invoiceObject.stockInvoice is None and invoiceObject.stateTeFacturo == 'Aceptado' and invoiceObject.typeItemsInvoice =='PRODUCTOS':
         invoiceObject.stockInvoice = '1'
         invoiceObject.save()
         if invoiceObject.originInvoice == 'QUOTATION':
@@ -2722,7 +2726,7 @@ def verifyInvoiceTeFacturo(request,idInvoice):
                     stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) - Decimal(addStockQt))))
                     stockEdit.save()
                     newStock = stockEdit.quantityProduct
-                    typeOutcoming = 'EGRESO-INVOICE'
+                    typeOutcoming = 'EGRESO-FACTURA'
                     dateOutcoming = datetime.datetime.today()
                     productCode = asociatedProduct.codeProduct
                     nameStore = storeObject.nameStore
@@ -2730,7 +2734,6 @@ def verifyInvoiceTeFacturo(request,idInvoice):
                     referenceOutcome = invoiceObject.codeInvoice
                     asociatedUserData = request.user
                     asociatedProduct = asociatedProduct
-                    asociatedStoreData = storeObject
                     endpointOutcoming = request.user.extendeduser.endpointUser
                     outcomingItemsRegisterInfo.objects.create(
                         typeOutcoming=typeOutcoming,
@@ -2753,7 +2756,6 @@ def verifyInvoiceTeFacturo(request,idInvoice):
                 print('Se ha fallado')
                 invoiceObject.stockInvoice = '1'
                 invoiceObject.save()
-
         else:
             asociatedQuotation = invoiceObject.guidesystem_set.all()[0].asociatedQuotation
             allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
@@ -2761,13 +2763,13 @@ def verifyInvoiceTeFacturo(request,idInvoice):
                 for productInfo in allProductsInfo:
                     asociatedProduct = productInfo.asociatedProduct
                     storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
-                    stockEdit = storexproductSystem.objects.filter(asociatedProduct=asociatedProduct).get(asociatedStore=storeObject)
+                    stockEdit = storexproductSystem.objects.filter(asociatedProduct__codeProduct=asociatedProduct.codeProduct).get(asociatedStore=storeObject)
                     lastStock = stockEdit.quantityProduct
                     addStockQt = productInfo.dataProductQuotation[8]
                     stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) - Decimal(addStockQt))))
                     stockEdit.save()
                     newStock = stockEdit.quantityProduct
-                    typeOutcoming = 'EGRESO-INVOICE'
+                    typeOutcoming = 'EGRESO-FACTURA'
                     dateOutcoming = datetime.datetime.today()
                     productCode = asociatedProduct.codeProduct
                     nameStore = storeObject.nameStore
@@ -2775,7 +2777,6 @@ def verifyInvoiceTeFacturo(request,idInvoice):
                     referenceOutcome = invoiceObject.codeInvoice
                     asociatedUserData = request.user
                     asociatedProduct = asociatedProduct
-                    asociatedStoreData = storeObject
                     endpointOutcoming = request.user.extendeduser.endpointUser
                     outcomingItemsRegisterInfo.objects.create(
                         typeOutcoming=typeOutcoming,
@@ -2796,6 +2797,97 @@ def verifyInvoiceTeFacturo(request,idInvoice):
                 invoiceObject.save()
             except:
                 print('Se ha fallado')
+                invoiceObject.stockInvoice = '1'
+                invoiceObject.save()
+    return HttpResponseRedirect(reverse('salesMetalprotec:invoicesMetalprotec'))
+
+def rollbackDiscountStockInvoice(request,idInvoice):
+    invoiceObject = invoiceSystem.objects.get(id=idInvoice)
+    if invoiceObject.stockInvoice == '2' and invoiceObject.stateTeFacturo == 'Anulado' and invoiceObject.typeItemsInvoice =='PRODUCTOS':
+        invoiceObject.stockInvoice = '1'
+        invoiceObject.save()
+        if invoiceObject.originInvoice == 'QUOTATION':
+            asociatedQuotation = invoiceObject.asociatedQuotation
+            allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+            try:
+                for productInfo in allProductsInfo:
+                    asociatedProduct = productInfo.asociatedProduct
+                    storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
+                    stockEdit = storexproductSystem.objects.filter(asociatedProduct__codeProduct=asociatedProduct.codeProduct).get(asociatedStore=storeObject)
+                    lastStock = stockEdit.quantityProduct
+                    addStockQt = productInfo.dataProductQuotation[8]
+                    stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) + Decimal(addStockQt))))
+                    stockEdit.save()
+                    newStock = stockEdit.quantityProduct
+                    typeIncoming = 'ROLLBACK-FACTURA'
+                    dateIncoming = datetime.datetime.today()
+                    productCode = asociatedProduct.codeProduct
+                    nameStore = storeObject.nameStore
+                    quantityProduct = addStockQt
+                    referenceIncome = invoiceObject.codeInvoice
+                    asociatedUserData = request.user
+                    asociatedProduct = asociatedProduct
+                    endpointIncoming = request.user.extendeduser.endpointUser
+                    incomingItemsRegisterInfo.objects.create(
+                        typeIncoming=typeIncoming,
+                        dateIncoming=dateIncoming,
+                        productCode=productCode,
+                        nameStore=nameStore,
+                        quantityProduct=quantityProduct,
+                        lastStock=lastStock,
+                        newStock=newStock,
+                        referenceIncome=referenceIncome,
+                        asociatedUserData=asociatedUserData,
+                        asociatedProduct=asociatedProduct,
+                        asociatedInvoice=invoiceObject,
+                        asociatedStoreData=storeObject,
+                        endpointIncoming=endpointIncoming
+                    )
+                invoiceObject.stockInvoice = None
+                invoiceObject.save()
+            except:
+                invoiceObject.stockInvoice = '1'
+                invoiceObject.save()
+        else:
+            asociatedQuotation = invoiceObject.guidesystem_set.all()[0].asociatedQuotation
+            allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+            try:
+                for productInfo in allProductsInfo:
+                    asociatedProduct = productInfo.asociatedProduct
+                    storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
+                    stockEdit = storexproductSystem.objects.filter(asociatedProduct__codeProduct=asociatedProduct.codeProduct).get(asociatedStore=storeObject)
+                    lastStock = stockEdit.quantityProduct
+                    addStockQt = productInfo.dataProductQuotation[8]
+                    stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) + Decimal(addStockQt))))
+                    stockEdit.save()
+                    newStock = stockEdit.quantityProduct
+                    typeIncoming = 'ROLLBACK-FACTURA'
+                    dateIncoming = datetime.datetime.today()
+                    productCode = asociatedProduct.codeProduct
+                    nameStore = storeObject.nameStore
+                    quantityProduct = addStockQt
+                    referenceIncome = invoiceObject.codeInvoice
+                    asociatedUserData = request.user
+                    asociatedProduct = asociatedProduct
+                    endpointIncoming = request.user.extendeduser.endpointUser
+                    incomingItemsRegisterInfo.objects.create(
+                        typeIncoming=typeIncoming,
+                        dateIncoming=dateIncoming,
+                        productCode=productCode,
+                        nameStore=nameStore,
+                        quantityProduct=quantityProduct,
+                        lastStock=lastStock,
+                        newStock=newStock,
+                        referenceIncome=referenceIncome,
+                        asociatedUserData=asociatedUserData,
+                        asociatedProduct=asociatedProduct,
+                        asociatedInvoice=invoiceObject,
+                        asociatedStoreData=storeObject,
+                        endpointIncoming=endpointIncoming
+                    )
+                invoiceObject.stockInvoice = None
+                invoiceObject.save()
+            except:
                 invoiceObject.stockInvoice = '1'
                 invoiceObject.save()
     return HttpResponseRedirect(reverse('salesMetalprotec:invoicesMetalprotec'))

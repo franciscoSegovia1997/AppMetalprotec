@@ -70,6 +70,7 @@
                     <th scope="col">Enviar a TeFacturo</th>
                     <th scope="col">Verificar Estado</th>
                     <th scope="col">Estado TeFacturo</th>
+                    <th scope="col">Stock descontado</th>
                     <th scope="col">Emitir Nota de Credito</th>
                 </thead>
                 <tbody>
@@ -108,6 +109,22 @@
                                     <td></td>
                                 {% endif %}
                                 <td>{{ invoiceInfo.stateTeFacturo }}</td>
+                                <td class="text-center">
+                                    {% if invoiceInfo.stockInvoice is None and invoiceInfo.stateTeFacturo == 'Aceptado' %}
+                                    <a class="btn btn-warning" href="{% url 'salesMetalprotec:discountStockInvoice' invoiceInfo.id %}">D</a>
+                                    {% elif invoiceInfo.stockInvoice == '2' and invoiceInfo.stateTeFacturo == 'Aceptado' %}
+                                    <button class="btn btn-success">D</button>
+                                    {% elif invoiceInfo.stockInvoice == '1' and invoiceInfo.stateTeFacturo == 'Aceptado' %}
+                                    <button class="btn btn-danger">D</button>
+                                    {% elif invoiceInfo.stockInvoice == '2' and invoiceInfo.stateTeFacturo == 'Anulado' %}
+                                    <a class="btn btn-warning" href="{% url 'salesMetalprotec:rollbackDiscountStockInvoice' invoiceInfo.id %}">R</a>
+                                    {% elif invoiceInfo.stockInvoice is None and invoiceInfo.stateTeFacturo == 'Anulado' %}
+                                    <button class="btn btn-success">R</button>
+                                    {% elif invoiceInfo.stockInvoice == '1' and invoiceInfo.stateTeFacturo == 'Anulado' %}
+                                    <button class="btn btn-danger">R</button>
+                                    {% else %}
+                                    {% endif %}
+                                </td>
                                 {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
                                     <td class="text-center"><a class="btn btn-danger" href="{% url 'salesMetalprotec:createCreditNoteFromInvoice' invoiceInfo.id %}"><i class="fa-solid fa-trash"></i></a></td>
                                 {% else %}
@@ -147,6 +164,22 @@
                                     <td></td>
                                 {% endif %}
                                 <td>{{ invoiceInfo.stateTeFacturo }}</td>
+                                <td class="text-center">
+                                    {% if invoiceInfo.stockInvoice is None and invoiceInfo.stateTeFacturo == 'Aceptado' %}
+                                    <a class="btn btn-warning" href="{% url 'salesMetalprotec:discountStockInvoice' invoiceInfo.id %}">D</a>
+                                    {% elif invoiceInfo.stockInvoice == '2' and invoiceInfo.stateTeFacturo == 'Aceptado' %}
+                                    <button class="btn btn-success">D</button>
+                                    {% elif invoiceInfo.stockInvoice == '1' and invoiceInfo.stateTeFacturo == 'Aceptado' %}
+                                    <button class="btn btn-danger">D</button>
+                                    {% elif invoiceInfo.stockInvoice == '2' and invoiceInfo.stateTeFacturo == 'Anulado' %}
+                                    <a class="btn btn-warning" href="{% url 'salesMetalprotec:rollbackDiscountStockInvoice' invoiceInfo.id %}">R</a>
+                                    {% elif invoiceInfo.stockInvoice is None and invoiceInfo.stateTeFacturo == 'Anulado' %}
+                                    <button class="btn btn-success">R</button>
+                                    {% elif invoiceInfo.stockInvoice == '1' and invoiceInfo.stateTeFacturo == 'Anulado' %}
+                                    <button class="btn btn-danger">R</button>
+                                    {% else %}
+                                    {% endif %}
+                                </td>
                                 {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
                                     <td class="text-center"><a class="btn btn-danger" href="{% url 'salesMetalprotec:createCreditNoteFromInvoice' invoiceInfo.id %}"><i class="fa-solid fa-trash"></i></a></td>
                                 {% else %}
@@ -187,6 +220,22 @@
                                 <td></td>
                             {% endif %}
                             <td>{{ invoiceInfo.stateTeFacturo }}</td>
+                            <td class="text-center">
+                                {% if invoiceInfo.stockInvoice is None and invoiceInfo.stateTeFacturo == 'Aceptado' %}
+                                <a class="btn btn-warning" href="{% url 'salesMetalprotec:discountStockInvoice' invoiceInfo.id %}">D</a>
+                                {% elif invoiceInfo.stockInvoice == '2' and invoiceInfo.stateTeFacturo == 'Aceptado' %}
+                                <button class="btn btn-success">D</button>
+                                {% elif invoiceInfo.stockInvoice == '1' and invoiceInfo.stateTeFacturo == 'Aceptado' %}
+                                <button class="btn btn-danger">D</button>
+                                {% elif invoiceInfo.stockInvoice == '2' and invoiceInfo.stateTeFacturo == 'Anulado' %}
+                                <a class="btn btn-warning" href="{% url 'salesMetalprotec:rollbackDiscountStockInvoice' invoiceInfo.id %}">R</a>
+                                {% elif invoiceInfo.stockInvoice is None and invoiceInfo.stateTeFacturo == 'Anulado' %}
+                                <button class="btn btn-success">R</button>
+                                {% elif invoiceInfo.stockInvoice == '1' and invoiceInfo.stateTeFacturo == 'Anulado' %}
+                                <button class="btn btn-danger">R</button>
+                                {% else %}
+                                {% endif %}
+                            </td>
                             {% if invoiceInfo.stateInvoice == 'ENVIADA' %}
                                 <td class="text-center"><a class="btn btn-danger" href="{% url 'salesMetalprotec:createCreditNoteFromInvoice' invoiceInfo.id %}"><i class="fa-solid fa-trash"></i></a></td>
                             {% else %}

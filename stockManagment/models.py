@@ -18,6 +18,7 @@ class incomingItemsRegisterInfo(models.Model):
     asociatedUserData = models.ForeignKey(User,blank=True, null=True, on_delete=models.SET_NULL)
     asociatedProduct = models.ForeignKey(productSystem,blank=True, null=True, on_delete=models.SET_NULL)
     asociatedBill = models.ForeignKey(billSystem,blank=True, null=True, on_delete=models.SET_NULL)
+    asociatedInvoice = models.ForeignKey(invoiceSystem,blank=True, null=True, on_delete=models.SET_NULL)
     asociatedCreditNote = models.ForeignKey(creditNoteSystem,blank=True, null=True, on_delete=models.SET_NULL)
     asociatedStoreData = models.ForeignKey(storeSystem,blank=True, null=True, on_delete=models.SET_NULL)
     endpointIncoming = models.ForeignKey(endpointSystem, on_delete=models.SET_NULL, null=True, blank=True)
