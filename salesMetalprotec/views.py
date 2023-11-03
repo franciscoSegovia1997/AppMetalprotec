@@ -4684,6 +4684,7 @@ def createBillFromGuides(request):
         for idGuide in guidesInfo:
             guideObject = guideSystem.objects.get(id=idGuide)
             guideObject.asociatedBill = infoCreatedBill
+            guideObject.stateGuide = 'EMITIDA'
             guideObject.save()
         return HttpResponseRedirect(reverse('salesMetalprotec:billsMetalprotec'))
     
