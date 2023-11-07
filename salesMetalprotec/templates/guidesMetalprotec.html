@@ -121,18 +121,22 @@
                         {% else %}
                             <td></td>
                         {% endif %}
-                        {% if guideInfo.stateGuide == 'ENVIADA' %}
-                            {% if guideInfo.stateTeFacturo == 'Aceptado' or guideInfo.stateTeFacturo == 'Aceptado con Obs.' %}
-                                {% if guideInfo.asociatedQuotation.quotationclientdata.dataClientQuotation.3 == 'EMPRESA' %}
-                                    <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:createBillFromGuide' guideInfo.id %}">F</a></td>
+                        {% if guideInfo.purposeTransportation == 'VENTA' %}
+                            {% if guideInfo.stateGuide == 'ENVIADA' %}
+                                {% if guideInfo.stateTeFacturo == 'Aceptado' or guideInfo.stateTeFacturo == 'Aceptado con Obs.' %}
+                                    {% if guideInfo.asociatedQuotation.quotationclientdata.dataClientQuotation.3 == 'EMPRESA' %}
+                                        <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:createBillFromGuide' guideInfo.id %}">F</a></td>
+                                    {% else %}
+                                        <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:createInvoiceFromGuide' guideInfo.id %}">B</a></td>
+                                    {% endif %}
                                 {% else %}
-                                    <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:createInvoiceFromGuide' guideInfo.id %}">B</a></td>
+                                    <td></td>
                                 {% endif %}
                             {% else %}
                                 <td></td>
                             {% endif %}
                         {% else %}
-                        <td></td>
+                            <td></td>
                         {% endif %}
                         {% if guideInfo.stateGuide != 'GENERADA' %}
                             <td class="text-center"><a class="btn btn-success" href="{% url 'salesMetalprotec:verifyGuideTeFacturo' guideInfo.id %}"><i class="fa-solid fa-check"></i></a></td>
@@ -145,14 +149,18 @@
                         {% else %}
                             <td></td>
                         {% endif %}
-                        {% if guideInfo.stateTeFacturo == 'Aceptado' %}
-                            {% if guideInfo.asociatedBill is None and guideInfo.asociatedInvoice is None %}
-                                {% if guideInfo.stateDiscount == '1' %}
-                                    <td class="text-center"><a class="btn btn-success" href="#"><i class="fa-solid fa-arrow-down"></i></a></td>
-                                {% elif guideInfo.stateDiscount == '2' %}
-                                    <td class="text-center"><a class="btn btn-danger" href="#"><i class="fa-solid fa-arrow-down"></i></a></td>
+                        {% if guideInfo.purposeTransportation == 'TRASLADO_ESTABLECIMIENTOS' %}
+                            {% if guideInfo.stateTeFacturo == 'Aceptado' %}
+                                {% if guideInfo.asociatedBill is None and guideInfo.asociatedInvoice is None %}
+                                    {% if guideInfo.stateDiscount == '1' %}
+                                        <td class="text-center"><a class="btn btn-success" href="#"><i class="fa-solid fa-arrow-down"></i></a></td>
+                                    {% elif guideInfo.stateDiscount == '2' %}
+                                        <td class="text-center"><a class="btn btn-danger" href="#"><i class="fa-solid fa-arrow-down"></i></a></td>
+                                    {% else %}
+                                        <td class="text-center"><a class="btn btn-secondary" href="{% url 'salesMetalprotec:discountGuideProducts' guideInfo.id %}"><i class="fa-solid fa-arrow-down"></i></a></td>
+                                    {% endif %}
                                 {% else %}
-                                    <td class="text-center"><a class="btn btn-secondary" href="{% url 'salesMetalprotec:discountGuideProducts' guideInfo.id %}"><i class="fa-solid fa-arrow-down"></i></a></td>
+                                    <td class="text-center"></td>
                                 {% endif %}
                             {% else %}
                                 <td class="text-center"></td>
