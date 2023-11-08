@@ -5195,7 +5195,10 @@ def discountGuideProducts(request,idGuide):
             for productInfo in allProductsInfo:
                 asociatedProduct = productInfo.asociatedProduct
                 storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
+                storeDestination = storeSystem.objects.all().exclude(id=storeObject.id)[0]
                 stockEdit = storexproductSystem.objects.filter(asociatedProduct__codeProduct=asociatedProduct.codeProduct).get(asociatedStore=storeObject)
+                stockAdd = storexproductSystem.objects.filter(asociatedProduct__codeProduct=asociatedProduct.codeProduct).get(asociatedStore=storeDestination)
+                
                 lastStock = stockEdit.quantityProduct
                 addStockQt = productInfo.dataProductQuotation[8]
                 stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) - Decimal(addStockQt))))
@@ -5224,6 +5227,36 @@ def discountGuideProducts(request,idGuide):
                     asociatedProduct=asociatedProduct,
                     asociatedStoreData=asociatedStoreData,
                     endpointOutcoming=endpointOutcoming
+                )
+
+                lastStock_1 = stockAdd.quantityProduct
+                addStockQt_1 = productInfo.dataProductQuotation[8]
+                stockAdd.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockAdd.quantityProduct) + Decimal(addStockQt_1))))
+                stockAdd.save()
+                newStock_1 = stockAdd.quantityProduct
+                typeIncoming_1 = 'INGRESO-GUIA'
+                dateIncoming_1 = datetime.datetime.today()
+                productCode_1 = asociatedProduct.codeProduct
+                nameStore_1 = storeDestination.nameStore
+                quantityProduct_1 = addStockQt_1
+                referenceIncome_1 = guideObject.codeGuide
+                asociatedUserData_1 = request.user
+                asociatedProduct_1 = asociatedProduct
+                asociatedStoreData_1 = storeDestination
+                endpointIncoming = endpointSystem.objects.all().exclude(id=endpointOutcoming.id)[0]
+                incomingItemsRegisterInfo.objects.create(
+                    typeIncoming=typeIncoming_1,
+                    dateIncoming=dateIncoming_1,
+                    productCode=productCode_1,
+                    nameStore=nameStore_1,
+                    quantityProduct=quantityProduct_1,
+                    lastStock=lastStock_1,
+                    newStock=newStock_1,
+                    referenceIncome=referenceIncome_1,
+                    asociatedUserData=asociatedUserData_1,
+                    asociatedProduct=asociatedProduct_1,
+                    asociatedStoreData=asociatedStoreData_1,
+                    endpointIncoming=endpointIncoming
                 )
             guideObject.stateDiscount = '1'
             guideObject.save()
