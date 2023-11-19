@@ -5264,3 +5264,14 @@ def discountGuideProducts(request,idGuide):
             guideObject.stateDiscount = '2'
             guideObject.save()
     return HttpResponseRedirect(reverse('salesMetalprotec:guidesMetalprotec'))
+
+
+def newGuideMetalprotec(request):
+    exchangeRate = getExchangeRate()
+    return render(request,'newGuideMetalprotec.html',{
+        'clientsSystem':clientSystem.objects.filter(endpointClient=request.user.extendeduser.endpointUser).order_by('id'),
+        'usersSystem':extendedUser.objects.filter(endpointUser=request.user.extendeduser.endpointUser).order_by('id'),
+        'productsSystem':productSystem.objects.filter(endpointProduct=request.user.extendeduser.endpointUser).order_by('id'),
+        'servicesSystem':serviceSystem.objects.filter(endpointService=request.user.extendeduser.endpointUser).order_by('id'),
+        'exchangeRate':exchangeRate
+    })

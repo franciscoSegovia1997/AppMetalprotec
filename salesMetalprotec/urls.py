@@ -52,4 +52,5 @@ urlpatterns = [
     path('rollbackDiscountStockBill/<str:idBill>',views.rollbackDiscountStockBill,name='rollbackDiscountStockBill'),
     path('discountStockInvoice/<str:idInvoice>',views.discountStockInvoice,name='discountStockInvoice'),
     path('rollbackDiscountStockInvoice/<str:idInvoice>',views.rollbackDiscountStockInvoice,name='rollbackDiscountStockInvoice'),
+    path('newGuideMetalproetc',views.newGuideMetalprotec,name='newGuideMetalprotec')
 ]
