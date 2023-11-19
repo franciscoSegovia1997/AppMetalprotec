@@ -112,7 +112,68 @@
         </div>
         <hr>
         <div class="row">
-            <h4>Datos de la cotizacion</h4>
+            <h4>Datos de la direccion de origen</h4>
+            <div class="row mb-3 mt-3">
+                <div class="col-4">
+                    <label>Seleccionar departamento</label>
+                    <select class="selectpicker form-control" data-live-search="true" id="selectDeparment">
+                        <option value="" selected></option>
+                        <option value="01">AMAZONAS</option>
+                        <option value="02">ANCASH</option>
+                        <option value="03">APURIMAC</option>
+                        <option value="04">AREQUIPA</option>
+                        <option value="05">AYACUCHO</option>
+                        <option value="06">CAJAMARCA</option>
+                        <option value="07">CALLAO</option>
+                        <option value="08">CUSCO</option>
+                        <option value="09">HUANCAVELICA</option>
+                        <option value="10">HUANUCO</option>
+                        <option value="11">ICA</option>
+                        <option value="12">JUNIN</option>
+                        <option value="13">LA LIBERTAD</option>
+                        <option value="14">LAMBAYEQUE</option>
+                        <option value="15">LIMA</option>
+                        <option value="16">LORETO</option>
+                        <option value="17">MADRE DE DIOS</option>
+                        <option value="18">MOQUEGUA</option>
+                        <option value="19">PASCO</option>
+                        <option value="20">PIURA</option>
+                        <option value="21">PUNO</option>
+                        <option value="22">SAN MARTIN</option>
+                        <option value="23">TACNA</option>
+                        <option value="24">TUMBES</option>
+                        <option value="25">UCAYALI</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Departamento</label>
+                    <input class="form-control" type="text" value="{{ editGuide.deparmentDeparture }}" id="deparmentDeparture" readonly>
+                </div>
+                <div class="col-4">
+                    <label>Provincia</label>
+                    <input class="form-control" type="text" value="{{ editGuide.provinceDeparture }}" id="provinceDeparture">
+                </div>
+                <div class="col-4">
+                    <label>Distrito</label>
+                    <input class="form-control" type="text" value="{{ editGuide.districtDeparture }}" id="districtDeparture">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Direccion</label>
+                    <input class="form-control" type="text" value="{{ editGuide.addressDeparture }}" id="addressDeparture">
+                </div>
+                <div class="col-4">
+                    <label>Ubigeo</label>
+                    <input class="form-control" type="text" value="{{ editGuide.ubigeoDeparture }}" id="ubigeoDeparture">
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <h4>Datos generales</h4>
             <div class="row mb-3 mt-3">
                 <div class="col-4">
                     <label>Fecha de emision</label>
@@ -181,29 +242,117 @@
         </div>
         <hr>
         <div class="row">
-            <h4>Items de la cotización</h4>
-            <div class="row mb-3 mt-3">
+            <h4>Datos de la guia</h4>
+            <div class="row mb-3">
                 <div class="col-4">
-                    <div class="row mx-0">
-                        <label>Tipo de items</label>
-                        <select class="selectpicker form-control" id="typeItems">
-                            <option value="" selected></option>
-                            <option value="PRODUCTOS">PRODUCTOS</option>
-                            <option value="SERVICIOS">SERVICIOS</option>
-                        </select>
-                    </div>
+                    <label>Fecha de emision</label>
+                    <input class="form-control" type="date" value="{{ editGuide.dateGuide|date:'Y-m-d' }}" id="dateGuide">
                 </div>
-                <div class="col-6"></div>
+                <div class="col-4">
+                    <label>Fecha de entrega de bienes</label>
+                    <input class="form-control" type="date" value="{{ editGuide.dateGivenGoods|date:'Y-m-d' }}" id="dateGivenGoods">
+                </div>
+                <div class="col-4">
+                    <label>Peso extra de la carga</label>
+                    <input class="form-control" type="number" step="0.01" value="{{ editGuide.extraWeight }}" id="extraWeight">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Motivo de traslado</label>
+                    <select class="selectpicker form-control" id="purposeTransportation">
+                        {% if editGuide.purposeTransportation == 'VENTA' %}
+                        <option value="" ></option>
+                        <option value="VENTA" selected>VENTA</option>
+                        <option value="TRASLADO_ESTABLECIMIENTOS">TRASLADO ENTRE ESTABLECIMIENTOS</option>
+                        {% elif editGuide.purposeTransportation == 'TRASLADO' %}
+                        <option value="" ></option>
+                        <option value="VENTA">VENTA</option>
+                        <option value="TRASLADO_ESTABLECIMIENTOS" selected>TRASLADO ENTRE ESTABLECIMIENTOS</option>
+                        {% else %}
+                        <option value="" selected></option>
+                        <option value="VENTA">VENTA</option>
+                        <option value="TRASLADO_ESTABLECIMIENTOS">TRASLADO ENTRE ESTABLECIMIENTOS</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="col-4">
+                    <label>Modalidad de transporte</label>
+                    <select class="selectpicker form-control" id="modeTransportation">
+                        {% if editGuide.modeTransportation == 'PRIVADO' %}
+                        <option value="" ></option>
+                        <option value="PRIVADO" selected>PRIVADO</option>
+                        <option value="PUBLICO">PUBLICO</option>
+                        {% elif editGuide.modeTransportation == 'PUBLICO' %}
+                        <option value="" ></option>
+                        <option value="PRIVADO">PRIVADO</option>
+                        <option value="PUBLICO" selected>PUBLICO</option>
+                        {% else %}
+                        <option value="" selected></option>
+                        <option value="PRIVADO">PRIVADO</option>
+                        <option value="PUBLICO">PUBLICO</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="col-4">
+                    <label>Nro de ubigeo del cliente</label>
+                    <input class="form-control" type="text" value="{{ editGuide.ubigeoClient }}" id="ubigeoClient">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <label>Observaciones</label>
+                    <textarea class="form-control" rows="2" id="commentGuide" >{{ editGuide.commentGuide }}</textarea>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <h4>Datos del transportista</h4>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Razon social</label>
+                    <input class="form-control" type="text" value="{{ editGuide.razonSocialTranporter }}" id="razonSocialTranporter">
+                </div>
+                <div class="col-4">
+                    <label>RUC</label>
+                    <input class="form-control" type="text" value="{{ editGuide.rucTransporter }}" id="rucTransporter">
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <h4>Datos del conductor</h4>
+            <div class="row mb-3">
+                <div class="col-4">
+                    <label>Placa del conductor</label>
+                    <input class="form-control" type="text" value="{{ editGuide.vehiclePlate }}" id="vehiclePlate">
+                </div>
+                <div class="col-4">
+                    <label>DNI del conductor</label>
+                    <input class="form-control" type="text" value="{{ editGuide.dniDriver }}" id="dniDriver">
+                </div>
+                <div class="col-4">
+                    <label>Licencia del conductor</label>
+                    <input class="form-control" type="text" value="{{ editGuide.licenceDriver }}" id="licenceDriver">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label>Nombre del conductor</label>
+                    <input class="form-control" type="text" value="{{ editGuide.nameDriver }}" id="nameDriver">
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <h4>Items de la guia</h4>
+            <div class="row mb-3 mt-3">
+                <div class="col-10"></div>
                 <div class="col-2" id="btnAddProduct">
                     <br>
                     <div class="row mx-0">
                         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProduct" onclick="deleteAddProductInfo()">Productos <i class="fa-solid fa-plus"></i></button>
-                    </div>
-                </div>
-                <div class="col-2" id="btnAddService">
-                    <br>
-                    <div class="row mx-0">
-                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addService" onclick="deleteAddServiceInfo()">Servicios <i class="fa-solid fa-plus"></i></button>
                     </div>
                 </div>
             </div>
@@ -224,21 +373,6 @@
                         <th scope="col">Eliminar</th>
                     </thead>
                     <tbody id="productsItems"></tbody>
-                </table>
-            </div>
-            <div class="row mx-0" id="servicesSection">
-                <br>
-                <h6>Servicios</h6>
-                <table class="table table-bordered table-hover" id="servicesTable">
-                    <thead class="table-dark">
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Unidad de medida</th>
-                        <th scope="col">Moneda</th>
-                        <th scope="col">pvnIGV</th>
-                        <th scope="col">Descuento</th>
-                        <th scope="col">Eliminar</th>
-                    </thead>
-                    <tbody id="servicesItems"></tbody>
                 </table>
             </div>
         </div>
@@ -331,65 +465,6 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteAddProductInfo()">Cancelar</button>
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="addProductInfo()">Agregar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add service to quotation -->
-    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="addService">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Agregar servicio</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteAddServiceInfo()"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <label>Seleccionar servicio</label>
-                            <select class="selectpicker form-control" data-live-search="true" id="selectService">
-                                <option value="" selected></option>
-                                {% for serviceInfo in servicesSystem %}
-                                <option value="{{ serviceInfo.id }}">{{ serviceInfo.nameService }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <label>Nombre</label>
-                            <input type="text" class="form-control" id="nameService" required>
-                        </div>
-                        <div class="col-6">
-                            <label>Unidad de medida</label>
-                            <input type="text" class="form-control" id="measureUnitService" required>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <label>Precio de venta sin IGV</label>
-                            <input type="number" step="0.01" class="form-control" name="pvnIGV" id="pvnIGVService" required>
-                        </div>
-                        <div class="col-6">
-                            <label>Moneda</label>
-                            <select class="selectpicker form-control" id="currencyService" required>
-                                <option value="" selected></option>
-                                <option value="SOLES">SOLES</option>
-                                <option value="DOLARES">DOLARES</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <label>Descuento (%)</label>
-                            <input type="number" step="0" class="form-control" id="discountService">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteAddServiceInfo()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" onclick="addServiceInfo()">Agregar</button>
                 </div>
             </div>
         </div>
