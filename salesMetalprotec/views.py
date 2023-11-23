@@ -2504,7 +2504,7 @@ def verifyBillTeFacturo(request,idBill):
 
 def discountStockBill(request,idBill):
     billObject = billSystem.objects.get(id=idBill)
-    if billObject.stockBill is None and billObject.stateTeFacturo == 'Aceptado' and billObject.typeItemsBill =='PRODUCTOS':
+    if billObject.stockBill is None and (billObject.stateTeFacturo == 'Aceptado' or billObject.stateTeFacturo == 'Aceptado con Obs.') and billObject.typeItemsBill =='PRODUCTOS':
         billObject.stockBill = '1'
         billObject.save()
         if billObject.originBill == 'QUOTATION':
