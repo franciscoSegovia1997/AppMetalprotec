@@ -110,11 +110,11 @@
                                 {% endif %}
                                 <td>{{ billInfo.stateTeFacturo }}</td>
                                 <td class="text-center">
-                                    {% if billInfo.stockBill is None and billInfo.stateTeFacturo == 'Aceptado' %}
+                                    {% if billInfo.stockBill is None and (billInfo.stateTeFacturo == 'Aceptado' or billInfo.stateTeFacturo == 'Aceptado con Obs.') %}
                                     <a class="btn btn-warning" href="{% url 'salesMetalprotec:discountStockBill' billInfo.id %}">D</a>
-                                    {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Aceptado' %}
+                                    {% elif billInfo.stockBill == '2' and (billInfo.stateTeFacturo == 'Aceptado' or billInfo.stateTeFacturo == 'Aceptado con Obs.') %}
                                     <button class="btn btn-success">D</button>
-                                    {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Aceptado' %}
+                                    {% elif billInfo.stockBill == '1' and (billInfo.stateTeFacturo == 'Aceptado' or billInfo.stateTeFacturo == 'Aceptado con Obs.') %}
                                     <button class="btn btn-danger">D</button>
                                     {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Anulado' %}
                                     <a class="btn btn-warning" href="{% url 'salesMetalprotec:rollbackDiscountStockBill' billInfo.id %}">R</a>
@@ -167,11 +167,11 @@
                                 {% endif %}
                                 <td>{{ billInfo.stateTeFacturo }}</td>
                                 <td class="text-center">
-                                    {% if billInfo.stockBill is None and billInfo.stateTeFacturo == 'Aceptado' %}
+                                    {% if billInfo.stockBill is None and (billInfo.stateTeFacturo == 'Aceptado' or billInfo.stateTeFacturo == 'Aceptado con Obs.') %}
                                     <a class="btn btn-warning" href="{% url 'salesMetalprotec:discountStockBill' billInfo.id %}">D</a>
-                                    {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Aceptado' %}
+                                    {% elif billInfo.stockBill == '2' and (billInfo.stateTeFacturo == 'Aceptado' or billInfo.stateTeFacturo == 'Aceptado con Obs.') %}
                                     <button class="btn btn-success">D</button>
-                                    {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Aceptado' %}
+                                    {% elif billInfo.stockBill == '1' and (billInfo.stateTeFacturo == 'Aceptado' or billInfo.stateTeFacturo == 'Aceptado con Obs.') %}
                                     <button class="btn btn-danger">D</button>
                                     {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Anulado' %}
                                     <a class="btn btn-warning" href="{% url 'salesMetalprotec:rollbackDiscountStockBill' billInfo.id %}">R</a>
@@ -225,11 +225,11 @@
                             {% endif %}
                             <td>{{ billInfo.stateTeFacturo }}</td>
                             <td class="text-center">
-                                {% if billInfo.stockBill is None and billInfo.stateTeFacturo == 'Aceptado' %}
+                                {% if billInfo.stockBill is None and (billInfo.stateTeFacturo == 'Aceptado' or billInfo.stateTeFacturo == 'Aceptado con Obs.') %}
                                 <a class="btn btn-warning" href="{% url 'salesMetalprotec:discountStockBill' billInfo.id %}">D</a>
-                                {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Aceptado' %}
+                                {% elif billInfo.stockBill == '2' and (billInfo.stateTeFacturo == 'Aceptado' or billInfo.stateTeFacturo == 'Aceptado con Obs.') %}
                                 <button class="btn btn-success">D</button>
-                                {% elif billInfo.stockBill == '1' and billInfo.stateTeFacturo == 'Aceptado' %}
+                                {% elif billInfo.stockBill == '1' and (billInfo.stateTeFacturo == 'Aceptado' or billInfo.stateTeFacturo == 'Aceptado con Obs.') %}
                                 <button class="btn btn-danger">D</button>
                                 {% elif billInfo.stockBill == '2' and billInfo.stateTeFacturo == 'Anulado' %}
                                 <a class="btn btn-warning" href="{% url 'salesMetalprotec:rollbackDiscountStockBill' billInfo.id %}">R</a>
