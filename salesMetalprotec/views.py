@@ -55,7 +55,7 @@ def invoicesMetalprotec(request):
 
 def creditNotesMetalprotec(request):
     return render(request,'creditNotesMetalprotec.html',{
-        'creditNotesSystem':creditNoteSystem.objects.filter(endpointCreditNote=request.user.extendeduser.endpointUser).order_by('-codeCreditNote')
+        'creditNotesSystem':creditNoteSystem.objects.filter(endpointCreditNote=request.user.extendeduser.endpointUser).order_by('-dateCreditNote')
     })
 
 def editDataQuotation(request,idQuotation):
@@ -3956,9 +3956,31 @@ def getInfoCreditNote(creditNoteObject):
         itemsInvoice = []
         if invoiceObject.typeItemsInvoice == 'PRODUCTOS':
             totalProductsItems = []
-            if invoiceObject.originInvoice == 'GUIDE':
-                for guideInfo in invoiceObject.guidesystem_set.all():
-                    for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all():
+            if creditNoteObject.creditNotePurpose == 'ANULACION_OPERACION':
+                if invoiceObject.originInvoice == 'GUIDE':
+                    for guideInfo in invoiceObject.guidesystem_set.all():
+                        for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all():
+                            if productInfo.asociatedProduct is not None:
+                                if productInfo.asociatedProduct.kitProduct == 'ON':
+                                    productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
+                                    totalProductsItems.append([
+                                        productoDatos.id,
+                                        productoDatos.nameProduct,
+                                        productoDatos.codeProduct,
+                                        productoDatos.measureUnit,
+                                        productInfo.dataProductQuotation[4],
+                                        productInfo.dataProductQuotation[5],
+                                        productInfo.dataProductQuotation[6],
+                                        productInfo.dataProductQuotation[7],
+                                        productInfo.dataProductQuotation[8],
+                                        productInfo.dataProductQuotation[9],
+                                    ])
+                                else:
+                                    totalProductsItems.append(productInfo.dataProductQuotation)
+                            else:
+                                totalProductsItems.append(productInfo.dataProductQuotation)
+                else:
+                    for productInfo in invoiceObject.asociatedQuotation.quotationproductdata_set.all():
                         if productInfo.asociatedProduct is not None:
                             if productInfo.asociatedProduct.kitProduct == 'ON':
                                 productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
@@ -3979,26 +4001,55 @@ def getInfoCreditNote(creditNoteObject):
                         else:
                             totalProductsItems.append(productInfo.dataProductQuotation)
             else:
-                for productInfo in invoiceObject.asociatedQuotation.quotationproductdata_set.all():
-                    if productInfo.asociatedProduct is not None:
-                        if productInfo.asociatedProduct.kitProduct == 'ON':
-                            productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
-                            totalProductsItems.append([
-                                productoDatos.id,
-                                productoDatos.nameProduct,
-                                productoDatos.codeProduct,
-                                productoDatos.measureUnit,
-                                productInfo.dataProductQuotation[4],
-                                productInfo.dataProductQuotation[5],
-                                productInfo.dataProductQuotation[6],
-                                productInfo.dataProductQuotation[7],
-                                productInfo.dataProductQuotation[8],
-                                productInfo.dataProductQuotation[9],
-                            ])
-                        else:
-                            totalProductsItems.append(productInfo.dataProductQuotation)
-                    else:
-                        totalProductsItems.append(productInfo.dataProductQuotation)
+                if invoiceObject.originInvoice == 'GUIDE':
+                    for guideInfo in invoiceObject.guidesystem_set.all():
+                        for productInfo in guideInfo.asociatedQuotation.quotationproductdata_set.all():
+                            if productInfo.dataProductQuotation[2] in creditNoteObject.codigosProductos:
+                                indexCodeQuantity = creditNoteObject.codigosProductos.index(productInfo.dataProductQuotation[2])
+                                productInfo.dataProductQuotation[8] = creditNoteObject.cantidadesProductos[indexCodeQuantity]
+                                if productInfo.asociatedProduct is not None:
+                                    if productInfo.asociatedProduct.kitProduct == 'ON':
+                                        productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
+                                        totalProductsItems.append([
+                                            productoDatos.id,
+                                            productoDatos.nameProduct,
+                                            productoDatos.codeProduct,
+                                            productoDatos.measureUnit,
+                                            productInfo.dataProductQuotation[4],
+                                            productInfo.dataProductQuotation[5],
+                                            productInfo.dataProductQuotation[6],
+                                            productInfo.dataProductQuotation[7],
+                                            productInfo.dataProductQuotation[8],
+                                            productInfo.dataProductQuotation[9],
+                                        ])
+                                    else:
+                                        totalProductsItems.append(productInfo.dataProductQuotation)
+                                else:
+                                    totalProductsItems.append(productInfo.dataProductQuotation)
+                else:
+                    for productInfo in invoiceObject.asociatedQuotation.quotationproductdata_set.all():
+                        if productInfo.dataProductQuotation[2] in creditNoteObject.codigosProductos:
+                            indexCodeQuantity = creditNoteObject.codigosProductos.index(productInfo.dataProductQuotation[2])
+                            productInfo.dataProductQuotation[8] = creditNoteObject.cantidadesProductos[indexCodeQuantity]
+                            if productInfo.asociatedProduct is not None:
+                                if productInfo.asociatedProduct.kitProduct == 'ON':
+                                    productoDatos = productSystem.objects.get(id=productInfo.asociatedProduct.kitInfo[0][0])
+                                    totalProductsItems.append([
+                                        productoDatos.id,
+                                        productoDatos.nameProduct,
+                                        productoDatos.codeProduct,
+                                        productoDatos.measureUnit,
+                                        productInfo.dataProductQuotation[4],
+                                        productInfo.dataProductQuotation[5],
+                                        productInfo.dataProductQuotation[6],
+                                        productInfo.dataProductQuotation[7],
+                                        productInfo.dataProductQuotation[8],
+                                        productInfo.dataProductQuotation[9],
+                                    ])
+                                else:
+                                    totalProductsItems.append(productInfo.dataProductQuotation)
+                            else:
+                                totalProductsItems.append(productInfo.dataProductQuotation)
             
             finalPrice = 0
             if currencyInvoice == 'PEN':
@@ -4617,7 +4668,7 @@ def createCreditNoteFromBill(request):
 
 
 def createCreditNoteFromInvoice(request,idInvoice):
-    asociatedInvoice = invoiceSystem.objects.create(id=idInvoice)
+    asociatedInvoice = invoiceSystem.objects.get(id=idInvoice)
     endpointCreditNote = request.user.extendeduser.endpointUser
     serieCreditNote = endpointCreditNote.serieNotaBoleta
     nroCreditNote = endpointCreditNote.nroNotaBoleta
