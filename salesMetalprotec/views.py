@@ -5330,29 +5330,40 @@ def newGuideMetalprotec(request):
 
 def rollbackStockCreditNote(request,idCreditNote):
     creditNoteObject = creditNoteSystem.objects.get(id=idCreditNote)
-    """
-    if billObject.stockBill == '2' and billObject.stateTeFacturo == 'Anulado' and billObject.typeItemsBill =='PRODUCTOS':
-        billObject.stockBill = '1'
-        billObject.save()
+    billObject = creditNoteObject.asociatedBill
+    if creditNoteObject.stockCreditNote is None and (creditNoteObject.stateTeFacturo == 'Aceptado' or creditNoteObject.stateTeFacturo == 'Aceptado con Obs.') and billObject.typeItemsBill =='PRODUCTOS':
+        creditNoteObject.stockCreditNote = '1'
+        creditNoteObject.save()
         if billObject.originBill == 'QUOTATION':
             asociatedQuotation = billObject.asociatedQuotation
-            allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+            if creditNoteObject.creditNotePurpose == 'ANULACION_OPERACION':
+                allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+            else:
+                allPreviosProduct = asociatedQuotation.quotationproductdata_set.all()
+                allProductsInfo = []
+                for previosProduct in allPreviosProduct:
+                    if previosProduct.dataProductQuotation[2] in creditNoteObject.codigosProductos:
+                        allProductsInfo.append(previosProduct)
             try:
                 for productInfo in allProductsInfo:
                     asociatedProduct = productInfo.asociatedProduct
                     storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
                     stockEdit = storexproductSystem.objects.filter(asociatedProduct__codeProduct=asociatedProduct.codeProduct).get(asociatedStore=storeObject)
                     lastStock = stockEdit.quantityProduct
-                    addStockQt = productInfo.dataProductQuotation[8]
+                    if creditNoteObject.creditNotePurpose == 'ANULACION_OPERACION':
+                        addStockQt = productInfo.dataProductQuotation[8]
+                    else:
+                        indexProduct = creditNoteObject.codigosProductos.index(productInfo.dataProductQuotation[2])
+                        addStockQt = creditNoteObject.cantidadesProductos[indexProduct]
                     stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) + Decimal(addStockQt))))
                     stockEdit.save()
                     newStock = stockEdit.quantityProduct
-                    typeIncoming = 'ROLLBACK-FACTURA'
+                    typeIncoming = 'ROLLBACK-NOTA-CREDITO'
                     dateIncoming = datetime.datetime.today()
                     productCode = asociatedProduct.codeProduct
                     nameStore = storeObject.nameStore
                     quantityProduct = addStockQt
-                    referenceIncome = billObject.codeBill
+                    referenceIncome = creditNoteObject.codeCreditNote
                     asociatedUserData = request.user
                     asociatedProduct = asociatedProduct
                     endpointIncoming = request.user.extendeduser.endpointUser
@@ -5367,34 +5378,45 @@ def rollbackStockCreditNote(request,idCreditNote):
                         referenceIncome=referenceIncome,
                         asociatedUserData=asociatedUserData,
                         asociatedProduct=asociatedProduct,
-                        asociatedBill=billObject,
+                        asociatedCreditNote=creditNoteObject,
                         asociatedStoreData=storeObject,
                         endpointIncoming=endpointIncoming
                     )
-                billObject.stockBill = None
-                billObject.save()
+                creditNoteObject.stockCreditNote = '2'
+                creditNoteObject.save()
             except:
-                billObject.stockBill = '1'
-                billObject.save()
+                creditNoteObject.stockCreditNote = '1'
+                creditNoteObject.save()
         else:
             asociatedQuotation = billObject.guidesystem_set.all()[0].asociatedQuotation
-            allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+            if creditNoteObject.creditNotePurpose == 'ANULACION_OPERACION':
+                allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+            else:
+                allPreviosProduct = asociatedQuotation.quotationproductdata_set.all()
+                allProductsInfo = []
+                for previosProduct in allPreviosProduct:
+                    if previosProduct.dataProductQuotation[2] in creditNoteObject.codigosProductos:
+                        allProductsInfo.append(previosProduct)
             try:
                 for productInfo in allProductsInfo:
                     asociatedProduct = productInfo.asociatedProduct
                     storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
                     stockEdit = storexproductSystem.objects.filter(asociatedProduct__codeProduct=asociatedProduct.codeProduct).get(asociatedStore=storeObject)
                     lastStock = stockEdit.quantityProduct
-                    addStockQt = productInfo.dataProductQuotation[8]
+                    if creditNoteObject.creditNotePurpose == 'ANULACION_OPERACION':
+                        addStockQt = productInfo.dataProductQuotation[8]
+                    else:
+                        indexProduct = creditNoteObject.codigosProductos.index(productInfo.dataProductQuotation[2])
+                        addStockQt = creditNoteObject.cantidadesProductos[indexProduct]
                     stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) + Decimal(addStockQt))))
                     stockEdit.save()
                     newStock = stockEdit.quantityProduct
-                    typeIncoming = 'ROLLBACK-FACTURA'
+                    typeIncoming = 'ROLLBACK-NOTA-CREDITO'
                     dateIncoming = datetime.datetime.today()
                     productCode = asociatedProduct.codeProduct
                     nameStore = storeObject.nameStore
                     quantityProduct = addStockQt
-                    referenceIncome = billObject.codeBill
+                    referenceIncome = creditNoteObject.codeCreditNote
                     asociatedUserData = request.user
                     asociatedProduct = asociatedProduct
                     endpointIncoming = request.user.extendeduser.endpointUser
@@ -5409,15 +5431,13 @@ def rollbackStockCreditNote(request,idCreditNote):
                         referenceIncome=referenceIncome,
                         asociatedUserData=asociatedUserData,
                         asociatedProduct=asociatedProduct,
-                        asociatedBill=billObject,
+                        asociatedCreditNote=creditNoteObject,
                         asociatedStoreData=storeObject,
                         endpointIncoming=endpointIncoming
                     )
-                billObject.stockBill = None
-                billObject.save()
+                creditNoteObject.stockCreditNote = '2'
+                creditNoteObject.save()
             except:
-                print('Se ha fallado')
-                billObject.stockBill = '1'
-                billObject.save()
-    """
+                creditNoteObject.stockCreditNote = '1'
+                creditNoteObject.save()
     return HttpResponseRedirect(reverse('salesMetalprotec:creditNotesMetalprotec'))
