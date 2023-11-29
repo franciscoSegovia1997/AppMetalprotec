@@ -133,5 +133,6 @@ class creditNoteSystem(models.Model):
     creditNotePurpose = models.CharField(max_length=36,null=True,blank=True)
     codigosProductos = ArrayField(models.CharField(max_length=128),null=True, blank=True)
     cantidadesProductos = ArrayField(models.CharField(max_length=12),null=True, blank=True)
+    stockCreditNote = models.CharField(max_length=4,null=True,blank=True)
 
 
