@@ -5326,3 +5326,98 @@ def newGuideMetalprotec(request):
         'servicesSystem':serviceSystem.objects.filter(endpointService=request.user.extendeduser.endpointUser).order_by('id'),
         'exchangeRate':exchangeRate
     })
+
+
+def rollbackStockCreditNote(request,idCreditNote):
+    creditNoteObject = creditNoteSystem.objects.get(id=idCreditNote)
+    """
+    if billObject.stockBill == '2' and billObject.stateTeFacturo == 'Anulado' and billObject.typeItemsBill =='PRODUCTOS':
+        billObject.stockBill = '1'
+        billObject.save()
+        if billObject.originBill == 'QUOTATION':
+            asociatedQuotation = billObject.asociatedQuotation
+            allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+            try:
+                for productInfo in allProductsInfo:
+                    asociatedProduct = productInfo.asociatedProduct
+                    storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
+                    stockEdit = storexproductSystem.objects.filter(asociatedProduct__codeProduct=asociatedProduct.codeProduct).get(asociatedStore=storeObject)
+                    lastStock = stockEdit.quantityProduct
+                    addStockQt = productInfo.dataProductQuotation[8]
+                    stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) + Decimal(addStockQt))))
+                    stockEdit.save()
+                    newStock = stockEdit.quantityProduct
+                    typeIncoming = 'ROLLBACK-FACTURA'
+                    dateIncoming = datetime.datetime.today()
+                    productCode = asociatedProduct.codeProduct
+                    nameStore = storeObject.nameStore
+                    quantityProduct = addStockQt
+                    referenceIncome = billObject.codeBill
+                    asociatedUserData = request.user
+                    asociatedProduct = asociatedProduct
+                    endpointIncoming = request.user.extendeduser.endpointUser
+                    incomingItemsRegisterInfo.objects.create(
+                        typeIncoming=typeIncoming,
+                        dateIncoming=dateIncoming,
+                        productCode=productCode,
+                        nameStore=nameStore,
+                        quantityProduct=quantityProduct,
+                        lastStock=lastStock,
+                        newStock=newStock,
+                        referenceIncome=referenceIncome,
+                        asociatedUserData=asociatedUserData,
+                        asociatedProduct=asociatedProduct,
+                        asociatedBill=billObject,
+                        asociatedStoreData=storeObject,
+                        endpointIncoming=endpointIncoming
+                    )
+                billObject.stockBill = None
+                billObject.save()
+            except:
+                billObject.stockBill = '1'
+                billObject.save()
+        else:
+            asociatedQuotation = billObject.guidesystem_set.all()[0].asociatedQuotation
+            allProductsInfo = asociatedQuotation.quotationproductdata_set.all()
+            try:
+                for productInfo in allProductsInfo:
+                    asociatedProduct = productInfo.asociatedProduct
+                    storeObject = storeSystem.objects.get(nameStore=productInfo.dataProductQuotation[4])
+                    stockEdit = storexproductSystem.objects.filter(asociatedProduct__codeProduct=asociatedProduct.codeProduct).get(asociatedStore=storeObject)
+                    lastStock = stockEdit.quantityProduct
+                    addStockQt = productInfo.dataProductQuotation[8]
+                    stockEdit.quantityProduct = str(Decimal('%.2f' % Decimal(Decimal(stockEdit.quantityProduct) + Decimal(addStockQt))))
+                    stockEdit.save()
+                    newStock = stockEdit.quantityProduct
+                    typeIncoming = 'ROLLBACK-FACTURA'
+                    dateIncoming = datetime.datetime.today()
+                    productCode = asociatedProduct.codeProduct
+                    nameStore = storeObject.nameStore
+                    quantityProduct = addStockQt
+                    referenceIncome = billObject.codeBill
+                    asociatedUserData = request.user
+                    asociatedProduct = asociatedProduct
+                    endpointIncoming = request.user.extendeduser.endpointUser
+                    incomingItemsRegisterInfo.objects.create(
+                        typeIncoming=typeIncoming,
+                        dateIncoming=dateIncoming,
+                        productCode=productCode,
+                        nameStore=nameStore,
+                        quantityProduct=quantityProduct,
+                        lastStock=lastStock,
+                        newStock=newStock,
+                        referenceIncome=referenceIncome,
+                        asociatedUserData=asociatedUserData,
+                        asociatedProduct=asociatedProduct,
+                        asociatedBill=billObject,
+                        asociatedStoreData=storeObject,
+                        endpointIncoming=endpointIncoming
+                    )
+                billObject.stockBill = None
+                billObject.save()
+            except:
+                print('Se ha fallado')
+                billObject.stockBill = '1'
+                billObject.save()
+    """
+    return HttpResponseRedirect(reverse('salesMetalprotec:creditNotesMetalprotec'))

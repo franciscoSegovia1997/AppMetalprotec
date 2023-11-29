@@ -61,6 +61,7 @@
                     <th scope="col">Enviar a TeFacturo</th>
                     <th scope="col">Estado TeFacturo</th>
                     <th scope="col">Verificar estado</th>
+                    <th scope="col">Rollback</th>
                 </thead>
                 <tbody>
                     {% for creditNoteInfo in creditNotesSystem %}
@@ -100,6 +101,25 @@
                         {% else %}
                             <td></td>
                         {% endif %}
+                        <td class="text-center">
+                            {% if creditNoteInfo.stateTeFacturo == 'Aceptado' or creditNoteInfo.stateTeFacturo == 'Aceptado con Obs.' %}
+                                {% if creditNoteInfo.stockCreditNote is None %}
+                                <a class="btn btn-warning" href="{% url 'salesMetalprotec:rollbackStockCreditNote' creditNoteInfo.id %}">D</a>
+                                {% elif creditNoteInfo.stockCreditNote == '2' %}
+                                <button class="btn btn-success">D</button>
+                                {% elif creditNoteInfo.stockCreditNote == '1' %}
+                                <button class="btn btn-danger">D</button>
+                                {% else %}
+                                {% endif %}
+                            {% elif creditNoteInfo.stockCreditNote == '2' and creditNoteInfo.stateTeFacturo == 'Anulado' %}
+                            <a class="btn btn-warning" href="#">R</a>
+                            {% elif creditNoteInfo.stockCreditNote is None and creditNoteInfo.stateTeFacturo == 'Anulado' %}
+                            <button class="btn btn-success">R</button>
+                            {% elif creditNoteInfo.stockCreditNote == '1' and creditNoteInfo.stateTeFacturo == 'Anulado' %}
+                            <button class="btn btn-danger">R</button>
+                            {% else %}
+                            {% endif %}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
