@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import productSystem, storeSystem, storexproductSystem
 from decimal import Decimal, DecimalException,getcontext
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from stockManagment.models import incomingItemsRegisterInfo, outcomingItemsRegisterInfo
@@ -339,13 +339,70 @@ def changeStore(request):
     
 def downloadAllProducts(request):
     productsData = []
-    productsData.append(['PRUEBA EXPORTACION'])
-    exportTable = pd.DataFrame(productsData,columns=['PRUEBA EXPORTACION'])
-    exportTable.to_excel('productsInfo.xlsx',index=False)
-    doc_excel = openpyxl.load_workbook("productsInfo.xlsx")
-    doc_excel.active.column_dimensions['A'].width = 60
-    doc_excel.save("productsInfo.xlsx")
-    response = HttpResponse(open('productsInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    nombre = 'attachment; ' + 'filename=' + 'productsInfo.xlsx'
-    response['Content-Disposition'] = nombre
-    return response
+    totalProducts = productSystem.objects.all()
+    for productItem in totalProducts:
+        productsData.append([
+            productItem.nameProduct,
+            productItem.codeProduct,
+            productItem.codeSunatProduct,
+            productItem.categoryProduct,
+            productItem.subCategoryProduct,
+            productItem.measureUnit,
+            productItem.currencyProduct,
+            productItem.weightProduct,
+            productItem.pcnIGV,
+            productItem.pccIGV,
+            productItem.pvnIGV,
+            productItem.pvcIGV,
+            productItem.storexproductsystem_set.all()[0].asociatedStore.nameStore,
+            productItem.storexproductsystem_set.all()[0].quantityProduct
+        ])
+    if len(productsData) > 0:
+        exportTable = pd.DataFrame(productsData,columns=[
+            'NOMBRE',
+            'CODIGO',
+            'CODIGO_SUNAT',
+            'CATEGORIA_PRODUCTO',
+            'SUBCATEGORIA_PRODUCTO',
+            'UNIDAD_MEDIDA',
+            'MONEDA_PRODUCTO',
+            'PESO_PRODUCTO',
+            'PRECIO_COMPRA_NO_IGV',
+            'PRECIO_COMPRA_CON_IGV',
+            'PRECIO_VENTA_NO_IGV',
+            'PRECIO_VENTA_CON_IGV',
+            'ALMACE_PRODUCTO',
+            'CANTIDAD_PRODUCTO'
+        ])
+        exportTable.to_excel('productsInfo.xlsx',index=False)
+        doc_excel = openpyxl.load_workbook("productsInfo.xlsx")
+        doc_excel.active.column_dimensions['A'].width = 60
+        doc_excel.active.column_dimensions['B'].width = 60
+        doc_excel.active.column_dimensions['C'].width = 60
+        doc_excel.active.column_dimensions['D'].width = 60
+        doc_excel.active.column_dimensions['E'].width = 60
+        doc_excel.active.column_dimensions['F'].width = 60
+        doc_excel.active.column_dimensions['G'].width = 60
+        doc_excel.active.column_dimensions['H'].width = 60
+        doc_excel.active.column_dimensions['I'].width = 60
+        doc_excel.active.column_dimensions['J'].width = 60
+        doc_excel.active.column_dimensions['K'].width = 60
+        doc_excel.active.column_dimensions['L'].width = 60
+        doc_excel.active.column_dimensions['M'].width = 60
+        doc_excel.active.column_dimensions['N'].width = 60
+        doc_excel.save("productsInfo.xlsx")
+        response = HttpResponse(open('productsInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'productsInfo.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
+    else:
+        productsData.append(['SIN INFORMACION'])
+        exportTable = pd.DataFrame(productsData,columns=['PRUEBA EXPORTACION'])
+        exportTable.to_excel('productsInfo.xlsx',index=False)
+        doc_excel = openpyxl.load_workbook("productsInfo.xlsx")
+        doc_excel.active.column_dimensions['A'].width = 60
+        doc_excel.save("productsInfo.xlsx")
+        response = HttpResponse(open('productsInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'productsInfo.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
