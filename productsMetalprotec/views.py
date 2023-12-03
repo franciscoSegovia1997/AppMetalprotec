@@ -7,6 +7,9 @@ from django.contrib.auth.decorators import login_required
 from stockManagment.models import incomingItemsRegisterInfo, outcomingItemsRegisterInfo
 import datetime
 from settingsMetalprotec.models import endpointSystem
+import pandas as pd
+import openpyxl
+
 
 getcontext().prec = 10
 
@@ -333,3 +336,16 @@ def changeStore(request):
             else:
                 pass
         return HttpResponseRedirect(reverse('productsMetalprotec:productsMetalprotec'))
+    
+def downloadAllProducts(request):
+    productsData = []
+    productsData.append(['PRUEBA EXPORTACION'])
+    exportTable = pd.DataFrame(productsData,columns=['PRUEBA EXPORTACION'])
+    exportTable.to_excel('productsInfo.xlsx',index=False)
+    doc_excel = openpyxl.load_workbook("productsInfo.xlsx")
+    doc_excel.active.column_dimensions['A'].width = 60
+    doc_excel.save("productsInfo.xlsx")
+    response = HttpResponse(open('productsInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    nombre = 'attachment; ' + 'filename=' + 'productsInfo.xlsx'
+    response['Content-Disposition'] = nombre
+    return response
