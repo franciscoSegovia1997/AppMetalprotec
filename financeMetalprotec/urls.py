@@ -18,5 +18,6 @@ urlpatterns = [
     path('getConfigComission',views.getConfigComission,name='getConfigComission'),
     path('getComissionData',views.getComissionData,name='getComissionData'),
     path('exportComissions',views.exportComissions,name='exportComissions'),
-    path('showBankRegister/<str:idBankRegister>',views.showBankRegister,name='showBankRegister')
+    path('showBankRegister/<str:idBankRegister>',views.showBankRegister,name='showBankRegister'),
+    path('downloadAllPayments',views.downloadAllPayments,name='downloadAllPayments'),
 ]

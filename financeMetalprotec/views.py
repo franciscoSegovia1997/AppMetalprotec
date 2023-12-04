@@ -701,3 +701,67 @@ def showBankRegister(request,idBankRegister):
         'bankInfo':bankInfo
     })
 
+def downloadAllPayments(request):
+    paymentsData = []
+    totalPayments = paymentSystem.objects.all().order_by('datePayment')
+    for paymentItem in totalPayments:
+        paymentsData.append([
+            paymentItem.datePayment,
+            paymentItem.nameBankPayment,
+            paymentItem.currencyBank,
+            paymentItem.operationNumber,
+            paymentItem.operationNumber2,
+            paymentItem.nameClient,
+            paymentItem.statePayment,
+            paymentItem.codeDocument,
+            paymentItem.codeGuide,
+            paymentItem.codeQuotation,
+            paymentItem.codeSeller,
+            paymentItem.typeDocumentPayment
+        ])
+    if len(paymentsData) > 0:
+        exportTable = pd.DataFrame(paymentsData,columns=[
+            'FECHA',
+            'NOMBRE_BANCO',
+            'MONEDA_BANCO',
+            'NUMERO_OPERACION',
+            'NUMERO_OPERACION_2',
+            'NOMBRE_CLIENTE',
+            'ESTADO_PAGO',
+            'CODIGO_DOCUMENTO',
+            'CODIGO_GUIA',
+            'CODIGO_COTIZACION',
+            'CODIGO_VENDEDOR',
+            'TIPO_DOCUMENTO',
+        ])
+        exportTable.to_excel('paymentsInfo.xlsx',index=False)
+        doc_excel = openpyxl.load_workbook("paymentsInfo.xlsx")
+        doc_excel.active.column_dimensions['A'].width = 60
+        doc_excel.active.column_dimensions['B'].width = 60
+        doc_excel.active.column_dimensions['C'].width = 60
+        doc_excel.active.column_dimensions['D'].width = 60
+        doc_excel.active.column_dimensions['E'].width = 60
+        doc_excel.active.column_dimensions['F'].width = 60
+        doc_excel.active.column_dimensions['G'].width = 60
+        doc_excel.active.column_dimensions['H'].width = 60
+        doc_excel.active.column_dimensions['I'].width = 60
+        doc_excel.active.column_dimensions['J'].width = 60
+        doc_excel.active.column_dimensions['K'].width = 60
+        doc_excel.active.column_dimensions['L'].width = 60
+        doc_excel.save("paymentsInfo.xlsx")
+        response = HttpResponse(open('paymentsInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'paymentsInfo.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
+    else:
+        paymentsData.append(['SIN INFORMACION'])
+        exportTable = pd.DataFrame(paymentsData,columns=['PRUEBA EXPORTACION'])
+        exportTable.to_excel('paymentsInfo.xlsx',index=False)
+        doc_excel = openpyxl.load_workbook("paymentsInfo.xlsx")
+        doc_excel.active.column_dimensions['A'].width = 60
+        doc_excel.save("paymentsInfo.xlsx")
+        response = HttpResponse(open('paymentsInfo.xlsx','rb'),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        nombre = 'attachment; ' + 'filename=' + 'paymentsInfo.xlsx'
+        response['Content-Disposition'] = nombre
+        return response
+
