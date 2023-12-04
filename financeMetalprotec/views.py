@@ -703,12 +703,12 @@ def showBankRegister(request,idBankRegister):
 
 def downloadAllPayments(request):
     paymentsData = []
-    totalPayments = paymentSystem.objects.all().order_by('datePayment')
+    totalPayments = paymentSystem.objects.all().order_by('-datePayment')
     for paymentItem in totalPayments:
         paymentsData.append([
             paymentItem.datePayment,
             paymentItem.nameBankPayment,
-            paymentItem.currencyBank,
+            paymentItem.currencyPayment,
             paymentItem.operationNumber,
             paymentItem.operationNumber2,
             paymentItem.nameClient,
