@@ -114,7 +114,7 @@ def datacenter(request):
 
 def purchaseOrder(request):
     return render(request,'purchaseOrder.html',{
-        'totalPurchaseOrder':ordenCompraMetalprotec.objects.filter(endpointOrden=request.user.extendeduser.endpointUser)
+        'totalPurchaseOrder':ordenCompraMetalprotec.objects.filter(endpointOrden=request.user.extendeduser.endpointUser).order_by('-id')
     })
 
 def deleteOrden(request,ind):
@@ -637,7 +637,7 @@ def editOrder(request,ind):
     orden_editar = ordenCompraMetalprotec.objects.get(id=ind)
     return render(request,'editPurchaseOrder.html',{
         'orden':orden_editar,
-        'productsSystem': productSystem.objects.all().order_by('id')
+        'productsSystem': productSystem.objects.filter(endpointProduct=request.user.extendeduser.endpointUser).order_by('id')
     })
 
 def updateOrder(request,ind):
