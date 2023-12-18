@@ -1,4 +1,4 @@
-# Task manager project
+# Metalprotec App
 
 ## Description
 
